@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fdfae7",
+                    "on-surface-variant": "#55423e",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#1f4f3c",
+                    "tertiary-container": "#9294b3",
+                    "on-secondary-container": "#3d6c57",
+                    "surface-variant": "#e6e3d0",
+                    "surface-container-high": "#ece9d6",
+                    "surface-container": "#f1eedb",
+                    "surface-dim": "#dddbc8",
+                    "primary-fixed-dim": "#ffb4a1",
+                    "background": "#fdfae7",
+                    "surface": "#fdfae7",
+                    "secondary": "#386753",
+                    "on-secondary": "#ffffff",
+                    "secondary-container": "#b8ebd1",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#88726d",
+                    "surface-tint": "#9a442d",
+                    "tertiary-fixed": "#dfe0ff",
+                    "on-tertiary-fixed-variant": "#424560",
+                    "secondary-fixed-dim": "#9fd1b8",
+                    "on-primary-fixed": "#3c0800",
+                    "primary": "#9a442d",
+                    "surface-container-low": "#f7f4e1",
+                    "inverse-primary": "#ffb4a1",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#ffdbd2",
+                    "on-surface": "#1c1c11",
+                    "inverse-on-surface": "#f4f1de",
+                    "on-tertiary-container": "#2a2d47",
+                    "surface-container-highest": "#e6e3d0",
+                    "on-background": "#1c1c11",
+                    "tertiary": "#5a5c79",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#c2c4e5",
+                    "primary-container": "#e07a5f",
+                    "secondary-fixed": "#bbeed4",
+                    "on-tertiary-fixed": "#161a32",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#002115",
+                    "on-primary-container": "#5b1604",
+                    "outline-variant": "#dbc1ba",
+                    "inverse-surface": "#313124",
+                    "on-primary-fixed-variant": "#7c2e19",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Be Vietnam Pro"],
+                    "label": ["Be Vietnam Pro"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        background-color: #fdfae7;
+      }
+      .headline-font {
+        font-family: 'Epilogue', serif;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface antialiased pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fdfae7]/80 backdrop-blur-xl shadow-[0_12px_40px_rgba(61,64,91,0.06)]">
+<div class="flex justify-between items-center px-6 h-16 w-full max-w-md mx-auto">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container active:scale-95 transition-transform duration-200">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="Modern close-up portrait of a woman with a warm, friendly expression against a soft-focus indoor background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLjH3yQC1aNDoCIlkL-M7u8ucbyArDW1oXBwipbM9-CTlg9kg3k_kXxIwLenGlnvaiaxjrYkTuS36j56y1jUw6QyKp0-if0JJ-SkeABMWwJCjZORO2bvJ0uPZDQjf5j7L8xgXOdPPVV0ISxe8MGhxWtFfh1HRgFiT3hd52AJiJOQIumM4vQ7aAKyz3bl4PwuqbmQjwSHOO6H-DWCGBHriLtp9k3sIpHMgLE9B4t1pzbKOOq3JEGHrh-pufVUvKQCneA6nDe4neT60"/>
+</div>
+<h1 class="font-['Epilogue'] font-bold text-xl tracking-tight text-[#9a442d]">Análisis</h1>
+<button class="material-symbols-outlined text-[#9a442d] hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" data-icon="notifications">notifications</button>
+</div>
+</header>
+<main class="pt-20 px-6 max-w-md mx-auto space-y-8">
+<!-- Monthly Spending Trend (Bento Cell) -->
+<section class="space-y-4">
+<h2 class="headline-font font-bold text-lg text-on-surface-variant px-2">Tendencia Mensual</h2>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm space-y-6">
+<div class="flex items-end justify-between h-40 gap-2">
+<!-- Bar Chart Visual -->
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-[40%] transition-all group-hover:bg-primary-container"></div>
+<span class="text-[10px] font-label uppercase tracking-widest text-outline">Ene</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-[65%] transition-all group-hover:bg-primary-container"></div>
+<span class="text-[10px] font-label uppercase tracking-widest text-outline">Feb</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-[50%] transition-all group-hover:bg-primary-container"></div>
+<span class="text-[10px] font-label uppercase tracking-widest text-outline">Mar</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group">
+<div class="w-full bg-gradient-to-t from-primary to-primary-container rounded-t-lg h-[85%]"></div>
+<span class="text-[10px] font-label uppercase tracking-widest text-primary font-bold">Abr</span>
+</div>
+</div>
+<div class="flex justify-between items-center border-t border-surface-container pt-4">
+<div class="space-y-0.5">
+<p class="text-xs text-on-surface-variant font-medium">Gasto Total</p>
+<p class="headline-font font-black text-2xl text-primary">$4,280.00</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container text-xs px-3 py-1 rounded-full font-bold">+12% vs Mar</span>
+</div>
+</div>
+</section>
+<!-- Category Breakdown (Circular Chart) -->
+<section class="space-y-4">
+<h2 class="headline-font font-bold text-lg text-on-surface-variant px-2">Distribución por Categoría</h2>
+<div class="bg-surface-container p-8 rounded-xl flex items-center gap-8">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<!-- SVG Doughnut Chart -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#e07a5f" stroke-dasharray="40 100" stroke-width="4"></circle>
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#386753" stroke-dasharray="30 100" stroke-dashoffset="-40" stroke-width="4"></circle>
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#5a5c79" stroke-dasharray="20 100" stroke-dashoffset="-70" stroke-width="4"></circle>
+<circle cx="18" cy="18" fill="transparent" r="15.9" stroke="#dbc1ba" stroke-dasharray="10 100" stroke-dashoffset="-90" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="headline-font font-bold text-lg text-on-surface">Abril</span>
+</div>
+</div>
+<div class="flex-1 space-y-3">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary-container"></div>
+<span class="text-xs font-medium text-on-surface-variant">Hogar (40%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="text-xs font-medium text-on-surface-variant">Comida (30%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-tertiary"></div>
+<span class="text-xs font-medium text-on-surface-variant">Ocio (20%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<span class="text-xs font-medium text-on-surface-variant">Otros (10%)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Suggestions Horizontal Scroll -->
+<section class="space-y-4">
+<div class="flex justify-between items-center px-2">
+<h2 class="headline-font font-bold text-lg text-on-surface-variant">Sugerencias AI</h2>
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Ver todas</span>
+</div>
+<div class="flex overflow-x-auto gap-4 pb-4 no-scrollbar -mx-6 px-6">
+<!-- Suggestion Card 1 -->
+<div class="min-w-[240px] bg-gradient-to-br from-primary to-primary-container p-6 rounded-xl text-white shadow-lg flex flex-col justify-between h-56">
+<div class="space-y-3">
+<div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="bolt">bolt</span>
+</div>
+<p class="headline-font font-bold text-xl leading-tight">Ahorro en Energía</p>
+</div>
+<p class="text-sm text-white/80">Has gastado un 15% más en luz este mes. Considera revisar tus electrodomésticos.</p>
+</div>
+<!-- Suggestion Card 2 -->
+<div class="min-w-[240px] bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container flex flex-col justify-between h-56">
+<div class="space-y-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="content_copy">content_copy</span>
+</div>
+<p class="headline-font font-bold text-xl leading-tight text-on-surface">Cargos Duplicados</p>
+</div>
+<p class="text-sm text-on-surface-variant">Detectamos dos suscripciones activas similares: Netflix y Disney+.</p>
+</div>
+<!-- Suggestion Card 3 -->
+<div class="min-w-[240px] bg-inverse-surface p-6 rounded-xl text-inverse-on-surface shadow-lg flex flex-col justify-between h-56">
+<div class="space-y-3">
+<div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-fixed" data-icon="savings">savings</span>
+</div>
+<p class="headline-font font-bold text-xl leading-tight">Fondo de Emergencia</p>
+</div>
+<p class="text-sm text-white/70">Estás a solo $200 de tu meta mensual de ahorro preventivo.</p>
+</div>
+</div>
+</section>
+<!-- Movimientos Atípicos -->
+<section class="space-y-4">
+<h2 class="headline-font font-bold text-lg text-on-surface-variant px-2">Movimientos Atípicos</h2>
+<div class="space-y-3">
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center justify-between group transition-all hover:bg-surface-container">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="shopping_basket">shopping_basket</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Mercadona</p>
+<p class="text-xs text-outline">Gasto en Alimentación</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-on-surface">$184.20</p>
+<span class="text-[10px] font-black text-primary uppercase">+25% PROMEDIO</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg flex items-center justify-between group transition-all hover:bg-surface-container">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="local_gas_station">local_gas_station</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Repsol S.A.</p>
+<p class="text-xs text-outline">Gasto en Transporte</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-on-surface">$72.50</p>
+<span class="text-[10px] font-black text-primary uppercase">+12% PROMEDIO</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 h-24 bg-[#fdfae7]/90 backdrop-blur-xl z-50 rounded-t-[3rem] shadow-[0_-8px_30px_rgba(61,64,91,0.04)]">
+<!-- Inicio -->
+<a class="flex flex-col items-center justify-center text-stone-500 gap-1 hover:text-[#9a442d] transition-colors active:scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider">Inicio</span>
+</a>
+<!-- Servicios -->
+<a class="flex flex-col items-center justify-center text-stone-500 gap-1 hover:text-[#9a442d] transition-colors active:scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider">Servicios</span>
+</a>
+<!-- Escáner -->
+<a class="flex flex-col items-center justify-center text-stone-500 gap-1 hover:text-[#9a442d] transition-colors active:scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider">Escáner</span>
+</a>
+<!-- Análisis (Active State) -->
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#9a442d] to-[#e07a5f] text-white rounded-full w-14 h-14 -mt-10 shadow-lg active:scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-['BeVietnamPro'] font-medium text-[8px] uppercase tracking-wider">Análisis</span>
+</a>
+<!-- Familia -->
+<a class="flex flex-col items-center justify-center text-stone-500 gap-1 hover:text-[#9a442d] transition-colors active:scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider">Familia</span>
+</a>
+</nav>
+</body></html>

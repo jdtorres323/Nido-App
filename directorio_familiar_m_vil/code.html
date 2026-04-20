@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Directorio Familiar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;900&amp;family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#fdfae7",
+                      "surface-bright": "#fdfae7",
+                      "on-surface-variant": "#55423e",
+                      "inverse-on-surface": "#f4f1de",
+                      "primary-fixed-dim": "#ffb4a1",
+                      "tertiary-fixed-dim": "#c2c4e5",
+                      "on-background": "#1c1c11",
+                      "surface-container-high": "#ece9d6",
+                      "on-error": "#ffffff",
+                      "secondary": "#386753",
+                      "tertiary-fixed": "#dfe0ff",
+                      "on-secondary-fixed": "#002115",
+                      "on-primary-fixed": "#3c0800",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-variant": "#e6e3d0",
+                      "on-primary-container": "#5b1604",
+                      "on-tertiary-fixed": "#161a32",
+                      "surface-container-highest": "#e6e3d0",
+                      "secondary-fixed": "#bbeed4",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#424560",
+                      "secondary-container": "#b8ebd1",
+                      "primary": "#9a442d",
+                      "outline-variant": "#dbc1ba",
+                      "on-primary": "#ffffff",
+                      "background": "#fdfae7",
+                      "inverse-surface": "#313124",
+                      "secondary-fixed-dim": "#9fd1b8",
+                      "on-error-container": "#93000a",
+                      "surface-container": "#f1eedb",
+                      "surface-tint": "#9a442d",
+                      "inverse-primary": "#ffb4a1",
+                      "outline": "#88726d",
+                      "tertiary": "#5a5c79",
+                      "primary-fixed": "#ffdbd2",
+                      "on-tertiary-container": "#2a2d47",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-container": "#3d6c57",
+                      "on-primary-fixed-variant": "#7c2e19",
+                      "primary-container": "#e07a5f",
+                      "surface-dim": "#dddbc8",
+                      "surface-container-low": "#f7f4e1",
+                      "on-surface": "#1c1c11",
+                      "tertiary-container": "#9294b3",
+                      "error": "#ba1a1a",
+                      "on-secondary-fixed-variant": "#1f4f3c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {},
+              "fontFamily": {
+                      "headline": [
+                              "Epilogue"
+                      ],
+                      "body": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label": [
+                              "Be Vietnam Pro"
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fdfae7]/80 dark:bg-stone-950/80 backdrop-blur-md shadow-[0_12px_40px_rgba(61,64,91,0.06)] flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface shadow-sm">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Portrait of a young woman with natural makeup, warm soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhH7Q_18hw8l3ccuUSZKu0y-_hMymKj-QOfoeNj4QtLSQpW1yDRT0sunX_3Lz_vNjuZEs6mc4O1hLdTPOhTmFMQE0JsJtesEWmtMz7gUR9CxA8PBNjO9YtQNafMTawrM1nn4vKKyQ7EkCkCzV8NLVsoCJJCy0WwJlPULcH_21hZs-Xpt_ays5rnDX54dcmEIW_TwVd7qUXEn7HPR2CsnRa7MKPkpwVZCc1EJQSIAA0LZWaa33E5BNc7svyVf5AnQYlfJg3PTDst6A"/>
+</div>
+<h1 class="font-['Epilogue'] font-black text-[#9a442d] dark:text-[#e07a5f] text-2xl tracking-tight">Household</h1>
+</div>
+<button class="text-[#9a442d] dark:text-[#e07a5f] hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="pt-28 px-6 space-y-8 pb-8">
+<!-- Screen Title -->
+<div>
+<h2 class="font-headline font-bold text-4xl text-on-surface tracking-tight mb-2">Directorio Familiar</h2>
+<p class="font-body text-on-surface-variant text-base">Gestiona los miembros y sus métodos de pago.</p>
+</div>
+<!-- Group Status Card -->
+<section class="bg-surface-container-low rounded-xl p-6 shadow-[0_12px_40px_rgba(61,64,91,0.06)] flex flex-col gap-6">
+<h3 class="font-headline font-bold text-xl text-on-surface">Estado del Grupo</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<p class="font-label text-sm uppercase tracking-wider text-on-surface-variant mb-1">Gastos este mes</p>
+<p class="font-headline font-bold text-2xl text-primary">$1,240<span class="text-sm font-normal text-on-surface-variant">.00</span></p>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<p class="font-label text-sm uppercase tracking-wider text-on-surface-variant mb-1">Miembros activos</p>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">group</span>
+<p class="font-headline font-bold text-2xl text-on-surface">4</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Family Members List -->
+<section class="space-y-4">
+<h3 class="font-headline font-bold text-2xl text-on-surface mb-6">Miembros</h3>
+<!-- Member Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0_12px_40px_rgba(61,64,91,0.06)] relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-fixed opacity-20 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+<div class="flex items-start gap-4 relative z-10">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-surface shadow-md shrink-0">
+<img alt="Ana García" class="w-full h-full object-cover" data-alt="Portrait of a young woman with natural makeup, warm soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8RSQ_TJ9Y3vB8ju-7rNWcXPjfh9TDfeWGlCW2tMUgFjqUNCp-aEhY0Ja_HxV_wrNZISCmfdosOWLtu_6-h9PNUOBAokV4lenBU-ZJSZTSu9RxzjHNgBRFq1jYaaa_Wp-e5x4SLhCLRHcNXF_JO0NGcUfMZ4DY7IUa_zNBMpYppTCtrINIQzlp-zeUOh3mZCFeisM3qlb-6_U06L8CgRnPuIZf0ZOviE-JWdW83wODWvM0fcRo-wdhiQu9FLSwXrZMj03lPz8B3Xg"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline font-bold text-lg text-on-surface">Ana García</h4>
+<span class="bg-secondary-container text-on-secondary-container font-label text-xs uppercase tracking-wider px-2 py-1 rounded-sm">Administrador</span>
+</div>
+<div class="mt-3 space-y-2">
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+<span class="font-medium">PayPal:</span> @anagarcia
+                            </div>
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+<span class="font-medium">Venmo:</span> @ana-g
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Member Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0_12px_40px_rgba(61,64,91,0.06)] relative overflow-hidden group">
+<div class="flex items-start gap-4 relative z-10">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-surface shadow-md shrink-0">
+<img alt="Carlos Mendoza" class="w-full h-full object-cover" data-alt="Portrait of a young man with a beard, casual attire, bright outdoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARXvPSlOYfOnyKwErsva17d9U6-aW0eBqtp_oXqW4tvB04d5A84J1DkYB7lhudt4UDK7NOLghz5O-u4D91bU02AUIXf8MLr5EEJZxc8DOaDhJI42KX6tNnVbTHMsKQXoNfN7wjPRqXQxXS70RjG_YT--9jcmwk2BJbBt8Jv2REMUNOTok_RnOBC7jhVY88v8WjqVW8wVImdJ8rQDS_d_oGJm0pdQhzsTF_diIEc_vwXiPMGLVMTVLKxJl3feDyxUvChTk2dcTVJ5w"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline font-bold text-lg text-on-surface">Carlos Mendoza</h4>
+</div>
+<div class="mt-3 space-y-2">
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+<span class="font-medium">Venmo:</span> @carlos-m
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Member Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0_12px_40px_rgba(61,64,91,0.06)] relative overflow-hidden group">
+<div class="flex items-start gap-4 relative z-10">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-surface shadow-md shrink-0">
+<img alt="Sofía Ruiz" class="w-full h-full object-cover" data-alt="Portrait of a smiling young woman with curly hair, natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfRxbBQJRN5wFiTGgVQXd3-DH1nsH_KBjkbyAECQ49rWChMIkaZuBnbrM88XHhTmMszT7woXnmI6h5W3vDlr1QtRchqU-ZKt4vtNUGMVkl-2tmlBCjhvGAo3wl20Eu33GvOYsPVH3IKfs8XuG88aSV-V_wK1vdNvL9RuYzK7gVh5KOB40c8CbuGI1p7HzdWQGIKvwF0oc268dgsuUKux9yzXyiwUQwkpUYEqidcWWS0RwzJmwWqbJcij92HKxmkRs30axYDOtoJaQ"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline font-bold text-lg text-on-surface">Sofía Ruiz</h4>
+</div>
+<div class="mt-3 space-y-2">
+<div class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+<span class="font-medium">Zelle:</span> sofia@email.com
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Invite Member Card -->
+<button class="w-full bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:bg-surface-container transition-colors active:scale-[0.98]">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_add</span>
+</div>
+<h4 class="font-headline font-bold text-lg text-primary">Invitar Miembro</h4>
+</button>
+</section>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-24 left-0 w-full px-6 z-40 pointer-events-none">
+<div class="pointer-events-auto">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold text-lg py-4 rounded-full shadow-[0_12px_40px_rgba(61,64,91,0.15)] flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">link</span>
+                Copiar Link de Invitación
+            </button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[3rem] pb-safe bg-[#fdfae7] dark:bg-stone-950 shadow-[0_-12px_40px_rgba(61,64,91,0.08)]">
+<div class="flex justify-around items-end px-4 pb-4 pt-2">
+<button class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:text-[#9a442d] dark:hover:text-[#e07a5f] transition-colors active:scale-90 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:text-[#9a442d] dark:hover:text-[#e07a5f] transition-colors active:scale-90 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined">home_repair_service</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider mt-1">Services</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:text-[#9a442d] dark:hover:text-[#e07a5f] transition-colors active:scale-90 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider mt-1">Scanner</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:text-[#9a442d] dark:hover:text-[#e07a5f] transition-colors active:scale-90 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider mt-1">Analytics</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-gradient-to-br from-[#9a442d] to-[#e07a5f] text-white rounded-full p-3 mb-1 shadow-lg active:scale-90 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">family_restroom</span>
+<span class="font-['BeVietnamPro'] font-medium text-[10px] uppercase tracking-wider mt-1">Family</span>
+</button>
+</div>
+</nav>
+</body></html>

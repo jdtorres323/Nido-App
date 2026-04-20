@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {},
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Public Sans"],
+                    "body": ["Public Sans"],
+                    "label": ["Public Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-orange-50 text-stone-800">
+<!-- TopNavBar (JSON execution) -->
+<header class="bg-orange-50 dark:bg-stone-950 flex justify-between items-center px-6 py-3 w-full fixed top-0 z-50 border-b border-orange-200 dark:border-stone-800 shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-orange-800 dark:text-orange-300">GastosFamilia</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-stone-500 dark:text-stone-400 hover:bg-orange-100 dark:hover:bg-stone-800 transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-orange-200">
+<img alt="Foto de perfil del usuario" class="w-full h-full object-cover" data-alt="portrait of a professional woman with a friendly smile in a bright minimalist office setting, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn7B_v-OWxlNIrc-voaZC3EHjPdozhl8ne2FGQlUl9RUVHtMKdxi4DAx8aIUunZfWop_IOFnlqDvWze6JGl5HsUZgLjnOvCYKuaJ63PWAaH3BU9Sxvy6jH6VK_rvRmQWkaexApP2vAsFlfUPm4iGvUV8YlF9s6zfG_5yRphBlg834FOXkr5djiR1h1XpWINnFyxPkWePdIU9iXSwdpuWsyUHL_VxvTu_MLU9oAhH8XHkJUOOSYJYhz5BD8cNJqcsTMBmjjLQskI4U"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (JSON execution - Hidden on Mobile) -->
+<nav class="hidden md:flex fixed left-0 top-0 h-full w-64 bg-orange-50 dark:bg-stone-900 border-r border-orange-200 dark:border-stone-800 flex-col py-6 mt-16">
+<div class="px-6 mb-8">
+<h2 class="text-lg font-bold text-orange-900 dark:text-orange-200">Mi Hogar</h2>
+<p class="text-sm text-stone-500 dark:text-stone-400">Gastos compartidos</p>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span>Inicio</span>
+</a>
+<!-- Active State Logic: Mapping 'Servicios' as active based on task 'Gestión de Servicios' -->
+<a class="flex items-center gap-3 bg-orange-200 dark:bg-orange-900/40 text-orange-900 dark:text-orange-100 rounded-lg px-4 py-3 mx-2 transition-transform scale-95 active:scale-100 font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span>Servicios</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="document_scanner">document_scanner</span>
+<span>Escáner</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Análisis</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 transition-transform scale-95 active:scale-100" href="#">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span>Familia</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-20 px-6 pb-24 md:pb-12 min-h-screen">
+<div class="max-w-6xl mx-auto">
+<!-- Page Header & Month Selector -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div>
+<h1 class="text-3xl font-extrabold text-stone-900 tracking-tight">Gestión de Servicios</h1>
+<p class="text-stone-500 mt-1 text-sm md:text-base">Administra y registra los pagos mensuales de tu hogar.</p>
+</div>
+<div class="flex items-center bg-white border border-orange-200 rounded-xl p-1 shadow-sm">
+<button class="p-2 hover:bg-orange-50 rounded-lg text-orange-700">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="px-4 py-1 text-center min-w-[120px]">
+<span class="block text-[10px] uppercase tracking-widest text-stone-400 font-bold">Mes actual</span>
+<span class="text-lg font-bold text-stone-800">Octubre 2023</span>
+</div>
+<button class="p-2 hover:bg-orange-50 rounded-lg text-orange-700">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid of Services -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Service Card: Electricidad -->
+<div class="bg-white rounded-xl shadow-sm border border-orange-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-700">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 40;">bolt</span>
+</div>
+<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider">Pagado</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-stone-800">Electricidad</h3>
+<p class="text-sm text-stone-400 mb-4">Compañía Eléctrica Nacional</p>
+<div class="space-y-4">
+<div class="relative">
+<label class="text-[10px] font-bold text-stone-400 uppercase ml-1">Monto del mes</label>
+<div class="flex items-center border-b-2 border-orange-100 focus-within:border-orange-500 transition-colors py-1">
+<span class="text-stone-500 mr-2 font-semibold">$</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-xl font-bold text-stone-800 p-0" type="text" value="85.50"/>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<img alt="Avatar responsable" class="w-6 h-6 rounded-full object-cover" data-alt="Close up portrait of a young man with glasses smiling in a modern bright setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZoO3AAUY6zs5xTG-OU54zNoMdvHZzkD1H1VxD903PTznDKIr-IsdmmWgJKk0k9DccdNZuzwQxAjT3JD5zchbMptIh0Zrg0IaJc2SpIAPi-7Fz-C2MHDVtuTHgf-YCVAoNAvtoIVVZVFds2Zod9XzKcA8lt-A_J-U3Qoc2InHfKtUokRO8HvPzwk6vev0BBt-iVhh2iTIyVWsgk1JRZinCGklzFQMacilW-A9mfhMwhaIQ5XIVEkVmNdmDqiWaPToTHUOIYs57KGc"/>
+<div class="text-xs">
+<span class="text-stone-400">Responsable:</span>
+<span class="font-semibold text-stone-700 ml-1">Carlos Ruiz</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card: Alquiler -->
+<div class="bg-white rounded-xl shadow-sm border border-orange-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-700">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 40;">home</span>
+</div>
+<span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wider">Pendiente</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-stone-800">Alquiler</h3>
+<p class="text-sm text-stone-400 mb-4">Pago mensual de vivienda</p>
+<div class="space-y-4">
+<div class="relative">
+<label class="text-[10px] font-bold text-stone-400 uppercase ml-1">Monto del mes</label>
+<div class="flex items-center border-b-2 border-orange-100 focus-within:border-orange-500 transition-colors py-1">
+<span class="text-stone-500 mr-2 font-semibold">$</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-xl font-bold text-stone-800 p-0" type="text" value="1200.00"/>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<img alt="Avatar responsable" class="w-6 h-6 rounded-full object-cover" data-alt="Smiling woman with curly hair looking directly at camera against a neutral soft background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsMAFshpiOR4joDd11MfW0wfs7kCj8S4ByU12MHvngJHmBpMg0eNwPEOgswIwq5qBmgjeCNES4WmB2ZZ_1Ue_B8-3TPohrTHk6BQ-lFXnj1HJfqUD0FYfFnIKQYGrady4svYtn3DxBUtMJTdM1tgFN1SRsD68icNRWn8M46pdEvpFr0v-zAibxDTbushTDf_XIunNTf0GQ3n28btqgKfKOLy5vL-hzUVkma67EDS-LQpOioB6erNdeFwblLM_XJkTWYBz5OWpbRAo"/>
+<div class="text-xs">
+<span class="text-stone-400">Responsable:</span>
+<span class="font-semibold text-stone-700 ml-1">Elena Soto</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card: Internet -->
+<div class="bg-white rounded-xl shadow-sm border border-orange-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-700">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 40;">wifi</span>
+</div>
+<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider">Pagado</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-stone-800">Internet</h3>
+<p class="text-sm text-stone-400 mb-4">Fibra Óptica 600Mb</p>
+<div class="space-y-4">
+<div class="relative">
+<label class="text-[10px] font-bold text-stone-400 uppercase ml-1">Monto del mes</label>
+<div class="flex items-center border-b-2 border-orange-100 focus-within:border-orange-500 transition-colors py-1">
+<span class="text-stone-500 mr-2 font-semibold">$</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-xl font-bold text-stone-800 p-0" type="text" value="45.00"/>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<img alt="Avatar responsable" class="w-6 h-6 rounded-full object-cover" data-alt="portrait of a professional woman with a friendly smile in a bright minimalist office setting, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqMQ_rYQq9YHTBKMpVGrW1sQ3jZXoLF__J7RoiueW5sSsNEaZ8quMRWj0Ck2aUkJTaJGJSdDbYE27sbAiqqnaGK-HagD3r2ncyyQjhuTS348aICR5VhrAayvKjyOaK8NihPOFnaeHk_9n6FrxSpXHgciHJhnjwE6GinKkubsG00qPkOe-EYTK_tXW7mPL0StAYzHEVK43jAofeRdpdpghJPgFSrh_Alk4GdjgCU3ii15xxEu2IH38IgCB-JaVEmizt3nYB31WTFxQ"/>
+<div class="text-xs">
+<span class="text-stone-400">Responsable:</span>
+<span class="font-semibold text-stone-700 ml-1">Tú (Ana)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card: Agua -->
+<div class="bg-white rounded-xl shadow-sm border border-orange-100 p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-700">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 40;">water_drop</span>
+</div>
+<span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full uppercase tracking-wider">Pendiente</span>
+</div>
+<div>
+<h3 class="text-xl font-bold text-stone-800">Agua</h3>
+<p class="text-sm text-stone-400 mb-4">Servicio de Agua Municipal</p>
+<div class="space-y-4">
+<div class="relative">
+<label class="text-[10px] font-bold text-stone-400 uppercase ml-1">Monto del mes</label>
+<div class="flex items-center border-b-2 border-orange-100 focus-within:border-orange-500 transition-colors py-1">
+<span class="text-stone-500 mr-2 font-semibold">$</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-xl font-bold text-stone-800 p-0 placeholder:text-stone-300" placeholder="Ingresar monto" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3 pt-2">
+<img alt="Avatar responsable" class="w-6 h-6 rounded-full object-cover" data-alt="middle aged man with short hair and light beard wearing a casual shirt smiling against a blurred park background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbuJvh8dDtzbp-aG6vb10665nmfxfz9OMANqWijM-UCTTmCH59l9ubldcUlbN_M1kNjVLJzDYEwEA8IG5n_pz5SyTlpzzSnjtZTr8bcZPr5M45El4csbD2cjD9ziABvUDSmWWLFC2sK7mR2dZFLYAcFdXJ-f4vTCmqM9SEI9OkPHmGEEbuDWLn6jp9KuoKXLrR_CphOCocrVEAcjuHMaWRzbgnArKETegA2bFs5INwU_m4oNbdmmf6LI4g_Q0ty1Rl5dKV02KbGew"/>
+<div class="text-xs">
+<span class="text-stone-400">Responsable:</span>
+<span class="font-semibold text-stone-700 ml-1">Roberto Gómez</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Add New Service Placeholder -->
+<button class="border-2 border-dashed border-orange-200 rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:bg-orange-100/50 hover:border-orange-300 transition-all text-orange-400 hover:text-orange-600 min-h-[250px]">
+<span class="material-symbols-outlined" style="font-size: 48px;">add_circle</span>
+<span class="font-bold">Añadir Servicio</span>
+</button>
+</div>
+<!-- Summary Section - Asymmetric Layout -->
+<div class="mt-12 bg-orange-900 text-orange-50 rounded-2xl p-8 shadow-xl flex flex-col lg:flex-row items-center gap-8 overflow-hidden relative">
+<div class="flex-1 z-10">
+<h2 class="text-2xl font-bold mb-2">Resumen de Gastos de Octubre</h2>
+<p class="text-orange-200 mb-6">Faltan 2 servicios por pagar. El presupuesto total estimado es de $1,355.50.</p>
+<div class="flex gap-4">
+<button class="bg-orange-500 hover:bg-orange-400 text-white px-6 py-2 rounded-lg font-bold transition-colors">Ver Reporte</button>
+<button class="bg-transparent border border-orange-400 hover:bg-orange-800 px-6 py-2 rounded-lg font-bold transition-colors">Notificar Familia</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 w-full lg:w-auto z-10">
+<div class="bg-orange-800/50 p-4 rounded-xl backdrop-blur-sm">
+<span class="text-orange-300 text-xs uppercase font-bold tracking-widest">Pagado</span>
+<p class="text-2xl font-black">$130.50</p>
+</div>
+<div class="bg-orange-800/50 p-4 rounded-xl backdrop-blur-sm">
+<span class="text-orange-300 text-xs uppercase font-bold tracking-widest">Pendiente</span>
+<p class="text-2xl font-black">$1,225.00</p>
+</div>
+</div>
+<!-- Decorative background element -->
+<div class="absolute right-[-50px] top-[-50px] w-64 h-64 bg-orange-400 rounded-full blur-[100px] opacity-20"></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar for Mobile -->
+<nav class="md:hidden fixed bottom-0 w-full bg-orange-50 border-t border-orange-200 px-4 py-3 flex justify-around items-center z-50">
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-medium">Inicio</span>
+</button>
+<!-- Active State for Servicios -->
+<button class="flex flex-col items-center gap-1 text-orange-700 font-semibold">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-[10px]">Servicios</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined" data-icon="document_scanner">document_scanner</span>
+<span class="text-[10px]">Escáner</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-[10px]">Análisis</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-500">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span class="text-[10px]">Familia</span>
+</button>
+</nav>
+</body></html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Añadir Nuevo Servicio - Nido</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Epilogue:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Hide scrollbar for a cleaner look but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary": "#5a5c79",
+                        "secondary-container": "#b8ebd1",
+                        "on-primary-container": "#5b1604",
+                        "surface-container": "#f1eedb",
+                        "secondary-fixed": "#bbeed4",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#dbc1ba",
+                        "surface-bright": "#fdfae7",
+                        "on-tertiary-fixed-variant": "#424560",
+                        "surface-variant": "#e6e3d0",
+                        "on-secondary-fixed-variant": "#1f4f3c",
+                        "on-secondary-fixed": "#002115",
+                        "surface-container-high": "#ece9d6",
+                        "on-tertiary-container": "#2a2d47",
+                        "primary-container": "#e07a5f",
+                        "on-surface": "#1c1c11",
+                        "on-tertiary-fixed": "#161a32",
+                        "error": "#ba1a1a",
+                        "background": "#fdfae7",
+                        "tertiary-fixed-dim": "#c2c4e5",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#9a442d",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#313124",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#ffb4a1",
+                        "on-primary-fixed": "#3c0800",
+                        "surface-dim": "#dddbc8",
+                        "surface-tint": "#9a442d",
+                        "inverse-primary": "#ffb4a1",
+                        "tertiary-container": "#9294b3",
+                        "surface": "#fdfae7",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#7c2e19",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e6e3d0",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f4f1de",
+                        "on-surface-variant": "#55423e",
+                        "secondary": "#386753",
+                        "on-background": "#1c1c11",
+                        "on-secondary-container": "#3d6c57",
+                        "surface-container-low": "#f7f4e1",
+                        "secondary-fixed-dim": "#9fd1b8",
+                        "outline": "#88726d",
+                        "tertiary-fixed": "#dfe0ff",
+                        "primary-fixed": "#ffdbd2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Epilogue", "serif"],
+                        "body": ["Be Vietnam Pro", "sans-serif"],
+                        "label": ["Be Vietnam Pro", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- Sidebar Navigation (Desktop) -->
+<aside class="hidden md:flex flex-col w-72 h-screen fixed top-0 left-0 bg-surface-container-low z-40 overflow-y-auto no-scrollbar shadow-[12px_0_40px_rgba(61,64,91,0.03)]">
+<div class="px-8 py-10">
+<h1 class="font-headline text-3xl font-bold text-primary tracking-tight">Nido</h1>
+</div>
+<nav class="flex-1 px-4 flex flex-col gap-2 mt-4">
+<!-- Hearth: Inactive -->
+<a class="flex items-center gap-4 px-6 py-4 rounded-full text-stone-500 hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors">home</span>
+<span class="font-label text-sm font-medium uppercase tracking-widest group-hover:text-primary transition-colors">Hearth</span>
+</a>
+<!-- Ledger: Active (Context: Adding an expense fits here) -->
+<a class="flex items-center gap-4 px-6 py-4 rounded-full bg-gradient-to-br from-[#9a442d] to-[#e07a5f] text-white shadow-[0_8px_20px_rgba(154,68,45,0.2)]" href="#">
+<span class="material-symbols-outlined text-2xl filled">account_balance_wallet</span>
+<span class="font-label text-sm font-medium uppercase tracking-widest">Ledger</span>
+</a>
+<!-- Members: Inactive -->
+<a class="flex items-center gap-4 px-6 py-4 rounded-full text-stone-500 hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors">group</span>
+<span class="font-label text-sm font-medium uppercase tracking-widest group-hover:text-primary transition-colors">Members</span>
+</a>
+<!-- Settings: Inactive -->
+<a class="flex items-center gap-4 px-6 py-4 rounded-full text-stone-500 hover:bg-surface-container transition-colors group" href="#">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors">tune</span>
+<span class="font-label text-sm font-medium uppercase tracking-widest group-hover:text-primary transition-colors">Settings</span>
+</a>
+</nav>
+<div class="p-8 mt-auto">
+<div class="flex items-center gap-4 bg-surface-container p-4 rounded-xl">
+<img alt="Profile avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface" data-alt="Portrait of a young woman with natural light and a soft background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-xeCrvViqMawGLw8DaWUOVUgfxbibvJcmJU_MkuUKJUg_sXYo-s0M8ynatL_FC1fEy3vPBsqdz_GS4D0dqMYXEnJvaVOOuqVSN8sXleel3phYt_DSygtnU5a_yOrXwkWtc7QvMTj4YxMAcwpQLWuebt4jSEk12fnkgC0SnpztNzbocTJ5Nm0WnLWyMQHIMH1SOXxaK2AjePHAMVElSfsg34dMm-_W-5e-FIDKAu0dB4HMU9bi2vzW61g1EN-nbFs-yCfQnUa83v0"/>
+<div class="flex flex-col">
+<span class="font-body text-sm font-semibold text-on-surface">Mi Perfil</span>
+<span class="font-body text-xs text-on-surface-variant">Hogar Principal</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 flex flex-col min-h-screen relative">
+<!-- Header / Context Action -->
+<header class="w-full px-8 py-8 flex justify-between items-center z-10 sticky top-0 bg-surface/80 backdrop-blur-xl">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label text-xs uppercase tracking-widest font-medium">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+                Volver al Ledger
+            </button>
+<div class="hidden md:flex gap-4">
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<!-- Form Canvas -->
+<div class="flex-1 flex flex-col items-center justify-start pt-4 pb-20 px-4 sm:px-8">
+<!-- Main Card -->
+<div class="w-full max-w-2xl bg-surface-container-lowest rounded-xl shadow-[0_12px_40px_rgba(61,64,91,0.06)] overflow-hidden relative">
+<!-- Decorative Header Accent -->
+<div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>
+<div class="p-8 sm:p-12 flex flex-col gap-10">
+<!-- Title Area -->
+<div class="flex flex-col gap-2">
+<h1 class="font-headline text-3xl sm:text-4xl font-bold text-primary tracking-tight">Añadir Nuevo Servicio</h1>
+<p class="font-body text-on-surface-variant text-base sm:text-lg">Registra un nuevo gasto recurrente o servicio para el hogar.</p>
+</div>
+<form class="flex flex-col gap-8">
+<!-- 1. Nombre del Servicio -->
+<div class="flex flex-col gap-2 relative">
+<label class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-medium">Nombre del Servicio</label>
+<input class="w-full bg-surface-container-highest/30 border-0 border-b-2 border-outline-variant px-4 py-4 rounded-t-lg font-body text-on-surface text-lg focus:ring-0 focus:border-primary transition-colors placeholder:text-stone-400" placeholder="Ej. Electricidad, Netflix, Internet" type="text"/>
+</div>
+<!-- 2. Categoría (Bento Grid Style) -->
+<div class="flex flex-col gap-4">
+<label class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-medium">Categoría</label>
+<div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+<!-- Option 1: Selected -->
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-primary-fixed border-2 border-primary transition-all group" type="button">
+<span class="material-symbols-outlined text-3xl text-primary filled">bolt</span>
+<span class="font-label text-xs uppercase tracking-wider text-on-primary-fixed-variant font-semibold">Energía</span>
+</button>
+<!-- Option 2 -->
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-surface-container-low border-2 border-transparent hover:bg-surface-container transition-all group" type="button">
+<span class="material-symbols-outlined text-3xl text-tertiary group-hover:text-on-surface transition-colors">wifi</span>
+<span class="font-label text-xs uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Internet</span>
+</button>
+<!-- Option 3 -->
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-surface-container-low border-2 border-transparent hover:bg-surface-container transition-all group" type="button">
+<span class="material-symbols-outlined text-3xl text-tertiary group-hover:text-on-surface transition-colors">water_drop</span>
+<span class="font-label text-xs uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Agua</span>
+</button>
+<!-- Option 4 -->
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-lg bg-surface-container-low border-2 border-transparent hover:bg-surface-container transition-all group" type="button">
+<span class="material-symbols-outlined text-3xl text-tertiary group-hover:text-on-surface transition-colors">home_work</span>
+<span class="font-label text-xs uppercase tracking-wider text-on-surface-variant group-hover:text-on-surface transition-colors">Renta</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- 3. Monto Estimado -->
+<div class="flex flex-col gap-2">
+<label class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-medium">Monto Estimado</label>
+<div class="flex items-center bg-surface-container-highest/30 border-b-2 border-outline-variant rounded-t-lg px-4 py-2 transition-colors focus-within:border-primary relative overflow-hidden group">
+<span class="font-headline text-3xl text-primary font-medium mr-2 group-focus-within:text-primary-container transition-colors">$</span>
+<input class="w-full bg-transparent border-0 px-0 py-2 font-headline text-4xl text-on-surface focus:ring-0 placeholder:text-stone-300" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+<!-- 4. Fecha de Vencimiento -->
+<div class="flex flex-col gap-2">
+<label class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-medium">Próximo Vencimiento</label>
+<div class="flex items-center bg-surface-container-highest/30 border-b-2 border-outline-variant rounded-t-lg px-4 py-2 transition-colors focus-within:border-primary">
+<span class="material-symbols-outlined text-on-surface-variant mr-3">calendar_month</span>
+<input class="w-full bg-transparent border-0 px-0 py-3 font-body text-lg text-on-surface focus:ring-0" type="date"/>
+</div>
+</div>
+</div>
+<!-- 5. Responsable del Pago -->
+<div class="flex flex-col gap-4 pt-4">
+<label class="font-label text-xs uppercase tracking-widest text-on-surface-variant font-medium">Responsable del Pago</label>
+<div class="flex flex-wrap items-center gap-4">
+<!-- Avatar 1: Carlos (Selected) -->
+<button class="flex flex-col items-center gap-2 relative group" type="button">
+<div class="w-16 h-16 rounded-full p-1 border-2 border-primary bg-surface-container-lowest shadow-sm transition-transform group-active:scale-95">
+<img alt="Carlos Avatar" class="w-full h-full rounded-full object-cover" data-alt="Portrait of a young man with a slight smile in a modern urban setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFT8gqc8abvSzVygslnCU8yZs5q_4t_Ufj3S2-XRQpFa_iueLZSOp96wuolYgvuW9NfDONu_c4x0MoYPe2h9eF0LuU-b-HRDw27uZFy5CFiwNMS3T5g3AY9GClGaDGEz8WuNpdL4GnZdqwx5DKC0oPL1DA0d5PlBWpL9P7qDTIVD8qWdeZ0-rGEvBiYOx88hSHCvjAv1szodIRAhSfbYpArwW9vbusCRE_wBVOYisrZyuOJ_9x_G829TB1xi8NCpIKfFX17-NPfhU"/>
+</div>
+<span class="font-body text-sm font-bold text-primary">Carlos</span>
+<!-- Selection Indicator Badge -->
+<div class="absolute top-0 right-0 w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</div>
+</button>
+<!-- Avatar 2: Ana -->
+<button class="flex flex-col items-center gap-2 relative group" type="button">
+<div class="w-16 h-16 rounded-full p-1 border-2 border-transparent group-hover:border-outline-variant bg-surface-container-low transition-all group-active:scale-95">
+<img alt="Ana Avatar" class="w-full h-full rounded-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Portrait of a young woman with natural light and a soft background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu2Al3IWg1H-D9Z_p9W2jn0GF6g016Zan4WFwHCxhId6A1B7b7ULXEA8L8HT4Q0VZs65XyM6IzEoSUCAkHjzW7JdXXP6kSOXtsYgVcTZiswegrwm6wDMjJCa_vBCKWaqUcH9Cl3GuQSuBJju80fy5eu39AOUTxkLB4ysQFV2j5670jrPeU3fWeUo9VMC6YAvl_PPnKkpTwyzuCG88-BSBtqA7gxjEzr5Ei07CuPUhCDiMmnA2aL-JzRJS6-uhfsPtILfbyywGEwc4"/>
+</div>
+<span class="font-body text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Ana</span>
+</button>
+<!-- Avatar 3: Sofía -->
+<button class="flex flex-col items-center gap-2 relative group" type="button">
+<div class="w-16 h-16 rounded-full p-1 border-2 border-transparent group-hover:border-outline-variant bg-surface-container-low transition-all group-active:scale-95">
+<img alt="Sofía Avatar" class="w-full h-full rounded-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Portrait of a cheerful woman with short hair against a warm brick wall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-qZvwNXxYgNDKyWDQzejZt9JlJMh6u4tr78uuSv3xoa2nU9fAX5RgfGfIOeZkIu9JGeJT9xN3nmdGhrKXQRTJtBdrMwyEk_Nbt8NYJTJBBPkupszlV-eZU9WKhIBzDhnSsv4qW27TA5ggbRbN2s2J61ZZXjlfYFWE0JK1GVayNwiTo9wtVwq69IZGKGaAplGphBYCYIl6EQScvsNgudZWgqqiVX5E27P2Yr9zoFeJwSRYZjB03uj-TMxbCEE8rAu_AE1WZgDgZCw"/>
+</div>
+<span class="font-body text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Sofía</span>
+</button>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col-reverse sm:flex-row items-center justify-end gap-4 mt-8 pt-8 border-t border-surface-container-high border-opacity-50">
+<button class="w-full sm:w-auto px-8 py-4 font-label text-sm uppercase tracking-widest font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-full transition-all" type="button">
+                                Cancelar
+                            </button>
+<button class="w-full sm:w-auto px-10 py-4 font-label text-sm uppercase tracking-widest font-bold text-white bg-gradient-to-br from-[#9a442d] to-[#e07a5f] rounded-full shadow-[0_8px_20px_rgba(154,68,45,0.25)] hover:opacity-90 active:scale-95 transition-all" type="submit">
+                                Guardar Servicio
+                            </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Bottom Spacer for mobile/scrolling -->
+<div class="h-12 w-full"></div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=Be+Vietnam+Pro:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#9294b3",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ffb4a1",
+                        "surface-bright": "#fdfae7",
+                        "on-surface-variant": "#55423e",
+                        "surface-variant": "#e6e3d0",
+                        "primary": "#9a442d",
+                        "on-tertiary-fixed": "#161a32",
+                        "on-primary-fixed-variant": "#7c2e19",
+                        "on-secondary-container": "#3d6c57",
+                        "primary-fixed": "#ffdbd2",
+                        "background": "#fdfae7",
+                        "on-primary-container": "#5b1604",
+                        "outline-variant": "#dbc1ba",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "surface": "#fdfae7",
+                        "secondary-fixed-dim": "#9fd1b8",
+                        "surface-container-low": "#f7f4e1",
+                        "on-tertiary-container": "#2a2d47",
+                        "surface-container-highest": "#e6e3d0",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#9a442d",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1c1c11",
+                        "primary-container": "#e07a5f",
+                        "inverse-primary": "#ffb4a1",
+                        "on-secondary-fixed-variant": "#1f4f3c",
+                        "surface-container": "#f1eedb",
+                        "on-secondary-fixed": "#002115",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#ece9d6",
+                        "outline": "#88726d",
+                        "surface-dim": "#dddbc8",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c2c4e5",
+                        "on-primary-fixed": "#3c0800",
+                        "on-tertiary-fixed-variant": "#424560",
+                        "secondary": "#386753",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f4f1de",
+                        "inverse-surface": "#313124",
+                        "secondary-fixed": "#bbeed4",
+                        "tertiary": "#5a5c79",
+                        "tertiary-fixed": "#dfe0ff",
+                        "on-background": "#1c1c11",
+                        "secondary-container": "#b8ebd1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Be Vietnam Pro"],
+                        "label": ["Be Vietnam Pro"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #fdfae7;
+        }
+        .headline-font { font-family: 'Epilogue', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col items-center">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fdfae7]/80 dark:bg-stone-950/80 backdrop-blur-xl">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-md mx-auto">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#9a442d] dark:text-[#e07a5f]">arrow_back</span>
+</button>
+<h1 class="font-epilogue text-2xl font-bold tracking-tight text-[#9a442d] dark:text-[#e07a5f]">Scan Bill</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<main class="w-full max-w-md px-6 pt-24 pb-40 flex flex-col gap-8">
+<!-- AI Status Pill -->
+<div class="flex justify-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container rounded-full">
+<span class="material-symbols-outlined text-on-secondary-container text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label text-xs uppercase tracking-widest font-bold text-on-secondary-container">IA Lista para procesar</span>
+</div>
+</div>
+<!-- Upload Area (Tactile Layering) -->
+<section class="relative group">
+<div class="w-full bg-surface-container rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant p-8 text-center transition-all duration-300 hover:bg-surface-container-high active:scale-[0.98]">
+<div class="w-20 h-20 bg-gradient-to-br from-[#9a442d] to-[#e07a5f] rounded-full flex items-center justify-center mb-4 shadow-xl">
+<span class="material-symbols-outlined text-white text-4xl">document_scanner</span>
+</div>
+<h3 class="headline-font text-lg font-bold text-on-surface mb-1">Escanea tu Ticket</h3>
+<p class="text-sm text-on-surface-variant font-body">Arrastra o selecciona una foto de tu factura para empezar el desglose.</p>
+<button class="mt-4 flex items-center gap-2 bg-primary text-white px-6 py-2 rounded-full headline-font font-bold text-sm shadow-md hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-xl">camera_alt</span>
+  Escanear con Cámara
+</button></div>
+<!-- Organic Asymmetry: Floating Icon Decoration -->
+<div class="absolute -top-4 -right-2 bg-tertiary-container text-white p-3 rounded-xl shadow-lg transform rotate-12">
+<span class="material-symbols-outlined text-xl">receipt_long</span>
+</div>
+</section>
+<!-- Extracted Items Section -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-end px-2">
+<h2 class="headline-font text-2xl font-bold text-primary">Artículos detectados</h2>
+<span class="font-label text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant">3 ELEMENTOS</span>
+</div>
+<!-- Item List -->
+<div class="space-y-4">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">egg_alt</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Leche Entera 1L</p>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Alimentación</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-headline font-bold text-primary">1,25€</span>
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Portrait of a smiling woman with glasses, soft natural morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm3UppbT6131kHtmD2tLkEiJfMskNDA7RQIGMLrDyBt7_K2DCB-lZutc7RHFJlL-gO6PmcJqbfI1R0cBnjFiwr_KxGJcsN1iqdG0uCJkcbFLnhBkMLjiTWS-EbZ16GGp36pJNeISvljN1WxTIjBIgDMttx-wBMVDacpyP2JfOIAoNg0D2dr9Fmy1EUzlM3NEO4pHwbRTQ7-ZemO9qdEwWjaVa6CtHAMTAFVIcMBoyaCFfEV64B6VTC23POrgo6meWn-XDZdOk8GgY"/>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">bakery_dining</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Pan Artesano</p>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Alimentación</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-headline font-bold text-primary">0,85€</span>
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Portrait of a man with a beard looking forward, warm indoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGHvWKL7Ir5BfMcuZNpNss-B3sZnZTuslBRMdNca9NNM5GFyr1Pli1GTRAyrLzNHFKn9hElyNd7b0RXhEzK32teuLWPnW7KQVhXt4tXtDvLhh8-wDBUcNJZWCWZtR3NJdHj40gyzajvvkREacY_pLgRf4c07fFeEen5yL-MiRlbNXApeAxTfUGpCRmKUZnJ5OKselHXiA8Rb6QxyN81hAjtuXAusziTIrMSPC3BJgqjrxghPD0Qd-eg3aGvBq-rjWFXknJq37eEH8"/>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">cleaning_services</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">Detergente Bio</p>
+<p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant">Limpieza</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-headline font-bold text-primary">12,40€</span>
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Portrait of a smiling woman with glasses, soft natural morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp4JA7BagbQ0DeFtilnaLOIz5Z9plXjZxos6H8KtX-k_S77aGFiY7a1AVo72WcgdNk5gMzdYqRlbSEZ2c_iEIdhIs3B544mWcYTjWowMGj9ddHSov7-0MQrlNMQ4rVG6gQEUATG2axVfoBWH0oSY_1AkEKTc4z1r-bTa97JB5lFANK88yhOgyVjnbZTIu8Kks9KruRmfFJ0Y5z3CiudLZ10KuAddd_5cSza8DOzVnkV1ZaVshgXLUOdcwJT80HumGfcZ8vkWkrslU"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="Portrait of a man with a beard looking forward, warm indoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVln8tWbUdJQIgKHNNOsST8nVf9-FPW0Qea2ffYpBuvSuMg5QTvODTKIHAbzqcvJZaWXDbKDKz_dNbx6SpfxDKmqpPNghZZSqt4x_cWjPS1EJgqcpDCT9-2VpgNRSVLliKQeg8bHSj_YPmy_-4zjBmbHeoZRT5nKBkjvfKKd9M1FNoh3ao2t3WsvgAqma6s2W2BZDO6lib7Hcp2KXp2QvTbS9BMcrtqa6w3o9o4NmQHNhsIJTUuITqu4npBpw8rXvGrxCX1SQkEHY"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Actions -->
+<div class="fixed bottom-32 left-0 w-full px-6 flex flex-col gap-3 pointer-events-none">
+<div class="max-w-md mx-auto w-full flex flex-col gap-3 pointer-events-auto">
+<button class="w-full bg-gradient-to-br from-[#9a442d] to-[#e07a5f] text-white py-4 rounded-full headline-font font-bold text-lg shadow-xl active:scale-95 duration-200">
+                    Confirmar Gasto
+                </button>
+<button class="w-full bg-transparent border-2 border-outline text-primary py-4 rounded-lg headline-font font-bold text-lg active:scale-95 duration-200">
+                    Descartar
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50">
+<div class="bg-[#fdfae7] dark:bg-stone-900 rounded-t-[3rem] shadow-[0_-12px_40px_rgba(61,64,91,0.06)] px-8 pb-6 pt-4 flex justify-around items-center w-full">
+<!-- Hearth -->
+<div class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 p-2 hover:text-[#9a442d] transition-colors active:scale-90 duration-300">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Hearth</span>
+</div>
+<!-- Ledger -->
+<div class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 p-2 hover:text-[#9a442d] transition-colors active:scale-90 duration-300">
+<span class="material-symbols-outlined mb-1">account_balance_wallet</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Ledger</span>
+</div>
+<!-- Scan (Active) -->
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#9a442d] to-[#e07a5f] text-white rounded-full p-3 mb-2 active:scale-90 duration-300">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">document_scanner</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold mt-0.5">Scan</span>
+</div>
+<!-- Members -->
+<div class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 p-2 hover:text-[#9a442d] transition-colors active:scale-90 duration-300">
+<span class="material-symbols-outlined mb-1">group</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Members</span>
+</div>
+</div>
+</nav>
+</body></html>

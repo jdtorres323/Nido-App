@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nido - Gestión de Servicios</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#313124",
+                        "primary-fixed-dim": "#ffb4a1",
+                        "surface-variant": "#e6e3d0",
+                        "on-tertiary-container": "#2a2d47",
+                        "on-error-container": "#93000a",
+                        "background": "#fdfae7",
+                        "secondary-fixed-dim": "#9fd1b8",
+                        "secondary": "#386753",
+                        "on-surface": "#1c1c11",
+                        "surface-bright": "#fdfae7",
+                        "tertiary-fixed-dim": "#c2c4e5",
+                        "on-secondary-fixed-variant": "#1f4f3c",
+                        "secondary-container": "#b8ebd1",
+                        "primary-fixed": "#ffdbd2",
+                        "surface-container": "#f1eedb",
+                        "inverse-primary": "#ffb4a1",
+                        "surface-container-high": "#ece9d6",
+                        "on-primary-fixed-variant": "#7c2e19",
+                        "tertiary-container": "#9294b3",
+                        "surface-container-low": "#f7f4e1",
+                        "tertiary-fixed": "#dfe0ff",
+                        "on-primary-fixed": "#3c0800",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#55423e",
+                        "primary": "#9a442d",
+                        "outline-variant": "#dbc1ba",
+                        "on-secondary-container": "#3d6c57",
+                        "surface-tint": "#9a442d",
+                        "on-tertiary-fixed": "#161a32",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dddbc8",
+                        "on-tertiary-fixed-variant": "#424560",
+                        "on-background": "#1c1c11",
+                        "on-primary-container": "#5b1604",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f4f1de",
+                        "surface-container-highest": "#e6e3d0",
+                        "primary-container": "#e07a5f",
+                        "error-container": "#ffdad6",
+                        "outline": "#88726d",
+                        "secondary-fixed": "#bbeed4",
+                        "tertiary": "#5a5c79",
+                        "surface": "#fdfae7",
+                        "on-secondary-fixed": "#002115"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Be Vietnam Pro"],
+                        "label": ["Be Vietnam Pro"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .font-epilogue { font-family: 'Epilogue', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fdfae7]/80 dark:bg-stone-950/80 backdrop-blur-xl flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="Portrait of a young woman with a warm smile, outdoor soft lighting, editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD78BUiSjAYv4b67tSvouDv8-0NuvykieKT-QRegc2rJVr19etAl42H3nIYZq8exgRFr5YLEmKni67yE9chuN74u9dM9V6zULXyEpXDBMtwtNn-aslzsFKQwnl7NShMjIRPjpxXa5HmNpYiobRZnWNkqLIViUSbLePTwk7X_YHJXwMQQ43GpTKjewAsS5sBBIzwM_zBuJlMOKLB87Kn7z0m_tZoMAalZzoXmabqVKpL8aSKKrUqd0ZO7e78jI4l46inFRF5Trvcq6M"/>
+</div>
+<h1 class="font-epilogue font-black text-[#9a442d] dark:text-[#e07a5f] text-2xl tracking-tight">Nido</h1>
+</div>
+<button class="text-[#9a442d] dark:text-[#e07a5f] hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-24 px-6 max-w-md mx-auto">
+<!-- Section Header & Month Selector -->
+<div class="mb-8">
+<h2 class="font-headline font-bold text-3xl text-primary mb-4">Gestión de Servicios</h2>
+<div class="flex items-center justify-between bg-surface-container-low p-4 rounded-xl">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-primary">chevron_left</span>
+</button>
+<div class="text-center">
+<span class="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant opacity-60">Periodo Actual</span>
+<span class="font-headline font-bold text-lg text-on-surface">Octubre 2023</span>
+</div>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-primary">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Sticky Summary (Tonal Layering Strategy) -->
+<div class="mb-8 bg-surface-container-lowest rounded-xl p-6 shadow-[0_12px_40px_rgba(61,64,91,0.06)] flex flex-col gap-4 border border-outline-variant/10">
+<div class="flex justify-between items-end">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Total Pagado</span>
+<p class="font-headline font-black text-3xl text-secondary">$1,240.00</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Pendiente</span>
+<p class="font-headline font-bold text-xl text-error">$350.00</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-surface-container-high py-3 rounded-full text-sm font-bold text-on-surface-variant hover:bg-surface-container-highest transition-colors">
+                    Ver Reporte
+                </button>
+<button class="flex-1 bg-gradient-to-tr from-[#9a442d] to-[#e07a5f] py-3 rounded-full text-sm font-bold text-white shadow-lg hover:scale-[1.02] transition-transform">
+                    Notificar Familia
+                </button>
+</div>
+</div>
+<!-- Services List -->
+<div class="space-y-4">
+<!-- Service Card: Paid -->
+<div class="bg-surface-container-low rounded-xl p-5 flex items-center justify-between group transition-all">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-secondary-container rounded-lg flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="bolt">bolt</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">Electricidad</h3>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            Pagado
+                        </span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-lg text-on-surface">$85.50</span>
+<button class="text-on-surface-variant/40 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="mt-2 flex justify-end">
+<div class="w-6 h-6 rounded-full border-2 border-surface overflow-hidden">
+<img alt="Admin" class="w-full h-full object-cover" data-alt="Close-up portrait of a man in his 30s, natural daylight, soft professional look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWZ3h5eBTp3NxMWXC4ASRoWi8OaxmtwC1uB4JZuh2FPTM-LEJgLLHG2-MGkmiyY9e5pWq6INv_NfHm1f49OMl5V-L5CWaSoISrxrNiwkPvRagFBHzSwMGiMG1Ssd140TUY4cu4U6MrG0pcFESyy5eu8U1_x7QpOFKJemrXjnl-cxRxq8VazEKhQ2Dr-UYHBNZnRJD_6SD0Wj8lgUgVgNOdTFxeO4DFgrMGiouayzpL9HGbZSfd1Ny6qtdCan9Qs_NUwJbs9cY1BI4"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card: Pending -->
+<div class="bg-surface-container-low rounded-xl p-5 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-primary-fixed rounded-lg flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" data-icon="home">home</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">Alquiler</h3>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                            Pendiente
+                        </span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-lg text-on-surface">$1,200.00</span>
+<button class="text-on-surface-variant/40 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="mt-2 flex justify-end">
+<div class="w-6 h-6 rounded-full border-2 border-surface overflow-hidden">
+<img alt="Admin" class="w-full h-full object-cover" data-alt="Professional woman in a minimalist office setting, warm interior lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA72gQyhEa9xUPc5_HtJy3H8ZjVCa7ZwLEqssrfbWR7dknYL51b5f6eX77Mz8QR3WpvpSMW5RH6iZVcoLtabFGcweO-DdkrMhxtUgN1NEvNCqGs2fz4APdch6_LwUDVqESNAyQlmuaAiH8ooR8iRngos6y7F7QhlzcQ2ENKOOItoX3GxWpM22pA8vVP0CDfN7fTcQIah_LtuMspvFVSOhYx3F9IIalOON3Sp3ywARLUSUaA9332IX5P5e_ARcCtqJpnfhxlDq-SFM4"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card: Paid -->
+<div class="bg-surface-container-low rounded-xl p-5 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-tertiary-fixed rounded-lg flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" data-icon="wifi">wifi</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">Internet Fibra</h3>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            Pagado
+                        </span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-lg text-on-surface">$45.00</span>
+<button class="text-on-surface-variant/40 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="mt-2 flex justify-end">
+<div class="w-6 h-6 rounded-full border-2 border-surface overflow-hidden">
+<img alt="Admin" class="w-full h-full object-cover" data-alt="Portrait of a young woman with a warm smile, outdoor soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGHFJYlqxMBWgKQtW9jSFSoYXy3RIbO-WdmHLBxDp7FaZFYr1EYlvdJzNExRGKXVL3Rd03_TFsk5_VJOXpid8rOLM4fM0SZTnhM6sHMrczBGX0q4wJfDZQewn7M-_icRWoMDL-y61hUv77nISOUVlTPinYq-_e_PKm1sq_GTB5Y7Xb3_3qDV5TIpT3GOwdw-mYBKZzBClfbhZsyxrqCwTVe1qijUEtAVkyYZARAmGkqwAXDCdWcWV62u75xxAhPhClygSAOsqganE"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Service Card: Paid -->
+<div class="bg-surface-container-low rounded-xl p-5 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center text-blue-800">
+<span class="material-symbols-outlined text-3xl" data-icon="water_drop">water_drop</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">Agua</h3>
+<span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                            Pagado
+                        </span>
+</div>
+</div>
+<div class="text-right">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-lg text-on-surface">$22.30</span>
+<button class="text-on-surface-variant/40 hover:text-primary">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="mt-2 flex justify-end">
+<div class="w-6 h-6 rounded-full border-2 border-surface overflow-hidden">
+<img alt="Admin" class="w-full h-full object-cover" data-alt="Close-up portrait of a man in his 30s" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3X6b_XOKCFJ0w3dadPUb9SjNCYujqxrmgvIAQavBcud4gSGgfv_tum8F2_s5-OfxAcFQ_HmfRTFlJRa0to5OYl0tlcNnUIpTVmHLiixcV0TT5c87StIjf30MRQSYJoeP28hO6QutWpclqct9O4_pWVUIKTMKM-vRKkoYxeEoGKAJCW3wDO00k2jINpr2yUgVLqhIRikpABm95fnsrtI3-AigSbqpW_KNKyZmFUMqa9NiN3p5DxpThUyAJrdvvkO21vT5kYoMI7NI"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Add Service CTA -->
+<button class="w-full bg-surface-container-high border-2 border-dashed border-outline-variant/30 rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">add</span>
+</div>
+<span class="font-bold">Añadir Servicio</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end px-4 pb-6 pt-2 bg-[#fdfae7] dark:bg-stone-950 rounded-t-[3rem] z-50 shadow-[0_-12px_40px_rgba(61,64,91,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:bg-[#f1eedb] dark:hover:bg-stone-800 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-gradient-to-tr from-[#9a442d] to-[#e07a5f] text-white rounded-full p-3 mb-2 scale-110 shadow-lg active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Servicios</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:bg-[#f1eedb] dark:hover:bg-stone-800 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Escáner</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:bg-[#f1eedb] dark:hover:bg-stone-800 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Análisis</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3d405b] dark:text-stone-400 p-2 hover:bg-[#f1eedb] dark:hover:bg-stone-800 rounded-full transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-beVietnamPro text-[10px] uppercase tracking-widest font-bold">Familia</span>
+</a>
+</nav>
+</body></html>

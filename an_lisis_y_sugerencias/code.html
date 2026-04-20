@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {},
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Public Sans"],
+                    "body": ["Public Sans"],
+                    "label": ["Public Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Public Sans', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+</head>
+<body class="bg-orange-50 text-stone-800">
+<!-- TopNavBar -->
+<nav class="fixed top-0 z-50 flex justify-between items-center px-6 py-3 w-full bg-orange-50 dark:bg-stone-950 border-b border-orange-200 dark:border-stone-800 shadow-sm transition-colors duration-200">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-orange-800 dark:text-orange-300">GastosFamilia</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-orange-100 dark:hover:bg-stone-800 transition-colors duration-200">
+<span class="material-symbols-outlined text-stone-500 dark:text-stone-400" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-orange-200">
+<img alt="Foto de perfil del usuario" data-alt="portrait of a middle aged man with a kind expression and neat hair in a professional home setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCho8hjXVTOZFMj6i4ZFZ4p_Xo23pVaBJQ7VW8HO1ep07TdtePtMmWOvx8HIZK1tZqqYoEpyDU9OPYEIN0TzB5L4_X9IaQ28TMi9PVuiZ8tYcQ0y11y-bPnO-Q1uySGaLhzJufHh-XemPdDfulN-X4Bh61IdkXedMLwTAdYZ87qRl8MP7VQ0--YJCig9fJ9IrvBKn6n5f9Fkp-yV0xoXw4T7ecJ_ce58kIWs32oMnIk9b8fkZ9mJQu-otzMP8VtwYnDS2ei91we8vo"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-orange-50 dark:bg-stone-900 border-r border-orange-200 dark:border-stone-800 flex flex-col py-6 pt-20 hidden md:flex">
+<div class="px-6 mb-8">
+<h2 class="text-lg font-bold text-orange-900 dark:text-orange-200">Mi Hogar</h2>
+<p class="text-sm text-stone-500 dark:text-stone-400">Gastos compartidos</p>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-sans">Inicio</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-sans">Servicios</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="document_scanner">document_scanner</span>
+<span class="font-sans">Escáner</span>
+</a>
+<!-- Active Tab: Análisis -->
+<a class="flex items-center gap-3 bg-orange-200 dark:bg-orange-900/40 text-orange-900 dark:text-orange-100 rounded-lg px-4 py-3 mx-2 scale-95 active:scale-100 transition-transform font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-sans">Análisis</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="family_restroom">family_restroom</span>
+<span class="font-sans">Familia</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:ml-64 pt-20 p-6">
+<div class="max-w-7xl mx-auto space-y-8">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl font-extrabold text-stone-900 tracking-tight">Análisis de Gastos</h1>
+<p class="text-stone-500 mt-1">Reporte detallado de los últimos 30 días para tu hogar.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-white px-4 py-2 border border-orange-200 rounded-lg text-sm font-medium hover:bg-orange-50 transition-colors">Mes actual</button>
+<button class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors">Descargar PDF</button>
+</div>
+</div>
+<!-- Bento Grid Section -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Main Trend Chart (Bento Large) -->
+<div class="md:col-span-8 bg-white p-6 rounded-xl border border-orange-100 shadow-sm flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-stone-800">Tendencia Mensual</h3>
+<div class="flex items-center gap-2 text-xs text-stone-400">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-500"></span> Gasto</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-stone-200"></span> Presupuesto</span>
+</div>
+</div>
+<!-- Visualization Placeholder: Trend -->
+<div class="relative h-64 w-full mt-auto">
+<div class="absolute bottom-0 left-0 w-full h-full flex items-end gap-2 px-2">
+<div class="w-full bg-orange-100 rounded-t-lg h-[40%]"></div>
+<div class="w-full bg-orange-200 rounded-t-lg h-[55%]"></div>
+<div class="w-full bg-orange-300 rounded-t-lg h-[45%]"></div>
+<div class="w-full bg-orange-400 rounded-t-lg h-[70%]"></div>
+<div class="w-full bg-orange-500 rounded-t-lg h-[85%]"></div>
+<div class="w-full bg-orange-600 rounded-t-lg h-[65%]"></div>
+<div class="w-full bg-orange-700 rounded-t-lg h-[95%]"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-xs text-stone-500 px-2">
+<span>Lunes</span><span>Martes</span><span>Miércoles</span><span>Jueves</span><span>Viernes</span><span>Sábado</span><span>Domingo</span>
+</div>
+</div>
+<!-- Category Breakdown (Bento Medium) -->
+<div class="md:col-span-4 bg-white p-6 rounded-xl border border-orange-100 shadow-sm flex flex-col items-center">
+<h3 class="font-bold text-stone-800 w-full mb-6">Categorías</h3>
+<!-- Donut Chart UI -->
+<div class="relative w-48 h-48 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle cx="96" cy="96" fill="transparent" r="80" stroke="#fef3c7" stroke-width="24"></circle>
+<circle cx="96" cy="96" fill="transparent" r="80" stroke="#ea580c" stroke-dasharray="502" stroke-dashoffset="150" stroke-linecap="round" stroke-width="24"></circle>
+<circle cx="96" cy="96" fill="transparent" r="80" stroke="#fb923c" stroke-dasharray="502" stroke-dashoffset="400" stroke-linecap="round" stroke-width="24"></circle>
+</svg>
+<div class="absolute text-center">
+<span class="block text-2xl font-extrabold text-stone-800">$1,240</span>
+<span class="text-[10px] text-stone-400 uppercase tracking-widest">Total</span>
+</div>
+</div>
+<div class="w-full mt-8 space-y-3">
+<div class="flex justify-between items-center text-sm">
+<span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-600"></span> Vivienda</span>
+<span class="font-semibold text-stone-700">45%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-400"></span> Alimentación</span>
+<span class="font-semibold text-stone-700">30%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-orange-100"></span> Otros</span>
+<span class="font-semibold text-stone-700">25%</span>
+</div>
+</div>
+</div>
+<!-- AI Suggestions (Asymmetric Grid) -->
+<div class="md:col-span-12">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-orange-600" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
+<h3 class="text-xl font-bold text-stone-800">Sugerencias de IA</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Suggestion Card 1 -->
+<div class="bg-orange-600 text-white p-6 rounded-xl shadow-lg relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-10">
+<span class="material-symbols-outlined text-9xl" data-icon="bolt">bolt</span>
+</div>
+<div class="relative z-10">
+<div class="bg-white/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
+<span class="material-symbols-outlined" data-icon="electric_bolt">electric_bolt</span>
+</div>
+<h4 class="font-bold text-lg mb-2">Ahorro en Energía</h4>
+<p class="text-orange-100 text-sm leading-relaxed">Gastaste un 15% más en luz este mes comparado con el promedio del vecindario. Considera revisar el aislamiento térmico.</p>
+<button class="mt-4 text-xs font-bold uppercase tracking-wider bg-white text-orange-600 px-3 py-2 rounded-md">Ver detalles</button>
+</div>
+</div>
+<!-- Suggestion Card 2 -->
+<div class="bg-white p-6 rounded-xl border border-orange-100 shadow-sm">
+<div class="flex items-center gap-3 mb-4">
+<div class="bg-orange-50 w-10 h-10 rounded-lg flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined" data-icon="subscriptions">subscriptions</span>
+</div>
+<span class="text-xs font-bold text-stone-400 uppercase">Suscripciones</span>
+</div>
+<h4 class="font-bold text-stone-800 mb-2">Cargos Duplicados</h4>
+<p class="text-stone-500 text-sm leading-relaxed">Hemos detectado dos cobros similares de "Streaming Service". Podrías ahorrar $12.99 mensuales cancelando uno.</p>
+<div class="mt-4 flex items-center gap-2 text-orange-600 font-semibold text-sm">
+<span>Solucionar ahora</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+<!-- Suggestion Card 3 -->
+<div class="bg-stone-900 text-white p-6 rounded-xl shadow-lg border border-stone-800">
+<div class="flex items-center gap-3 mb-4">
+<div class="bg-stone-800 w-10 h-10 rounded-lg flex items-center justify-center text-orange-400">
+<span class="material-symbols-outlined" data-icon="savings">savings</span>
+</div>
+<span class="text-xs font-bold text-stone-500 uppercase">Metas</span>
+</div>
+<h4 class="font-bold text-orange-300 mb-2">Fondo de Emergencia</h4>
+<p class="text-stone-400 text-sm leading-relaxed">Si mantienes este ritmo de ahorro, completarás tu meta de vacaciones 2 meses antes de lo previsto.</p>
+<div class="mt-4 w-full bg-stone-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-orange-500 h-full w-[78%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Anomalies / Activity (Glassmorphism inspired) -->
+<div class="md:col-span-12 bg-white/40 backdrop-blur-md p-6 rounded-2xl border border-white/60 shadow-xl overflow-hidden">
+<h3 class="font-bold text-stone-800 mb-6">Movimientos Atípicos</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-xs text-stone-400 uppercase border-b border-orange-100">
+<tr>
+<th class="pb-3 font-medium">Concepto</th>
+<th class="pb-3 font-medium">Fecha</th>
+<th class="pb-3 font-medium">Monto</th>
+<th class="pb-3 font-medium">Estado</th>
+<th class="pb-3 font-medium text-right">Acción</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-orange-50">
+<tr class="hover:bg-white/50 transition-colors">
+<td class="py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700">
+<span class="material-symbols-outlined text-sm" data-icon="shopping_cart">shopping_cart</span>
+</div>
+<span class="font-semibold text-stone-700">Supermercado El Sol</span>
+</td>
+<td class="py-4 text-sm text-stone-500">14 Oct, 2023</td>
+<td class="py-4 text-sm font-bold text-stone-800">$245.00</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded-full bg-red-100 text-red-600 text-[10px] font-bold uppercase">+25% promedio</span>
+</td>
+<td class="py-4 text-right">
+<button class="text-orange-600 hover:text-orange-800 text-sm font-medium">Revisar ticket</button>
+</td>
+</tr>
+<tr class="hover:bg-white/50 transition-colors">
+<td class="py-4 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+<span class="material-symbols-outlined text-sm" data-icon="local_gas_station">local_gas_station</span>
+</div>
+<span class="font-semibold text-stone-700">Gasolinera Centro</span>
+</td>
+<td class="py-4 text-sm text-stone-500">12 Oct, 2023</td>
+<td class="py-4 text-sm font-bold text-stone-800">$60.00</td>
+<td class="py-4">
+<span class="px-2 py-1 rounded-full bg-green-100 text-green-600 text-[10px] font-bold uppercase">En presupuesto</span>
+</td>
+<td class="py-4 text-right">
+<button class="text-orange-600 hover:text-orange-800 text-sm font-medium">Revisar ticket</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

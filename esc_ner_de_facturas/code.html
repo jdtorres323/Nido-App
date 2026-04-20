@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GastosFamilia - Escáner de Facturas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {},
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Public Sans"],
+                    "body": ["Public Sans"],
+                    "label": ["Public Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-orange-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-orange-50 dark:bg-stone-950 text-stone-800 dark:text-stone-100 border-b border-orange-200 dark:border-stone-800 shadow-sm fixed top-0 w-full z-50">
+<div class="flex justify-between items-center px-6 py-3 w-full">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-orange-800 dark:text-orange-300">GastosFamilia</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-stone-500 dark:text-stone-400 hover:bg-orange-100 dark:hover:bg-stone-800 transition-colors duration-200 px-2 py-1 rounded" href="#">Inicio</a>
+<a class="text-stone-500 dark:text-stone-400 hover:bg-orange-100 dark:hover:bg-stone-800 transition-colors duration-200 px-2 py-1 rounded" href="#">Servicios</a>
+<a class="text-orange-700 dark:text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-stone-800 transition-colors duration-200 px-2 py-1 rounded" href="#">Escáner</a>
+<a class="text-stone-500 dark:text-stone-400 hover:bg-orange-100 dark:hover:bg-stone-800 transition-colors duration-200 px-2 py-1 rounded" href="#">Análisis</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-stone-500 hover:bg-orange-100 dark:hover:bg-stone-800 rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<img alt="Foto de perfil del usuario" class="w-8 h-8 rounded-full border border-orange-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHPKT7_ewl2ZzUoiitOoU-z_W_f7fP12Atc9dmMXj9r_E7YG1q_phKhdEiN9TMPjpjipzRspn36mjkoqG4b2ZphwJKQdkm3JBeeco3XO5hrY3O8FnRZ7km2Vs0s4Cgtevh0bCz6N0cZOoCV4N_5s3zOxT_PF4onLOjai64tsZln33DL5xJV8KpJeGNU3ST8dIzYxbuNC6OYCdLlUHQvERmsXbB--Z39Yf2mmOxFGxZhaQMv3bMhfteHgQYmDRuRvNwsF91KIowS50"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Hidden on small screens) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 bg-orange-50 dark:bg-stone-900 border-r border-orange-200 dark:border-stone-800 w-64 mt-14 hidden lg:flex">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 mb-1">
+<img alt="Avatar del grupo familiar" class="w-10 h-10 rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvGbQdJDjvH-xrHZSMfUwlafhOtDnuAJlJ7jPBRD2m4mKCyXy1Heh5CY2_-8a3ox6dPILbriENYk-ml4_yzAV6tfOaR5rB16hMH518KTCjadKxHIi0OEkjQVsiUqil_9L2VdfkvtZWdw0pcg5woh7th0LG-5uLChMW_9Yo9Dawx5m2CqLl98eXKe-1LUqR5qU89D05UuILdiHFCppax-9mf61mtQa3nc9xrKS5HraAqhWCHc0m-GwStNSVqeDEV4UXfbFx_duQGI0"/>
+<div>
+<p class="text-lg font-bold text-orange-900 dark:text-orange-200 leading-none">Mi Hogar</p>
+<p class="text-xs text-stone-500 dark:text-stone-400">Gastos compartidos</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-sans">Inicio</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-sans">Servicios</span>
+</a>
+<a class="flex items-center gap-3 bg-orange-200 dark:bg-orange-900/40 text-orange-900 dark:text-orange-100 rounded-lg px-4 py-3 mx-2 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">document_scanner</span>
+<span class="font-sans">Escáner</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-sans">Análisis</span>
+</a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-stone-400 px-4 py-3 mx-2 hover:bg-orange-100 dark:hover:bg-stone-800 scale-95 active:scale-100 transition-transform" href="#">
+<span class="material-symbols-outlined">family_restroom</span>
+<span class="font-sans">Familia</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="lg:ml-64 pt-20 pb-12 px-6">
+<div class="max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="mb-8">
+<h1 class="text-3xl font-extrabold text-stone-900 dark:text-white tracking-tight">Escáner de Facturas por IA</h1>
+<p class="text-stone-600 dark:text-stone-400 mt-2">Digitaliza tus recibos y asigna gastos automáticamente.</p>
+</div>
+<!-- Scanner Workspace Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+<!-- Left: Drag & Drop Zone -->
+<div class="xl:col-span-5 space-y-6">
+<div class="bg-white dark:bg-stone-900 rounded-xl p-8 border-2 border-dashed border-orange-200 dark:border-stone-700 flex flex-col items-center justify-center min-h-[500px] text-center transition-all hover:border-orange-400">
+<div class="w-20 h-20 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-4xl text-orange-600 dark:text-orange-400">cloud_upload</span>
+</div>
+<h3 class="text-xl font-bold text-stone-800 dark:text-stone-200">Arrastra tu factura aquí</h3>
+<p class="text-stone-500 dark:text-stone-400 mt-2 mb-8 max-w-xs">Formatos aceptados: JPG, PNG o PDF. Máximo 10MB.</p>
+<button class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-8 rounded-lg transition-all shadow-md">
+                            Seleccionar archivo
+                        </button>
+</div>
+<!-- Scan History/Status -->
+<div class="bg-white dark:bg-stone-900 p-6 rounded-xl shadow-sm border border-orange-100 dark:border-stone-800">
+<div class="flex items-center justify-between mb-4">
+<h4 class="font-bold">Estado de la IA</h4>
+<span class="flex items-center gap-2 text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full">
+<span class="w-2 h-2 bg-green-500 rounded-full"></span> Lista para procesar
+                            </span>
+</div>
+<p class="text-sm text-stone-500">Nuestro motor de IA está procesando los recibos con un 99% de precisión en el reconocimiento de caracteres.</p>
+</div>
+</div>
+<!-- Right: Extracted Items List -->
+<div class="xl:col-span-7">
+<div class="bg-white dark:bg-stone-900 rounded-xl shadow-sm border border-orange-100 dark:border-stone-800 overflow-hidden flex flex-col h-full min-h-[600px]">
+<div class="p-6 border-b border-orange-100 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/50 flex justify-between items-center">
+<div>
+<h3 class="text-lg font-bold">Artículos Extraídos</h3>
+<p class="text-sm text-stone-500">Mercadona - 24 Oct 2023</p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-extrabold text-orange-700 dark:text-orange-400">42,85€</p>
+<p class="text-xs text-stone-500 uppercase tracking-wider">Total Factura</p>
+</div>
+</div>
+<!-- Items List -->
+<div class="flex-grow overflow-y-auto p-4 space-y-3">
+<!-- Item 1 -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-lg group hover:ring-1 hover:ring-orange-200 transition-all">
+<div class="flex items-center gap-4 mb-3 md:mb-0">
+<div class="w-10 h-10 bg-white dark:bg-stone-800 rounded flex items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">shopping_basket</span>
+</div>
+<div>
+<p class="font-semibold text-stone-800 dark:text-stone-200">Leche Semidesnatada 6pk</p>
+<p class="text-xs text-stone-500">Alimentación</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<p class="font-bold text-stone-900 dark:text-stone-100">5,40€</p>
+<div class="flex items-center -space-x-2">
+<button class="w-8 h-8 rounded-full border-2 border-white dark:border-stone-900 bg-orange-100 flex items-center justify-center text-orange-600 hover:z-10" title="Asignar a Papá">
+<img alt="Avatar papá" class="w-full h-full rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpKULGuMUxg0qhbrY28PKCSXezI7Ozy4b43gJrEdD00xyHIpYE_SnAza2DcLl0zGy_kCTOpsqZ5cKx6xjBVrdTnFSak63f843XwokaOIAXcqAx1HygObNBlQA9zj4lkQlhnMTPAXCN7BDV9HKM7K_ECJXRWA7a7-RskE0_02qWnzs_DxLMzTTRMXR5h4ryxXjHuUcxY3nZx4-k7GBvq-wWqmBvTTjIFdu8jTif2mkmXG0hGqwUbKq7lPavcRxJhhtkSWKhp-30cM0"/>
+</button>
+<button class="w-8 h-8 rounded-full border-2 border-white dark:border-stone-900 bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-stone-500 hover:z-10" title="Añadir miembro">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-lg group hover:ring-1 hover:ring-orange-200 transition-all">
+<div class="flex items-center gap-4 mb-3 md:mb-0">
+<div class="w-10 h-10 bg-white dark:bg-stone-800 rounded flex items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">bakery_dining</span>
+</div>
+<div>
+<p class="font-semibold text-stone-800 dark:text-stone-200">Pan de Hogaza Integral</p>
+<p class="text-xs text-stone-500">Panadería</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<p class="font-bold text-stone-900 dark:text-stone-100">2,10€</p>
+<div class="flex items-center -space-x-2">
+<button class="w-8 h-8 rounded-full border-2 border-white dark:border-stone-900 bg-orange-100 flex items-center justify-center text-orange-600 hover:z-10">
+<img alt="Avatar mamá" class="w-full h-full rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8s0uJgpNfKBEYXIZvY95hx9x8kgfZG2iUVJVNLkD3k1rAdUAsH7Q8elyrkwxDDNpldYmrSUrga_E7gzJ-dyhKB-sd6HeO2BCCxr2tNQGsBTyBvKXxDp1KB_kN5CBYVqNH3soL9BNdUaZln6XOeW1rKB5kMgWguTj5BXdOFYJXRm10QRbwFpKlrL1w-PT5iyP-30OO8quq-qyG5YCnt59yVOGrZOMwAvkJ5h8mvBXb48FIw7kIyOew9oJNKScmlj4ru_eod-MNhUc"/>
+</button>
+<button class="w-8 h-8 rounded-full border-2 border-white dark:border-stone-900 bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-stone-500 hover:z-10">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800/30 rounded-lg group transition-all">
+<div class="flex items-center gap-4 mb-3 md:mb-0">
+<div class="w-10 h-10 bg-white dark:bg-stone-800 rounded flex items-center justify-center text-orange-400">
+<span class="material-symbols-outlined">cleaning_services</span>
+</div>
+<div>
+<p class="font-semibold text-stone-800 dark:text-stone-200">Detergente Líquido 3L</p>
+<p class="text-xs text-stone-500">Limpieza</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<p class="font-bold text-stone-900 dark:text-stone-100">12,95€</p>
+<div class="flex items-center -space-x-2">
+<span class="text-xs text-orange-700 dark:text-orange-400 mr-2 font-medium">Compartido por todos</span>
+<div class="flex -space-x-1">
+<img class="w-6 h-6 rounded-full border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXUugGJsquMcL32HbzFOI2lHgKGfPS8r6mosh5BeBpKkq2IEQhfQZnrl1tJbviaRMfpejKynMV2oQvTdCFI0o7aiuvRRJFN6dNKPv8QIndaW8wZzw_t86LO9cZeIr_TCGXAHjeoVJMuDEC-sqzPcaRUmHcpMsd5tcJfD9gWowf62g0T-k82ITFOyo_BUkM6h79gtlyLWapI_nQy5fLdP7DusqfiE7TsNkTBPNNVc-e8Dtv-FO0hNtFKDaKsv46bhS6IpZF9YZtpHU"/>
+<img class="w-6 h-6 rounded-full border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAItgtSciMjRfP_VLCw-pR_xXk2Zc-Y5eWQJ3SaFe8GZb09PdqcBlHim-YgD36U5hXENdaHxhf_0yLIeAzi4C93MQGXlJGJlw5iXx0otGgXscl3e16Z3HEKNo4tZ_NIbBydd2MvwYplo1y9XOq1WwCHaol8Mo2Vag33DDjigiTVhR1Wb2uzi_xfJP9z1lyJG1zX0DRFDgDEr7q31q7uPNjOoRb1GF898QyYQMON7NwgNAEkfgObZFNDIptfE1vTkrGBxprX8U-drlI"/>
+<img class="w-6 h-6 rounded-full border border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOIleYDGuuLGbapeDgyO1trNUJf7sl_YCp1X0hDCvxNo8zwUnJW--xciAXHKNt8oALIkwlrpIUOxOJdZnrBNFxriLhSnPvwMhXdtxjRaPfQIFMOTeGSoc6GmyAlfxWozH-Gp_p3Xkql71rM0-wxyI9LiMeQG-kLXTYcEV1fvJla1TlWxr5uecJtcvdM5CTsu8lJOUOKAxCul1SwUAnyRhTtA_4NK5VZow3kYxfqwpbQ2Ou013Bs3r1eQ6vebqJ5ObwutAO7kfr3BE"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 dark:bg-stone-800/50 rounded-lg group hover:ring-1 hover:ring-orange-200 transition-all">
+<div class="flex items-center gap-4 mb-3 md:mb-0">
+<div class="w-10 h-10 bg-white dark:bg-stone-800 rounded flex items-center justify-center text-stone-400">
+<span class="material-symbols-outlined">set_meal</span>
+</div>
+<div>
+<p class="font-semibold text-stone-800 dark:text-stone-200">Salmón Noruego Fresco</p>
+<p class="text-xs text-stone-500">Pescadería</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<p class="font-bold text-stone-900 dark:text-stone-100">22,40€</p>
+<div class="flex items-center -space-x-2">
+<button class="w-8 h-8 rounded-full border-2 border-white dark:border-stone-900 bg-stone-200 dark:bg-stone-700 flex items-center justify-center text-stone-500 hover:z-10">
+<span class="material-symbols-outlined text-sm">person_add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer -->
+<div class="p-6 bg-stone-50 dark:bg-stone-900 border-t border-orange-100 dark:border-stone-800 grid grid-cols-2 gap-4">
+<button class="py-3 px-4 border border-stone-300 dark:border-stone-700 rounded-lg font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
+                                Descartar
+                            </button>
+<button class="py-3 px-4 bg-orange-700 hover:bg-orange-800 text-white rounded-lg font-bold shadow-lg shadow-orange-900/20 transition-all">
+                                Confirmar Gasto
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation for Mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-stone-950 border-t border-orange-100 dark:border-stone-800 px-6 py-3 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-stone-400">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px]">Inicio</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-orange-700">
+<span class="material-symbols-outlined">document_scanner</span>
+<span class="text-[10px]">Escáner</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-400">
+<span class="material-symbols-outlined">family_restroom</span>
+<span class="text-[10px]">Familia</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-stone-400">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px]">Ajustes</span>
+</button>
+</nav>
+</body></html>
