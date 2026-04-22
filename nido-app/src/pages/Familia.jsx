@@ -1,5 +1,7 @@
 import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function Familia() {
   const { user } = useAuth();
@@ -9,6 +11,19 @@ export default function Familia() {
     if (activeHousehold?.id) {
       navigator.clipboard.writeText(activeHousehold.id);
       alert('¡ID del Hogar copiado!');
+    }
+  };
+
+  const handleCurrencyChange = async (e) => {
+    const newCurrency = e.target.value;
+    if (activeHousehold?.id) {
+      try {
+        await updateDoc(doc(db, 'households', activeHousehold.id), {
+          currency: newCurrency
+        });
+      } catch (err) {
+        console.error("Error updating currency", err);
+      }
     }
   };
 
@@ -27,12 +42,27 @@ export default function Familia() {
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
         <div>
           <h1 className="text-4xl font-extrabold text-on-background tracking-tight">Directorio del Hogar</h1>
-          <p className="text-on-surface-variant mt-2">Gestiona los miembros de tu grupo familiar y sus métodos de pago.</p>
+          <p className="text-on-surface-variant mt-2">Gestiona los miembros de tu grupo familiar y moneda local.</p>
         </div>
-        <div className="md:hidden">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          <div className="flex items-center gap-2 bg-surface px-4 py-3 rounded-xl border border-outline-variant shadow-sm w-full md:w-auto justify-between">
+            <span className="material-symbols-outlined text-on-surface-variant text-sm">payments</span>
+            <select 
+              value={activeHousehold?.currency || 'EUR'}
+              onChange={handleCurrencyChange}
+              className="bg-transparent text-sm font-bold text-on-surface outline-none cursor-pointer flex-1 text-right md:text-left"
+            >
+              <option value="EUR">Euro (€)</option>
+              <option value="USD">Dólar (US$)</option>
+              <option value="UYU">Peso Uruguayo ($U)</option>
+              <option value="MXN">Peso Mexicano ($)</option>
+              <option value="ARS">Peso Argentino ($)</option>
+              <option value="COP">Peso Colombiano ($)</option>
+            </select>
+          </div>
           <button 
             onClick={copyHouseholdId}
-            className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-3 px-6 rounded-xl font-semibold shadow-md active:scale-95 transition-transform"
+            className="flex items-center justify-center gap-2 bg-primary text-on-primary py-3 px-6 rounded-xl font-semibold shadow-md active:scale-95 transition-transform w-full md:w-auto"
           >
             <span className="material-symbols-outlined">link</span>
             <span>Copiar Link</span>
