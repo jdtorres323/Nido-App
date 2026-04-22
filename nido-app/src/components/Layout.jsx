@@ -6,8 +6,8 @@ import { householdService } from '../services/householdService';
 export default function Layout({ children, title }) {
   const location = useLocation();
   const path = location.pathname;
-  const { user, loginWithGoogle, logout } = useAuth();
-  const { activeHousehold, members } = useHousehold();
+  const { user, loading: authLoading, loginWithGoogle, logout } = useAuth();
+  const { activeHousehold, members, loading: householdLoading } = useHousehold();
 
   const handleCreateFirstHousehold = async () => {
     if (user) {
@@ -22,6 +22,15 @@ export default function Layout({ children, title }) {
     { name: 'Análisis', path: '/analisis', icon: 'analytics' },
     { name: 'Familia', path: '/familia', icon: 'family_restroom' },
   ];
+
+  if (authLoading || (user && householdLoading)) {
+    return (
+      <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center font-body">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-on-surface-variant animate-pulse">Cargando tu Nido...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     return (

@@ -1,12 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { 
   onAuthStateChanged, 
-  signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   signOut 
 } from 'firebase/auth';
 import { auth, googleProvider, db } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -16,27 +16,26 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    // Handle redirect result
-    getRedirectResult(auth).then((result) => {
-      if (result?.user) {
-        console.log("Redirect success:", result.user);
-      }
-    }).catch((error) => {
-      console.error("Error after redirect:", error);
-      alert("Error en el retorno de Google: " + error.message);
-    });
+    let unsubscribeProfile = () => {};
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log("Auth State Changed:", firebaseUser ? "User found" : "No user");
-      try {
-        if (firebaseUser) {
-          setUser(firebaseUser);
-          
-          // Sync user profile in Firestore
-          const userRef = doc(db, 'users', firebaseUser.uid);
-          const userSnap = await getDoc(userRef);
-          
-          if (!userSnap.exists()) {
+      
+      // Cleanup previous profile listener if any
+      unsubscribeProfile();
+
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        
+        // Sync user profile in Firestore with real-time listener
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        
+        unsubscribeProfile = onSnapshot(userRef, async (docSnap) => {
+          if (docSnap.exists()) {
+            console.log("Profile updated:", docSnap.data());
+            setUserProfile(docSnap.data());
+          } else {
+            // Create profile if it doesn't exist
             const newProfile = {
               uid: firebaseUser.uid,
               displayName: firebaseUser.displayName,
@@ -48,33 +47,46 @@ export function AuthProvider({ children }) {
             };
             await setDoc(userRef, newProfile);
             setUserProfile(newProfile);
-          } else {
-            setUserProfile(userSnap.data());
           }
-        } else {
-          setUser(null);
-          setUserProfile(null);
-        }
-      } catch (error) {
-        console.error("Error in onAuthStateChanged:", error);
-        // Still set the user if Firebase Auth succeeded, even if profile sync failed
-        if (firebaseUser) setUser(firebaseUser);
-      } finally {
+          setLoading(false);
+        }, (error) => {
+          console.error("Error in profile listener:", error);
+          setLoading(false);
+        });
+
+      } else {
+        setUser(null);
+        setUserProfile(null);
         setLoading(false);
       }
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribeAuth();
+      unsubscribeProfile();
+    };
   }, []);
 
   const loginWithGoogle = async () => {
     try {
-      await signInWithRedirect(auth, googleProvider);
+      console.log("Starting Google Login with Popup...");
+      await signInWithPopup(auth, googleProvider);
     } catch (error) {
-      console.error("Error during Google Login redirect:", error);
-      alert("No se pudo iniciar el inicio de sesión. Por favor, intenta de nuevo.");
+      console.error("Error during Google Login:", error);
+      // Fallback to redirect if popup is blocked or fails
+      if (error.code === 'auth/popup-blocked') {
+        try {
+          // await signInWithRedirect(auth, googleProvider);
+          alert("Por favor, permite las ventanas emergentes para iniciar sesión.");
+        } catch (redirectError) {
+          console.error("Error during fallback redirect:", redirectError);
+        }
+      } else {
+        alert("No se pudo iniciar sesión: " + error.message);
+      }
     }
   };
+
   const logout = () => signOut(auth);
 
   const value = {
