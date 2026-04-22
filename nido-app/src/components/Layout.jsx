@@ -75,13 +75,18 @@ export default function Layout({ children, title }) {
       <aside className="hidden md:flex fixed left-0 top-0 h-full flex-col py-8 bg-surface-container-low border-r border-outline-variant w-72 z-50">
         <div className="px-8 mb-10">
           <h1 className="font-headline italic text-3xl text-primary">Nido</h1>
-          <div className="mt-8 bg-surface-container p-4 rounded-2xl flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-black shadow-inner overflow-hidden uppercase">
-              {activeHousehold?.name?.charAt(0) || 'H'}
-            </div>
+          <div className="mt-8 bg-surface-container-high/50 p-4 rounded-3xl flex items-center gap-4 border border-outline-variant/30">
+            <img 
+              src="/household.png" 
+              alt="Hogar" 
+              className="w-14 h-14 rounded-2xl object-cover shadow-ambient border-2 border-surface" 
+            />
             <div className="overflow-hidden">
-              <p className="font-bold text-on-surface truncate whitespace-nowrap">{activeHousehold?.name || 'Hogar'}</p>
-              <p className="text-xs text-on-surface-variant">{members.length} miembros</p>
+              <p className="font-headline font-bold text-on-surface truncate text-lg tracking-tight">{activeHousehold?.name || 'Mi Hogar'}</p>
+              <p className="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">group</span>
+                {members.length} miembros
+              </p>
             </div>
           </div>
         </div>
@@ -111,16 +116,29 @@ export default function Layout({ children, title }) {
       </aside>
 
       {/* Header (Top Nav) */}
-      <header className="md:ml-72 flex justify-between items-center px-6 py-6 w-full bg-surface dark:bg-stone-950 sticky top-0 z-40">
+      <header className="md:ml-72 flex justify-between items-center px-6 py-6 w-full bg-surface/80 backdrop-blur-md sticky top-0 z-40">
         <div className="flex items-center gap-4">
-          <h2 className="font-headline text-3xl text-on-background">{title}</h2>
+          <h2 className="font-headline text-3xl font-bold text-on-background tracking-tight">{title}</h2>
         </div>
-        <div className="flex items-center gap-4 md:hidden">
-          <img 
-            alt={user.displayName} 
-            className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover" 
-            src={user.photoURL} 
-          />
+        <div className="flex items-center gap-3">
+          <button className="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors relative group">
+            <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">notifications</span>
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
+          </button>
+          <div className="hidden md:flex items-center gap-3 pl-3 border-l border-outline-variant">
+            <img 
+              alt={user.displayName} 
+              className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover" 
+              src={user.photoURL} 
+            />
+          </div>
+          <div className="md:hidden">
+            <img 
+              alt={user.displayName} 
+              className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover" 
+              src={user.photoURL} 
+            />
+          </div>
         </div>
       </header>
 
