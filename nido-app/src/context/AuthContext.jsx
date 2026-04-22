@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { 
   onAuthStateChanged, 
-  signInWithPopup, 
+  signInWithRedirect,
+  getRedirectResult,
   signOut 
 } from 'firebase/auth';
 import { auth, googleProvider, db } from '../firebase';
@@ -15,6 +16,11 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
+    // Handle redirect result
+    getRedirectResult(auth).catch((error) => {
+      console.error("Error after redirect:", error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
@@ -50,10 +56,10 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
-      console.error("Error during Google Login:", error);
-      alert("No se pudo iniciar sesión con Google. Por favor, verifica si tu navegador bloqueó la ventana emergente.");
+      console.error("Error during Google Login redirect:", error);
+      alert("No se pudo iniciar el inicio de sesión. Por favor, intenta de nuevo.");
     }
   };
   const logout = () => signOut(auth);
