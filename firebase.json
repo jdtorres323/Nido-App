@@ -1,5 +1,7 @@
 {
   "firestore": {
+    "database": "(default)",
+    "location": "us-east1",
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
@@ -19,6 +21,7 @@
   },
   "auth": {
     "providers": {
+      "emailPassword": {},
       "googleSignIn": {
         "oAuthBrandDisplayName": "Nido Organic App",
         "supportEmail": "stylibre.info@gmail.com"
