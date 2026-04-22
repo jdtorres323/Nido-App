@@ -6,6 +6,7 @@ import Escaner from './pages/Escaner';
 import Analisis from './pages/Analisis';
 import Familia from './pages/Familia';
 import NuevoGasto from './pages/NuevoGasto';
+import NuevoServicio from './pages/NuevoServicio';
 import { AuthProvider } from './context/AuthContext';
 import { HouseholdProvider } from './context/HouseholdContext';
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="/analisis" element={<Layout title="Análisis"><Analisis /></Layout>} />
             <Route path="/familia" element={<Layout title="Directorio Familiar"><Familia /></Layout>} />
             <Route path="/nuevo-gasto" element={<Layout title="Añadir Gasto"><NuevoGasto /></Layout>} />
+            <Route path="/nuevo-servicio" element={<Layout title="Añadir Servicio"><NuevoServicio /></Layout>} />
           </Routes>
         </Router>
       </HouseholdProvider>

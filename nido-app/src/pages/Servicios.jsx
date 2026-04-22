@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -144,14 +145,14 @@ export default function Servicios() {
             })}
 
             {/* Add New Service Button Card */}
-            <button className="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-[2.5rem] p-10 flex flex-col items-center justify-center gap-4 hover:bg-primary/5 hover:border-primary/40 transition-all text-on-surface-variant group min-h-[300px]">
+            <Link to="/nuevo-servicio" className="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-[2.5rem] p-10 flex flex-col items-center justify-center gap-4 hover:bg-primary/5 hover:border-primary/40 transition-all text-on-surface-variant group min-h-[300px] w-full cursor-pointer">
               <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-outline-variant group-hover:text-primary group-hover:bg-primary/10 transition-all">
                 <span className="material-symbols-outlined text-4xl">add_circle</span>
               </div>
               <div className="text-center">
                 <span className="block font-headline text-xl text-on-surface group-hover:text-primary transition-colors">Añadir Servicio</span>
               </div>
-            </button>
+            </Link>
           </div>
         </div>
 
