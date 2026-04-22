@@ -7,6 +7,7 @@ export default function Servicios() {
   const { activeHousehold, expenses, loading, members } = useHousehold();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [showOptimizeModal, setShowOptimizeModal] = useState(false);
 
   if (loading) return (
