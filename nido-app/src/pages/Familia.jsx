@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Familia() {
   const { user } = useAuth();
-  const { activeHousehold, members, balances } = useHousehold();
+  const { activeHousehold, members, balances, expenses } = useHousehold();
 
   const copyHouseholdId = () => {
     if (activeHousehold?.id) {
@@ -12,99 +12,130 @@ export default function Familia() {
     }
   };
 
+  // Stats calculation
+  const currentMonth = new Date().getMonth();
+  const expensesThisMonth = expenses.filter(exp => {
+    const expDate = new Date(exp.date);
+    return expDate.getMonth() === currentMonth;
+  }).length;
+
+  const settledMembers = members.filter(m => Math.abs(balances[m.id] || 0) < 0.01).length;
+
   return (
-    <div className="max-w-5xl mx-auto space-y-12">
-      {/* Invite & Info Card */}
-      <section className="bg-surface-container-high rounded-[3rem] p-8 md:p-12 border border-outline-variant relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="text-center md:text-left space-y-2">
-            <h1 className="font-headline text-4xl md:text-5xl text-on-background">Tu Nido Familiar</h1>
-            <p className="text-on-surface-variant font-medium">Gestiona quiénes forman parte de este espacio y comparte los gastos.</p>
+    <div className="max-w-6xl mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold text-on-background tracking-tight">Directorio del Hogar</h1>
+          <p className="text-on-surface-variant mt-2">Gestiona los miembros de tu grupo familiar y sus métodos de pago.</p>
+        </div>
+        <div className="md:hidden">
+          <button 
+            onClick={copyHouseholdId}
+            className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-3 px-6 rounded-xl font-semibold shadow-md active:scale-95 transition-transform"
+          >
+            <span className="material-symbols-outlined">link</span>
+            <span>Copiar Link</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Bento Grid Member Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {members.map((member, index) => {
+          const balance = balances[member.id] || 0;
+          const isMe = member.id === user?.uid;
+          const isAdmin = index === 0; // Temporary logic for admin
+
+          return (
+            <div key={member.id} className="bg-surface p-8 rounded-3xl shadow-sm border border-outline-variant flex flex-col items-center text-center relative overflow-hidden group">
+              {isAdmin && (
+                <div className="absolute top-0 right-0 p-4">
+                  <span className="inline-flex items-center rounded-full bg-primary-container px-3 py-1 text-xs font-medium text-on-primary-container">
+                    Administrador
+                  </span>
+                </div>
+              )}
+              {isMe && !isAdmin && (
+                 <div className="absolute top-0 right-0 p-4">
+                  <span className="inline-flex items-center rounded-full bg-secondary-container px-3 py-1 text-xs font-medium text-on-secondary-container">
+                    Tú
+                  </span>
+                </div>
+              )}
+              
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-low mb-6 shadow-xl transition-transform group-hover:scale-105 duration-300">
+                <img 
+                  alt={member.displayName} 
+                  className="w-full h-full object-cover"
+                  src={member.photoURL} 
+                />
+              </div>
+              
+              <h3 className="text-xl font-bold text-on-background">{member.displayName}</h3>
+              <p className="text-on-surface-variant text-sm mb-2">{member.email}</p>
+              
+              <p className={`font-headline text-lg font-bold mb-6 ${balance >= 0 ? 'text-on-surface' : 'text-error'}`}>
+                Balance: {balance >= 0 ? '+' : ''}{balance.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+              </p>
+
+              <div className="w-full space-y-3">
+                <div className={`flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl border border-outline-variant ${isMe ? '' : 'opacity-50'}`}>
+                  <span className="text-xs font-bold text-on-surface-variant uppercase">PayPal</span>
+                  <span className="text-on-surface font-medium italic">{isMe ? '@' + member.displayName.replace(/\s+/g, '').toLowerCase() : 'No vinculado'}</span>
+                </div>
+                <div className={`flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl border border-outline-variant ${!isMe ? 'opacity-50' : ''}`}>
+                  <span className="text-xs font-bold text-on-surface-variant uppercase">Venmo</span>
+                  <span className="text-on-surface font-medium italic">{!isMe ? 'No vinculado' : member.displayName.replace(/\s+/g, '-').toLowerCase()}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Invite New Member Card */}
+        <div 
+          onClick={copyHouseholdId}
+          className="border-2 border-dashed border-outline p-8 rounded-3xl flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-surface-container-low transition-all duration-300"
+        >
+          <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <span className="material-symbols-outlined text-on-primary-container text-3xl">person_add</span>
           </div>
+          <h3 className="text-lg font-bold text-on-background">Invitar Miembro</h3>
+          <p className="text-on-surface-variant text-sm mt-2 max-w-[200px]">Copia el ID del hogar para añadir a alguien nuevo</p>
+          <p className="font-mono text-xs font-bold mt-4 bg-surface-container px-3 py-1 rounded-lg text-primary">{activeHousehold?.id}</p>
+        </div>
+      </div>
+
+      {/* Summary Stats Card (Asymmetric Layout) */}
+      <div className="bg-gradient-to-br from-primary to-[#5A2A18] p-8 rounded-3xl shadow-xl flex flex-col md:flex-row gap-8 items-center justify-between text-on-primary">
+        <div className="flex-1 text-center md:text-left">
+          <h3 className="text-2xl font-bold mb-2">Estado del Grupo</h3>
+          <p className="text-on-primary/80 mb-6">Actualmente hay {members.length} miembros activos compartiendo gastos.</p>
           
-          <div className="bg-white/50 backdrop-blur-sm p-6 rounded-[2.5rem] border border-white flex flex-col items-center gap-4 shadow-sm">
-            <p className="font-label text-[10px] uppercase font-black text-primary tracking-widest">Código de Invitación</p>
-            <div className="flex items-center gap-3 bg-surface-container-lowest px-6 py-3 rounded-2xl border border-outline-variant font-mono font-bold text-on-surface text-lg">
-              {activeHousehold?.id?.slice(0, 8)}...
-              <button 
-                onClick={copyHouseholdId}
-                className="material-symbols-outlined text-primary hover:scale-110 transition-transform"
-              >
-                content_copy
-              </button>
+          <div className="flex flex-wrap justify-center md:justify-start gap-4">
+            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-center">
+              <span className="block text-2xl font-bold">{expensesThisMonth}</span>
+              <span className="text-xs uppercase tracking-tighter text-on-primary/80">Gastos este mes</span>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-center">
+              <span className="block text-2xl font-bold">{settledMembers}/{members.length}</span>
+              <span className="text-xs uppercase tracking-tighter text-on-primary/80">Pagos al día</span>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Directory Section */}
-      <section className="space-y-8">
-        <div className="flex justify-between items-end">
-          <h2 className="font-headline text-3xl text-on-background">Miembros del Hogar</h2>
-          <span className="bg-primary-container text-on-primary-container px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
-            {members.length} Total
-          </span>
+        
+        <div className="w-full md:w-auto flex flex-col gap-3">
+          <button className="bg-surface text-primary px-6 py-3 rounded-xl font-bold hover:bg-surface-container-lowest transition-colors flex items-center justify-center gap-2 shadow-lg">
+            <span className="material-symbols-outlined">settings</span>
+            <span>Configurar Reglas</span>
+          </button>
+          <button className="bg-black/20 text-on-primary border border-white/20 px-6 py-3 rounded-xl font-bold hover:bg-black/30 transition-colors flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined">history</span>
+            <span>Historial de Pagos</span>
+          </button>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {members.map(member => {
-            const balance = balances[member.id] || 0;
-            const isMe = member.id === user?.uid;
-            const isSettled = Math.abs(balance) < 0.01;
-
-            return (
-              <div key={member.id} className="bg-surface-container-lowest p-6 rounded-[2.5rem] border border-outline-variant flex items-center justify-between group hover:border-primary/20 transition-all">
-                <div className="flex items-center gap-5">
-                  <div className="relative">
-                    <img 
-                      className="w-16 h-16 rounded-full object-cover border-2 border-primary-container shadow-inner" 
-                      alt={member.displayName} 
-                      src={member.photoURL} 
-                    />
-                    {isMe && (
-                      <div className="absolute -top-1 -right-1 bg-primary text-on-primary text-[8px] font-black uppercase px-2 py-0.5 rounded-full border border-surface shadow-sm">
-                        Tú
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-on-surface text-xl">{member.displayName}</h3>
-                    <p className="text-on-surface-variant text-xs mb-2">{member.email}</p>
-                    <div className="flex items-center gap-2">
-                       <span className={`w-2 h-2 rounded-full ${isSettled ? 'bg-emerald-400' : 'bg-rose-400'}`}></span>
-                       <span className="text-[10px] font-black uppercase tracking-tighter text-on-surface-variant">
-                         {isSettled ? 'Al día' : 'Pagos pendientes'}
-                       </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-right hidden sm:block">
-                  <p className={`font-headline text-xl font-bold ${balance >= 0 ? 'text-on-surface' : 'text-rose-500'}`}>
-                    {Math.abs(balance).toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
-                  </p>
-                  <p className="font-label text-[10px] uppercase font-bold text-outline-variant">
-                     Balance Neto
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* House Rules Shortcut */}
-      <section className="bg-on-surface text-surface rounded-[3rem] p-10 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="space-y-2 text-center md:text-left">
-          <h3 className="font-headline text-2xl">Reglas de Convivencia</h3>
-          <p className="text-surface/60 max-w-sm">Define cómo se dividen los gastos, las fechas de corte y quién es el administrador principal.</p>
-        </div>
-        <button className="bg-primary text-on-primary px-8 py-4 rounded-full font-bold shadow-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-3">
-          <span className="material-symbols-outlined">settings</span>
-          Configurar Hogar
-        </button>
-      </section>
+      </div>
     </div>
   );
 }
