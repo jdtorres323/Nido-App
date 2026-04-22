@@ -7,7 +7,7 @@ export default function Servicios() {
   const { activeHousehold, expenses, loading, members } = useHousehold();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [showOptimizeModal, setShowOptimizeModal] = useState(false);
 
   if (loading) return (
     <div className="flex items-center justify-center h-96">
@@ -54,8 +54,101 @@ export default function Servicios() {
     return 'receipt_long';
   };
 
+  const generateOptimizationTips = () => {
+    const tips = [];
+    const concepts = servicesExpenses.map(s => s.concept.toLowerCase());
+    
+    if (concepts.some(c => c.includes('luz') || c.includes('elec'))) {
+      tips.push({
+        title: 'Eficiencia Energética',
+        desc: 'He notado gastos de electricidad. Cambiar a bombillas LED y desenchufar aparatos en modo stand-by puede ahorrarte hasta un 10%.',
+        icon: 'bolt'
+      });
+    }
+
+    if (concepts.some(c => c.includes('agua'))) {
+      tips.push({
+        title: 'Consumo de Agua',
+        desc: 'Instalar aireadores en los grifos reduce el caudal sin perder confort, lo que se traduce en una factura más baja el próximo mes.',
+        icon: 'water_drop'
+      });
+    }
+
+    const subs = servicesExpenses.filter(s => ['netflix', 'spotify', 'hbo', 'disney', 'prime'].some(sub => s.concept.toLowerCase().includes(sub)));
+    if (subs.length > 1) {
+      tips.push({
+        title: 'Auditoría de Suscripciones',
+        desc: `Tienes ${subs.length} servicios de streaming. ¿Realmente los usas todos? Cancelar uno podría ahorrarte ${activeHousehold?.currency || '€'} ${(subs[0].amount * 12).toFixed(0)} al año.`,
+        icon: 'subscriptions'
+      });
+    }
+
+    if (tips.length === 0) {
+      tips.push({
+        title: 'Consejo General',
+        desc: 'Sigue registrando tus gastos para que pueda darte consejos más precisos basados en tus hábitos reales.',
+        icon: 'auto_awesome'
+      });
+    }
+
+    return tips;
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-10 pb-20">
+      {/* Modal de Optimización */}
+      {showOptimizeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-on-background/40 backdrop-blur-sm" onClick={() => setShowOptimizeModal(false)}></div>
+          <div className="bg-surface-container-lowest w-full max-w-2xl rounded-[3rem] p-10 relative z-10 shadow-2xl border border-outline-variant animate-in fade-in zoom-in duration-300">
+            <button 
+              onClick={() => setShowOptimizeModal(false)}
+              className="absolute top-8 right-8 w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+
+            <div className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-4xl">auto_awesome</span>
+                </div>
+                <div>
+                  <h2 className="font-headline text-3xl italic tracking-tight">Optimización Inteligente</h2>
+                  <p className="text-on-surface-variant font-medium">Análisis basado en tus gastos de {monthName}</p>
+                </div>
+              </div>
+
+              <div className="grid gap-6">
+                {generateOptimizationTips().map((tip, idx) => (
+                  <div key={idx} className="bg-surface-container-low border border-outline-variant p-6 rounded-[2rem] flex gap-6 items-start group hover:border-primary/30 transition-colors">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
+                      <span className="material-symbols-outlined">{tip.icon}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-on-surface text-lg">{tip.title}</h4>
+                      <p className="text-on-surface-variant text-sm leading-relaxed">{tip.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-primary/5 rounded-[2rem] p-8 text-center space-y-4">
+                <p className="text-sm font-medium text-on-surface-variant">
+                  ¿Quieres un plan de ahorro personalizado para tu familia?
+                </p>
+                <button 
+                  onClick={() => setShowOptimizeModal(false)}
+                  className="bg-primary text-on-primary px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all shadow-lg active:scale-95"
+                >
+                  Generar Plan Completo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Page Header & Month Selector */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-1">
@@ -188,7 +281,10 @@ export default function Servicios() {
                       </div>
                     ))}
                 </div>
-                <button className="w-full bg-on-primary-container text-primary-container py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 transition-opacity shadow-lg active:scale-95">
+                <button 
+                  onClick={() => setShowOptimizeModal(true)}
+                  className="w-full bg-on-primary-container text-primary-container py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 transition-opacity shadow-lg active:scale-95"
+                >
                   Optimizar Gastos
                 </button>
               </>
@@ -219,7 +315,7 @@ export default function Servicios() {
             <h2 className="font-headline text-3xl md:text-4xl italic tracking-tight">Resumen de {currentDate.toLocaleString('es-ES', { month: 'long' })}</h2>
             <p className="text-surface/60 max-w-lg font-medium leading-relaxed">
               {servicesExpenses.length > 0 
-                ? `Faltan 2 servicios por pagar. El compromiso total proyectado es de ${totalServicesAmount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}.`
+                ? `Faltan ${servicesExpenses.filter(s => !s.isPaid).length} servicios por pagar. El compromiso total proyectado es de ${totalServicesAmount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}.`
                 : 'No hay servicios registrados para este periodo aún.'}
             </p>
           </div>
