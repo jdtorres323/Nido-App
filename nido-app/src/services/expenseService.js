@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export const expenseService = {
@@ -14,7 +14,8 @@ export const expenseService = {
   },
 
   async deleteExpense(expenseId) {
-    // Implement delete if needed
+    const expenseRef = doc(db, 'expenses', expenseId);
+    return await deleteDoc(expenseRef);
   },
 
   async updateExpense(expenseId, updates) {

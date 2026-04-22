@@ -75,6 +75,21 @@ export default function NuevoServicio() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!id || !window.confirm('¿Estás seguro de que deseas eliminar este servicio?')) return;
+    
+    setIsSubmitting(true);
+    try {
+      await expenseService.deleteExpense(id);
+      navigate('/servicios');
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      alert("Error al eliminar el servicio");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center justify-start pt-4 pb-20 px-4 sm:px-8 max-w-4xl mx-auto w-full">
       {/* Main Card */}
@@ -211,21 +226,34 @@ export default function NuevoServicio() {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-4 mt-8 pt-8 border-t border-outline-variant/30">
-              <button 
-                type="button" 
-                onClick={() => navigate('/servicios')}
-                className="w-full sm:w-auto px-8 py-4 font-black text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all rounded-[1.5rem]"
-              >
-                Cancelar
-              </button>
-              <button 
-                type="submit" 
-                disabled={isSubmitting || !formData.amount || !formData.concept}
-                className="w-full sm:w-auto px-10 py-4 font-black text-[10px] uppercase tracking-widest text-on-primary bg-primary rounded-[1.5rem] shadow-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
-              >
-                {isSubmitting ? 'Guardando...' : 'Guardar Servicio'}
-              </button>
+            <div className={`flex flex-col-reverse sm:flex-row items-center gap-4 mt-8 pt-8 border-t border-outline-variant/30 ${id ? 'justify-between' : 'justify-end'}`}>
+              {id && (
+                <button 
+                  type="button" 
+                  onClick={handleDelete}
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto px-8 py-4 font-black text-[10px] uppercase tracking-widest text-error hover:bg-error/10 transition-all rounded-[1.5rem] disabled:opacity-50"
+                >
+                  Eliminar
+                </button>
+              )}
+              <div className="flex flex-col-reverse sm:flex-row items-center gap-4 w-full sm:w-auto">
+                <button 
+                  type="button" 
+                  onClick={() => navigate('/servicios')}
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto px-8 py-4 font-black text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all rounded-[1.5rem]"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting || !formData.amount || !formData.concept}
+                  className="w-full sm:w-auto px-10 py-4 font-black text-[10px] uppercase tracking-widest text-on-primary bg-primary rounded-[1.5rem] shadow-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Guardando...' : (id ? 'Actualizar' : 'Guardar')}
+                </button>
+              </div>
             </div>
           </form>
 
