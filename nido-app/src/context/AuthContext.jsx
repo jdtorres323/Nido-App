@@ -17,11 +17,17 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     // Handle redirect result
-    getRedirectResult(auth).catch((error) => {
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) {
+        console.log("Redirect success:", result.user);
+      }
+    }).catch((error) => {
       console.error("Error after redirect:", error);
+      alert("Error en el retorno de Google: " + error.message);
     });
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log("Auth State Changed:", firebaseUser ? "User found" : "No user");
       try {
         if (firebaseUser) {
           setUser(firebaseUser);
