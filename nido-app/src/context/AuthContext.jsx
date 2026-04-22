@@ -48,7 +48,14 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
+  const loginWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Error during Google Login:", error);
+      alert("No se pudo iniciar sesión con Google. Por favor, verifica si tu navegador bloqueó la ventana emergente.");
+    }
+  };
   const logout = () => signOut(auth);
 
   const value = {

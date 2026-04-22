@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "proy-conta-prod-jd"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
