@@ -95,8 +95,8 @@ export default function Servicios() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {servicesExpenses.map((service) => {
-              const responsible = members.find(m => m.uid === service.createdBy) || { displayName: 'Desconocido' };
-              const isPaid = true;
+              const responsible = members.find(m => m.id === service.paidBy || m.uid === service.paidBy) || { displayName: 'Desconocido' };
+              const isPaid = !!service.isPaid;
 
               return (
                 <div key={service.id} onClick={() => navigate(`/editar-servicio/${service.id}`)} className="bg-surface-container-lowest rounded-[2.5rem] p-8 border border-outline-variant flex flex-col justify-between hover:shadow-xl hover:border-primary/20 transition-all group cursor-pointer">

@@ -17,6 +17,7 @@ export default function NuevoServicio() {
     amount: '',
     dueDate: new Date().toISOString().split('T')[0],
     paidBy: user?.uid || '',
+    isPaid: false,
   });
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function NuevoServicio() {
           amount: serviceToEdit.amount || '',
           dueDate: serviceToEdit.date ? serviceToEdit.date.split('T')[0] : new Date().toISOString().split('T')[0],
           paidBy: serviceToEdit.paidBy || user?.uid || '',
+          isPaid: !!serviceToEdit.isPaid,
         });
       }
     }
@@ -52,7 +54,8 @@ export default function NuevoServicio() {
         amount: parseFloat(formData.amount),
         category: 'servicios', 
         paidBy: formData.paidBy,
-        paymentStatus: 'Pendiente', // Services are usually pending until paid
+        paymentStatus: formData.isPaid ? 'Pagado' : 'Pendiente',
+        isPaid: formData.isPaid,
         date: formData.dueDate, // using due date as the expense date for now
         serviceType: formData.category, // store the specific service type
         participants: members.map(m => m.id) // Default split among everyone
@@ -187,6 +190,23 @@ export default function NuevoServicio() {
                       )}
                     </button>
                  ))}
+              </div>
+            </div>
+
+            {/* 6. Estado de Pago */}
+            <div className="flex flex-col gap-4 pt-4">
+              <div className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant">
+                <div>
+                  <h3 className="font-bold text-on-surface">Estado del Pago</h3>
+                  <p className="text-xs text-on-surface-variant font-medium">Marca si este servicio ya fue pagado</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFormData({...formData, isPaid: !formData.isPaid})}
+                  className={`w-14 h-8 rounded-full p-1 transition-colors flex items-center ${formData.isPaid ? 'bg-primary' : 'bg-surface-container-highest'}`}
+                >
+                  <div className={`w-6 h-6 bg-surface rounded-full shadow-md transition-transform ${formData.isPaid ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                </button>
               </div>
             </div>
 
