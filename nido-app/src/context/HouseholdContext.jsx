@@ -4,7 +4,8 @@ import {
   query, 
   where, 
   onSnapshot, 
-  orderBy 
+  orderBy,
+  doc 
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
@@ -107,6 +108,5 @@ export function HouseholdProvider({ children }) {
   );
 }
 
-import { doc } from 'firebase/firestore'; // Fix for the missing import in the snippet above
 
 export const useHousehold = () => useContext(HouseholdContext);
