@@ -19,11 +19,18 @@ export default function Servicios() {
 
   // Filter expenses that are services for the current month
   const servicesExpenses = expenses.filter(exp => {
-    const expDate = new Date(exp.date);
+    let expDate;
+    if (exp.date) {
+       // Append time to avoid UTC shifting
+       expDate = new Date(exp.date.includes('T') ? exp.date : `${exp.date}T12:00:00`);
+    } else {
+       expDate = new Date();
+    }
+    
     return expDate.getMonth() === currentDate.getMonth() && 
            expDate.getFullYear() === currentDate.getFullYear() &&
            (exp.category === 'hogar' || exp.category === 'servicios' || 
-            ['luz', 'agua', 'gas', 'internet', 'alquiler', 'netflix', 'spotify'].some(s => exp.concept.toLowerCase().includes(s)));
+            ['luz', 'agua', 'gas', 'internet', 'alquiler', 'netflix', 'spotify'].some(s => exp.concept?.toLowerCase().includes(s)));
   });
 
   const totalServicesAmount = servicesExpenses.reduce((acc, exp) => acc + parseFloat(exp.amount), 0);
