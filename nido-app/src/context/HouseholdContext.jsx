@@ -36,6 +36,9 @@ export function HouseholdProvider({ children }) {
       if (docSnap.exists()) {
         setActiveHousehold({ id: docSnap.id, ...docSnap.data() });
       }
+    }, (error) => {
+      console.error("Error fetching household:", error);
+      setLoading(false);
     });
 
     // Listen to Members (Users who belong to this household)
@@ -43,17 +46,28 @@ export function HouseholdProvider({ children }) {
     const unsubscribeMembers = onSnapshot(membersQuery, (querySnap) => {
       const membersData = querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setMembers(membersData);
+    }, (error) => {
+      console.error("Error fetching members:", error);
+      setLoading(false);
     });
 
     // Listen to Expenses
     const expensesQuery = query(
       collection(db, 'expenses'), 
-      where('householdId', '==', householdId),
-      orderBy('date', 'desc')
+      where('householdId', '==', householdId)
     );
     const unsubscribeExpenses = onSnapshot(expensesQuery, (querySnap) => {
-      const expensesData = querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      let expensesData = querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort in memory to avoid needing a Firestore composite index
+      expensesData.sort((a, b) => {
+        const dateA = new Date(a.date || 0).getTime();
+        const dateB = new Date(b.date || 0).getTime();
+        return dateB - dateA; // Descending
+      });
       setExpenses(expensesData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching expenses:", error);
       setLoading(false);
     });
 
