@@ -26,9 +26,9 @@ export default function Servicios() {
             ['luz', 'agua', 'gas', 'internet', 'alquiler', 'netflix', 'spotify'].some(s => exp.concept.toLowerCase().includes(s)));
   });
 
-  const totalServicesAmount = servicesExpenses.reduce((acc, exp) => acc + exp.amount, 0);
-  const paidAmount = servicesExpenses.length * 45; // Mock data for "paid" vs "pending" logic if not in DB
-  const pendingAmount = totalServicesAmount - paidAmount > 0 ? totalServicesAmount - paidAmount : 0;
+  const totalServicesAmount = servicesExpenses.reduce((acc, exp) => acc + parseFloat(exp.amount), 0);
+  const paidAmount = servicesExpenses.reduce((acc, exp) => acc + (exp.isPaid ? parseFloat(exp.amount) : 0), 0);
+  const pendingAmount = totalServicesAmount - paidAmount;
 
   const changeMonth = (offset) => {
     const newDate = new Date(currentDate);
@@ -161,23 +161,30 @@ export default function Servicios() {
           <div className="bg-primary-container rounded-[2.5rem] p-10 space-y-8 shadow-xl relative overflow-hidden">
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-on-primary-container/5 rounded-full blur-2xl"></div>
             <h3 className="font-headline text-2xl text-on-primary-container italic">Smart Projections</h3>
-            <div className="space-y-8">
-                {[
-                  { name: 'Electricidad', amount: '~ 45€', status: 'Cerca del promedio' },
-                  { name: 'Sumi. Agua', amount: '~ 22€', status: 'Bajo consumo' }
-                ].map((proj, idx) => (
-                  <div key={idx} className="flex justify-between items-start border-b border-on-primary-container/10 pb-4 last:border-0">
-                    <div>
-                      <p className="font-bold text-on-primary-container text-lg leading-none mb-1">{proj.name}</p>
-                      <p className="text-[10px] text-on-primary-container/60 uppercase font-black tracking-widest">{proj.status}</p>
-                    </div>
-                    <p className="font-headline text-xl font-bold text-on-primary-container">{proj.amount}</p>
-                  </div>
-                ))}
-            </div>
-            <button className="w-full bg-on-primary-container text-primary-container py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 transition-opacity shadow-lg active:scale-95">
-              Optimizar Gastos
-            </button>
+            
+            {servicesExpenses.length === 0 ? (
+              <div className="py-8 text-center opacity-70">
+                <span className="material-symbols-outlined text-4xl mb-2 block">monitoring</span>
+                <p className="text-sm font-medium">Registra servicios para generar proyecciones de gasto</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-8">
+                    {servicesExpenses.slice(0, 3).map((service, idx) => (
+                      <div key={idx} className="flex justify-between items-start border-b border-on-primary-container/10 pb-4 last:border-0">
+                        <div>
+                          <p className="font-bold text-on-primary-container text-lg leading-none mb-1">{service.concept}</p>
+                          <p className="text-[10px] text-on-primary-container/60 uppercase font-black tracking-widest">En presupuesto</p>
+                        </div>
+                        <p className="font-headline text-xl font-bold text-on-primary-container">~ {parseFloat(service.amount).toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}</p>
+                      </div>
+                    ))}
+                </div>
+                <button className="w-full bg-on-primary-container text-primary-container py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] hover:opacity-90 transition-opacity shadow-lg active:scale-95">
+                  Optimizar Gastos
+                </button>
+              </>
+            )}
           </div>
 
           <div className="p-10 border border-outline-variant rounded-[3rem] space-y-6 bg-surface-container-low relative group">
@@ -186,7 +193,9 @@ export default function Servicios() {
             </div>
             <h4 className="font-headline text-xl text-on-surface">Nido Tip</h4>
             <p className="text-on-surface-variant text-sm leading-relaxed font-medium">
-              El gasto de luz ha subido un <span className="text-primary font-bold">12%</span> respecto al mes pasado. Considera revisar tus electrodomésticos en modo espera.
+              {servicesExpenses.length === 0 
+                ? "Los gastos recurrentes como la luz o el agua pueden optimizarse. Comienza a registrarlos para recibir tips personalizados."
+                : `Tienes ${servicesExpenses.length} servicio(s) este mes. Recuerda revisar los consumos en horas pico para ahorrar más.`}
             </p>
           </div>
         </div>
