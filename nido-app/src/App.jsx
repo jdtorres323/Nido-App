@@ -23,6 +23,7 @@ function App() {
             <Route path="/familia" element={<Layout title="Directorio Familiar"><Familia /></Layout>} />
             <Route path="/nuevo-gasto" element={<Layout title="Añadir Gasto"><NuevoGasto /></Layout>} />
             <Route path="/nuevo-servicio" element={<Layout title="Añadir Servicio"><NuevoServicio /></Layout>} />
+            <Route path="/editar-servicio/:id" element={<Layout title="Editar Servicio"><NuevoServicio /></Layout>} />
           </Routes>
         </Router>
       </HouseholdProvider>

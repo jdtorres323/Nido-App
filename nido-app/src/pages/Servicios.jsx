@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
 
 export default function Servicios() {
   const { activeHousehold, expenses, loading, members } = useHousehold();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   if (loading) return (
@@ -98,7 +99,7 @@ export default function Servicios() {
               const isPaid = true;
 
               return (
-                <div key={service.id} className="bg-surface-container-lowest rounded-[2.5rem] p-8 border border-outline-variant flex flex-col justify-between hover:shadow-xl hover:border-primary/20 transition-all group cursor-pointer">
+                <div key={service.id} onClick={() => navigate(`/editar-servicio/${service.id}`)} className="bg-surface-container-lowest rounded-[2.5rem] p-8 border border-outline-variant flex flex-col justify-between hover:shadow-xl hover:border-primary/20 transition-all group cursor-pointer">
                   <div className="flex justify-between items-start mb-8">
                     <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary transition-transform group-hover:scale-110">
                       <span className="material-symbols-outlined text-3xl">

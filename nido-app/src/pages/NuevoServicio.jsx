@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
 import { expenseService } from '../services/expenseService';
 
 export default function NuevoServicio() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { user } = useAuth();
-  const { activeHousehold, members } = useHousehold();
+  const { activeHousehold, members, expenses } = useHousehold();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -17,6 +18,21 @@ export default function NuevoServicio() {
     dueDate: new Date().toISOString().split('T')[0],
     paidBy: user?.uid || '',
   });
+
+  useEffect(() => {
+    if (id && expenses.length > 0) {
+      const serviceToEdit = expenses.find(e => e.id === id);
+      if (serviceToEdit) {
+        setFormData({
+          concept: serviceToEdit.concept || '',
+          category: serviceToEdit.serviceType || 'Energía',
+          amount: serviceToEdit.amount || '',
+          dueDate: serviceToEdit.date ? serviceToEdit.date.split('T')[0] : new Date().toISOString().split('T')[0],
+          paidBy: serviceToEdit.paidBy || user?.uid || '',
+        });
+      }
+    }
+  }, [id, expenses, user]);
 
   const categories = [
     { id: 'Energía', icon: 'bolt', label: 'Energía' },
@@ -31,8 +47,7 @@ export default function NuevoServicio() {
 
     setIsSubmitting(true);
     try {
-      // Treating services as expenses with category 'servicios'
-      await expenseService.addExpense(activeHousehold.id, {
+      const expenseData = {
         concept: formData.concept,
         amount: parseFloat(formData.amount),
         category: 'servicios', 
@@ -41,7 +56,13 @@ export default function NuevoServicio() {
         date: formData.dueDate, // using due date as the expense date for now
         serviceType: formData.category, // store the specific service type
         participants: members.map(m => m.id) // Default split among everyone
-      });
+      };
+
+      if (id) {
+        await expenseService.updateExpense(id, expenseData);
+      } else {
+        await expenseService.addExpense(activeHousehold.id, expenseData);
+      }
       navigate('/servicios');
     } catch (error) {
       console.error("Error saving service:", error);
@@ -61,8 +82,12 @@ export default function NuevoServicio() {
           
           {/* Title Area */}
           <div className="flex flex-col gap-2">
-            <h1 className="font-headline text-3xl sm:text-4xl font-bold text-primary tracking-tight">Añadir Nuevo Servicio</h1>
-            <p className="text-on-surface-variant font-medium text-base sm:text-lg">Registra un nuevo gasto recurrente o servicio para el hogar.</p>
+            <h1 className="font-headline text-3xl sm:text-4xl font-bold text-primary tracking-tight">
+              {id ? 'Editar Servicio' : 'Añadir Nuevo Servicio'}
+            </h1>
+            <p className="text-on-surface-variant font-medium text-base sm:text-lg">
+              {id ? 'Modifica los detalles del servicio seleccionado.' : 'Registra un nuevo gasto recurrente o servicio para el hogar.'}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
