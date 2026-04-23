@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
 
 export default function Analisis() {
+  const navigate = useNavigate();
   const { expenses, activeHousehold, formatAmount } = useHousehold();
 
   const totalAmount = expenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
@@ -204,7 +206,17 @@ export default function Analisis() {
                   </thead>
                   <tbody className="divide-y divide-outline-variant/50">
                     {expenses.slice().sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount)).slice(0, 5).map((exp, idx) => (
-                      <tr key={idx} className="hover:bg-surface-container-lowest transition-colors group">
+                      <tr 
+                        key={idx} 
+                        onClick={() => {
+                          if (exp.category === 'servicios') {
+                            navigate(`/editar-servicio/${exp.id}`);
+                          } else {
+                            navigate(`/editar-gasto/${exp.id}`);
+                          }
+                        }}
+                        className="hover:bg-surface-container-lowest transition-colors group cursor-pointer"
+                      >
                         <td className="py-4 flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                             <span className="material-symbols-outlined text-sm">{exp.category === 'comida' ? 'shopping_cart' : exp.category === 'hogar' ? 'home' : exp.category === 'servicios' ? 'water_drop' : exp.category === 'ocio' ? 'sports_esports' : 'receipt_long'}</span>

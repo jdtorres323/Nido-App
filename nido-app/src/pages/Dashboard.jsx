@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
 import Layout from '../components/Layout';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { activeHousehold, members, expenses, balances, loading, formatAmount } = useHousehold();
 
@@ -227,7 +228,17 @@ export default function Dashboard() {
             const categoryIcon = getCategoryIcon(exp.category);
             
             return (
-              <div key={exp.id} className="p-6 flex items-center justify-between hover:bg-orange-50/50 dark:hover:bg-stone-800/50 transition-colors cursor-pointer group">
+              <div 
+                key={exp.id} 
+                onClick={() => {
+                  if (exp.category === 'servicios') {
+                    navigate(`/editar-servicio/${exp.id}`);
+                  } else {
+                    navigate(`/editar-gasto/${exp.id}`);
+                  }
+                }}
+                className="p-6 flex items-center justify-between hover:bg-orange-50/50 dark:hover:bg-stone-800/50 transition-colors cursor-pointer group"
+              >
                 <div className="flex items-center gap-5">
                   <div className={`w-14 h-14 ${categoryStyle.split(' ')[0]} rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3`}>
                     <span className={`material-symbols-outlined text-3xl ${categoryStyle.split(' ')[1]}`} style={{fontVariationSettings: "'FILL' 1"}}>

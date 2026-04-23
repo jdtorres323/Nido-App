@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
 import { expenseService } from '../services/expenseService';
 
 export default function NuevoGasto() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { user } = useAuth();
-  const { activeHousehold, members, currencySymbol } = useHousehold();
+  const { activeHousehold, members, expenses, currencySymbol } = useHousehold();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -21,21 +22,60 @@ export default function NuevoGasto() {
     participants: [] 
   });
 
+  useEffect(() => {
+    if (id && expenses.length > 0) {
+      const expenseToEdit = expenses.find(e => e.id === id);
+      if (expenseToEdit) {
+        setFormData({
+          amount: expenseToEdit.amount || '',
+          concept: expenseToEdit.concept || '',
+          category: expenseToEdit.category || 'otros',
+          paidBy: expenseToEdit.paidBy || user?.uid || '',
+          paymentStatus: expenseToEdit.paymentStatus || 'Pagado',
+          date: expenseToEdit.date || new Date().toISOString().split('T')[0],
+          participants: expenseToEdit.participants || []
+        });
+      }
+    }
+  }, [id, expenses, user]);
+
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     if (!formData.amount || !formData.concept || !activeHousehold) return;
 
     setIsSubmitting(true);
     try {
-      await expenseService.addExpense(activeHousehold.id, {
+      const expenseData = {
         ...formData,
         amount: parseFloat(formData.amount),
+        isPaid: formData.paymentStatus === 'Pagado',
         participants: formData.participants.length > 0 ? formData.participants : members.map(m => m.id)
-      });
+      };
+
+      if (id) {
+        await expenseService.updateExpense(id, expenseData);
+      } else {
+        await expenseService.addExpense(activeHousehold.id, expenseData);
+      }
       navigate('/');
     } catch (error) {
       console.error("Error saving expense:", error);
       alert("Error al guardar el gasto");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id || !window.confirm('¿Estás seguro de que deseas eliminar este gasto?')) return;
+    
+    setIsSubmitting(true);
+    try {
+      await expenseService.deleteExpense(id);
+      navigate('/');
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      alert("Error al eliminar el gasto");
     } finally {
       setIsSubmitting(false);
     }
@@ -49,10 +89,12 @@ export default function NuevoGasto() {
         {/* Header Branding */}
         <section className="text-center space-y-4 mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-[2rem] bg-on-surface text-surface mb-2">
-            <span className="material-symbols-outlined text-3xl">add_shopping_cart</span>
+            <span className="material-symbols-outlined text-3xl">{id ? 'edit_square' : 'add_shopping_cart'}</span>
           </div>
-          <h1 className="font-headline text-4xl md:text-5xl text-on-surface italic">Gasto Manual</h1>
-          <p className="text-on-surface-variant font-medium max-w-xs mx-auto">Registra un nuevo desembolso para que el nido esté al día.</p>
+          <h1 className="font-headline text-4xl md:text-5xl text-on-surface italic">{id ? 'Editar Gasto' : 'Gasto Manual'}</h1>
+          <p className="text-on-surface-variant font-medium max-w-xs mx-auto">
+            {id ? 'Modifica los detalles de este gasto registrado.' : 'Registra un nuevo desembolso para que el nido esté al día.'}
+          </p>
         </section>
 
         {/* Input Form */}
@@ -142,12 +184,22 @@ export default function NuevoGasto() {
 
           {/* Action Buttons */}
           <div className="pt-10 flex flex-col md:flex-row gap-6">
+             {id && (
+                <button 
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-rose-50 text-rose-600 rounded-[2.5rem] py-6 font-black text-xs uppercase tracking-[0.3em] border border-rose-100 hover:bg-rose-100 transition-all disabled:opacity-30"
+                >
+                  Eliminar
+                </button>
+             )}
              <button 
                type="submit"
                disabled={isSubmitting || !formData.amount || !formData.concept}
                className="flex-[2] bg-on-surface text-surface rounded-[2.5rem] py-6 font-black text-xs uppercase tracking-[0.3em] shadow-2xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-30"
              >
-               {isSubmitting ? 'Procesando...' : 'Guardar Gasto'}
+               {isSubmitting ? 'Procesando...' : (id ? 'Actualizar' : 'Guardar Gasto')}
              </button>
              <button 
                type="button"
