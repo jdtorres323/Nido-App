@@ -3,11 +3,34 @@ import { useHousehold } from '../context/HouseholdContext';
 
 export default function Analisis() {
   const navigate = useNavigate();
-  const { expenses, activeHousehold, formatAmount } = useHousehold();
+  const { expenses, activeHousehold, loading, formatAmount } = useHousehold();
 
-  const totalAmount = expenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+  if (loading) return (
+    <div className="flex items-center justify-center h-96">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  );
+
+  // Filter expenses for the last 30 days
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
-  const categories = expenses.reduce((acc, exp) => {
+  const recentExpenses = expenses.map(exp => {
+    let rawDate = exp.date;
+    if (!rawDate && exp.createdAt) {
+      const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
+      rawDate = d.toLocaleDateString('sv');
+    }
+    return { ...exp, processedDate: rawDate };
+  }).filter(exp => {
+    if (!exp.processedDate) return false;
+    const expDate = new Date(exp.processedDate.includes('T') ? exp.processedDate : `${exp.processedDate}T12:00:00`);
+    return expDate >= thirtyDaysAgo;
+  });
+
+  const totalAmount = recentExpenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+  
+  const categories = recentExpenses.reduce((acc, exp) => {
     const cat = exp.category || 'otros';
     acc[cat] = (acc[cat] || 0) + (parseFloat(exp.amount) || 0);
     return acc;
@@ -31,7 +54,7 @@ export default function Analisis() {
   });
 
   const dailyTrend = last7Days.map(date => {
-    const total = expenses
+    const total = recentExpenses
       .filter(exp => (exp.date ? exp.date.split('T')[0] : '') === date)
       .reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
     
@@ -45,7 +68,7 @@ export default function Analisis() {
     };
   });
 
-  const maxAmount = Math.max(...dailyTrend.map(d => d.amount), 100);
+  const maxAmount = Math.max(...dailyTrend.map(d => d.amount), 10); // Minimum max for scaling
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -61,7 +84,7 @@ export default function Analisis() {
         </div>
       </div>
 
-      {expenses.length === 0 ? (
+      {recentExpenses.length === 0 ? (
         <div className="bg-surface-container-lowest p-12 rounded-[2rem] border border-outline-variant shadow-sm flex flex-col items-center justify-center text-center">
           <span className="material-symbols-outlined text-6xl text-primary/40 mb-4">analytics</span>
           <h3 className="font-headline font-bold text-2xl text-on-surface mb-2">Aún no hay datos para analizar</h3>
@@ -112,10 +135,31 @@ export default function Analisis() {
             <div className="md:col-span-4 bg-surface-container-lowest p-6 rounded-[2rem] border border-outline-variant shadow-sm flex flex-col items-center">
               <h3 className="font-headline font-bold text-on-surface w-full mb-6">Categorías</h3>
               <div className="relative w-48 h-48 flex items-center justify-center">
-                <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="96" cy="96" fill="transparent" r="80" stroke="var(--color-primary-container, #fef3c7)" strokeWidth="24"></circle>
-                  <circle cx="96" cy="96" fill="transparent" r="80" stroke="var(--color-primary, #ea580c)" strokeDasharray="502" strokeDashoffset="150" strokeLinecap="round" strokeWidth="24"></circle>
-                  <circle cx="96" cy="96" fill="transparent" r="80" stroke="var(--color-secondary, #fb923c)" strokeDasharray="502" strokeDashoffset="400" strokeLinecap="round" strokeWidth="24"></circle>
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="currentColor" className="text-surface-container-highest" strokeWidth="12"></circle>
+                  {(() => {
+                    let cumulativePercentage = 0;
+                    return sortedCategories.map(([cat, amount], i) => {
+                      const percentage = (amount / totalAmount) * 100;
+                      const strokeDasharray = `${percentage} ${100 - percentage}`;
+                      const strokeDashoffset = -cumulativePercentage;
+                      cumulativePercentage += percentage;
+                      const colors = ['text-primary', 'text-secondary', 'text-orange-300', 'text-orange-100'];
+                      return (
+                        <circle 
+                          key={cat}
+                          cx="50" cy="50" r="40" 
+                          fill="transparent" 
+                          stroke="currentColor" 
+                          className={colors[i % colors.length]} 
+                          strokeWidth="12"
+                          strokeDasharray={`${(percentage * 251.2) / 100} 251.2`}
+                          strokeDashoffset={`${-(cumulativePercentage - percentage) * 2.512}`}
+                          strokeLinecap="round"
+                        />
+                      );
+                    });
+                  })()}
                 </svg>
                 <div className="absolute text-center">
                   <span className="block text-2xl font-extrabold text-on-surface">
@@ -208,7 +252,7 @@ export default function Analisis() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-outline-variant/50">
-                    {expenses.slice().sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount)).slice(0, 5).map((exp, idx) => (
+                    {recentExpenses.slice().sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount)).slice(0, 5).map((exp, idx) => (
                       <tr 
                         key={idx} 
                         onClick={() => {

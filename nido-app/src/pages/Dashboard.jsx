@@ -31,13 +31,13 @@ export default function Dashboard() {
 
   const dailyStats = last7Days.map(date => {
     const dayExpenses = expenses.filter(exp => {
-      // Prioritize explicit date, fallback to createdAt for older records
       let rawDate = exp.date;
       if (!rawDate && exp.createdAt) {
         const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
         rawDate = d.toLocaleDateString('sv');
       }
-      const expDate = rawDate ? rawDate.split('T')[0] : '';
+      if (!rawDate) return false;
+      const expDate = rawDate.includes('T') ? rawDate.split('T')[0] : rawDate;
       return expDate === date;
     });
     return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);

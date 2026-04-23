@@ -32,7 +32,7 @@ export default function NuevoGasto() {
           category: expenseToEdit.category || 'otros',
           paidBy: expenseToEdit.paidBy || user?.uid || '',
           paymentStatus: expenseToEdit.paymentStatus || 'Pagado',
-          date: expenseToEdit.date || new Date().toISOString().split('T')[0],
+          date: expenseToEdit.date || (expenseToEdit.createdAt ? (expenseToEdit.createdAt.toDate ? expenseToEdit.createdAt.toDate() : new Date(expenseToEdit.createdAt)).toLocaleDateString('sv') : new Date().toLocaleDateString('sv')),
           participants: expenseToEdit.participants || []
         });
       }
