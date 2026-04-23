@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
 import { expenseService } from '../services/expenseService';
+import ExpenseSplitter from '../components/ExpenseSplitter';
 
 export default function NuevoGasto() {
   const navigate = useNavigate();
@@ -19,7 +20,9 @@ export default function NuevoGasto() {
     paidBy: user?.uid || '',
     paymentStatus: 'Pagado',
     date: new Date().toLocaleDateString('sv'),
-    participants: [] 
+    participants: [],
+    splitMode: 'equal', // 'equal' or 'custom'
+    customSplits: {} // { userId: amount }
   });
 
   useEffect(() => {
@@ -33,7 +36,9 @@ export default function NuevoGasto() {
           paidBy: expenseToEdit.paidBy || user?.uid || '',
           paymentStatus: expenseToEdit.paymentStatus || 'Pagado',
           date: expenseToEdit.date || (expenseToEdit.createdAt ? (expenseToEdit.createdAt.toDate ? expenseToEdit.createdAt.toDate() : new Date(expenseToEdit.createdAt)).toLocaleDateString('sv') : new Date().toLocaleDateString('sv')),
-          participants: expenseToEdit.participants || []
+          participants: expenseToEdit.participants || [],
+          splitMode: expenseToEdit.splitMode || 'equal',
+          customSplits: expenseToEdit.customSplits || {}
         });
       }
     }
@@ -182,6 +187,20 @@ export default function NuevoGasto() {
              </div>
           </div>
 
+          <hr className="border-outline-variant/30" />
+
+          {/* Splitting Section */}
+          <div className="space-y-8">
+            <h3 className="font-headline text-2xl text-on-surface italic text-center">Configuración de Reparto</h3>
+            <ExpenseSplitter 
+              total={parseFloat(formData.amount) || 0}
+              members={members}
+              currencySymbol={currencySymbol}
+              value={{ splitMode: formData.splitMode, customSplits: formData.customSplits }}
+              onChange={(val) => setFormData({ ...formData, ...val })}
+            />
+          </div>
+
           {/* Action Buttons */}
           <div className="pt-10 flex flex-col md:flex-row gap-6">
              {id && (
@@ -196,7 +215,12 @@ export default function NuevoGasto() {
              )}
              <button 
                type="submit"
-               disabled={isSubmitting || !formData.amount || !formData.concept}
+               disabled={
+                 isSubmitting || 
+                 !formData.amount || 
+                 !formData.concept || 
+                 (formData.splitMode === 'custom' && Math.abs(parseFloat(formData.amount) - Object.values(formData.customSplits).reduce((acc, val) => acc + (parseFloat(val) || 0), 0)) > 0.01)
+               }
                className="flex-[2] bg-on-surface text-surface rounded-[2.5rem] py-6 font-black text-xs uppercase tracking-[0.3em] shadow-2xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-30"
              >
                {isSubmitting ? 'Procesando...' : (id ? 'Actualizar' : 'Guardar Gasto')}

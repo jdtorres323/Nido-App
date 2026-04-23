@@ -93,15 +93,25 @@ export function HouseholdProvider({ children }) {
       netBalances[paidBy] += amount;
 
       // Subtract split shares
-      // For now, assuming simple equal split among all household members unless specified
+      const splitMode = exp.splitMode || 'equal';
       const participants = exp.participants || members.map(m => m.id);
-      const share = amount / participants.length;
-
-      participants.forEach(pId => {
-        if (netBalances[pId] !== undefined) {
-          netBalances[pId] -= share;
-        }
-      });
+      
+      if (splitMode === 'custom' && exp.customSplits) {
+        // Use manual assignments
+        Object.entries(exp.customSplits).forEach(([pId, share]) => {
+          if (netBalances[pId] !== undefined) {
+            netBalances[pId] -= parseFloat(share);
+          }
+        });
+      } else {
+        // Equal split among participants
+        const share = amount / participants.length;
+        participants.forEach(pId => {
+          if (netBalances[pId] !== undefined) {
+            netBalances[pId] -= share;
+          }
+        });
+      }
     });
 
     return netBalances;
