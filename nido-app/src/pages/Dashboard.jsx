@@ -5,7 +5,7 @@ import Layout from '../components/Layout';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { activeHousehold, members, expenses, balances, loading } = useHousehold();
+  const { activeHousehold, members, expenses, balances, loading, formatAmount } = useHousehold();
 
   if (loading) return (
     <Layout title="Dashboard">
@@ -71,7 +71,7 @@ export default function Dashboard() {
           <div className="relative z-10">
             <p className="text-stone-500 dark:text-stone-400 font-medium mb-1">Balance total del hogar</p>
             <h3 className="font-headline text-5xl font-extrabold text-stone-900 dark:text-white mb-8 tracking-tighter">
-              {totalSpent.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+              {formatAmount(totalSpent)}
             </h3>
             
             <div className="flex flex-wrap gap-4">
@@ -82,7 +82,7 @@ export default function Dashboard() {
                 <div>
                   <p className="text-[10px] uppercase font-black tracking-[0.15em] text-stone-400">Te deben</p>
                   <p className="font-headline text-2xl font-bold text-emerald-600">
-                    {youAreOwed.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                    {formatAmount(youAreOwed)}
                   </p>
                 </div>
               </div>
@@ -94,7 +94,7 @@ export default function Dashboard() {
                 <div>
                   <p className="text-[10px] uppercase font-black tracking-[0.15em] text-stone-400">Debes</p>
                   <p className="font-headline text-2xl font-bold text-rose-600">
-                    {youOwe.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                    {formatAmount(youOwe)}
                   </p>
                 </div>
               </div>
@@ -144,7 +144,7 @@ export default function Dashboard() {
                   style={{ height: `${(amount / maxDaily) * 100}%`, minHeight: '8px' }}
                 >
                   <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
-                    {amount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                    {formatAmount(amount)}
                   </div>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
@@ -198,7 +198,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <p className={`font-headline text-2xl font-bold ${isSettled ? 'text-stone-300' : (balance >= 0 ? 'text-stone-900 dark:text-white' : 'text-rose-600')}`}>
-                  {Math.abs(balance).toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                  {formatAmount(Math.abs(balance))}
                 </p>
               </div>
             );
@@ -246,7 +246,7 @@ export default function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="font-headline text-2xl font-bold text-stone-900 dark:text-white">
-                    {exp.amount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                    {formatAmount(exp.amount)}
                   </p>
                   <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${categoryStyle} px-3 py-1 rounded-full`}>
                     {exp.category}

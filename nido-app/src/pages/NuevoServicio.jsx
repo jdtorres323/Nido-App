@@ -8,7 +8,7 @@ export default function NuevoServicio() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAuth();
-  const { activeHousehold, members, expenses } = useHousehold();
+  const { activeHousehold, members, expenses, currencySymbol } = useHousehold();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -147,7 +147,7 @@ export default function NuevoServicio() {
                 <label className="font-black text-[10px] uppercase tracking-widest text-on-surface-variant">Monto Estimado</label>
                 <div className="flex items-center bg-surface-container-highest/30 border-b-2 border-outline-variant rounded-t-lg px-4 py-2 transition-colors focus-within:border-primary relative overflow-hidden group">
                   <span className="font-headline text-3xl text-primary font-bold mr-2 group-focus-within:text-primary transition-colors">
-                     {activeHousehold?.currency === 'USD' ? '$' : '€'}
+                     {currencySymbol}
                   </span>
                   <input 
                     required

@@ -1,7 +1,7 @@
 import { useHousehold } from '../context/HouseholdContext';
 
 export default function Analisis() {
-  const { expenses, activeHousehold } = useHousehold();
+  const { expenses, activeHousehold, formatAmount } = useHousehold();
 
   const totalAmount = expenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
   
@@ -20,6 +20,27 @@ export default function Analisis() {
   };
 
   const sortedCategories = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+
+  // Dynamic Chart Logic: Last 7 days
+  const last7Days = [...Array(7)].map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d.toISOString().split('T')[0];
+  });
+
+  const dailyTrend = last7Days.map(date => {
+    const total = expenses
+      .filter(exp => exp.date === date)
+      .reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+    
+    const dayName = new Date(date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long' });
+    return {
+      amount: total,
+      label: dayName.charAt(0).toUpperCase() + dayName.slice(1)
+    };
+  });
+
+  const maxAmount = Math.max(...dailyTrend.map(d => d.amount), 100);
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -57,12 +78,28 @@ export default function Analisis() {
               </div>
               
               <div className="relative h-64 w-full mt-auto flex items-end gap-2 px-2">
-                {[40, 55, 45, 70, 85, 65, 95].map((h, i) => (
-                  <div key={i} className="w-full bg-primary rounded-t-xl transition-all hover:opacity-80" style={{height: `${h}%`, opacity: 0.5 + (h / 200)}}></div>
-                ))}
-              </div>
-              <div className="flex justify-between mt-4 text-xs text-on-surface-variant px-2 font-medium">
-                <span>Lunes</span><span>Martes</span><span>Miércoles</span><span>Jueves</span><span>Viernes</span><span>Sábado</span><span>Domingo</span>
+                {dailyTrend.map((day, i) => {
+                  const height = (day.amount / maxAmount) * 100;
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative">
+                      {/* Tooltip on hover */}
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl font-bold">
+                        {formatAmount(day.amount)}
+                      </div>
+                      
+                      <div 
+                        className="w-full bg-primary rounded-t-xl transition-all duration-500 hover:opacity-100" 
+                        style={{
+                          height: `${Math.max(height, 5)}%`, 
+                          opacity: 0.4 + (height / 150)
+                        }}
+                      ></div>
+                      <span className="text-[10px] font-black uppercase tracking-tighter text-on-surface-variant truncate w-full text-center">
+                        {day.label.substring(0, 3)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -77,7 +114,7 @@ export default function Analisis() {
                 </svg>
                 <div className="absolute text-center">
                   <span className="block text-2xl font-extrabold text-on-surface">
-                    {totalAmount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                    {formatAmount(totalAmount)}
                   </span>
                   <span className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Total</span>
                 </div>
@@ -128,7 +165,7 @@ export default function Analisis() {
                     <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-wider">Suscripciones</span>
                   </div>
                   <h4 className="font-headline font-bold text-on-surface mb-2">Cargos Duplicados</h4>
-                  <p className="text-on-surface-variant text-sm leading-relaxed font-medium">Hemos detectado dos cobros similares de "Streaming Service". Podrías ahorrar $12.99 mensuales cancelando uno.</p>
+                  <p className="text-on-surface-variant text-sm leading-relaxed font-medium">Hemos detectado dos cobros similares de "Streaming Service". Podrías ahorrar {formatAmount(12.99)} mensuales cancelando uno.</p>
                   <div className="mt-4 flex items-center gap-2 text-primary font-bold text-sm cursor-pointer hover:underline">
                     <span>Solucionar ahora</span>
                     <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -172,13 +209,13 @@ export default function Analisis() {
                           <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                             <span className="material-symbols-outlined text-sm">{exp.category === 'comida' ? 'shopping_cart' : exp.category === 'hogar' ? 'home' : exp.category === 'servicios' ? 'water_drop' : exp.category === 'ocio' ? 'sports_esports' : 'receipt_long'}</span>
                           </div>
-                          <span className="font-bold text-on-surface">{exp.title}</span>
+                          <span className="font-bold text-on-surface">{exp.concept}</span>
                         </td>
                         <td className="py-4 text-sm font-medium text-on-surface-variant">
                           {exp.date ? new Date(exp.date).toLocaleDateString() : 'N/A'}
                         </td>
                         <td className="py-4 text-sm font-black text-on-surface">
-                          {parseFloat(exp.amount).toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                          {formatAmount(exp.amount)}
                         </td>
                         <td className="py-4">
                           <span className="px-3 py-1 rounded-full bg-primary-container text-primary text-[10px] font-black uppercase tracking-wider">{categoryLabels[exp.category] || exp.category}</span>

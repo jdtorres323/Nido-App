@@ -107,12 +107,38 @@ export function HouseholdProvider({ children }) {
     return netBalances;
   }, [members, expenses]);
 
+  // Helper to get currency symbol
+  const currencySymbol = useMemo(() => {
+    if (!activeHousehold?.currency) return '€';
+    switch (activeHousehold.currency) {
+      case 'EUR': return '€';
+      case 'USD': return 'US$';
+      case 'UYU': return '$U';
+      case 'MXN': return '$';
+      case 'ARS': return '$';
+      case 'COP': return '$';
+      default: return '$';
+    }
+  }, [activeHousehold?.currency]);
+
+  // Helper to format amount
+  const formatAmount = (amount) => {
+    const val = parseFloat(amount) || 0;
+    return val.toLocaleString('es-ES', { 
+      style: 'currency', 
+      currency: activeHousehold?.currency || 'EUR',
+      minimumFractionDigits: 2
+    });
+  };
+
   const value = {
     activeHousehold,
     members,
     expenses,
     balances,
-    loading
+    loading,
+    currencySymbol,
+    formatAmount
   };
 
   return (

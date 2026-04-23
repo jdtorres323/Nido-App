@@ -7,7 +7,7 @@ import { expenseService } from '../services/expenseService';
 export default function NuevoGasto() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { activeHousehold, members } = useHousehold();
+  const { activeHousehold, members, currencySymbol } = useHousehold();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -62,7 +62,7 @@ export default function NuevoGasto() {
           <div className="flex flex-col items-center gap-2">
              <label className="font-black text-[10px] uppercase tracking-[0.3em] text-primary">Importe Total</label>
              <div className="flex items-center justify-center group">
-                <span className="text-4xl text-on-surface/20 mr-4 font-bold">€</span>
+                <span className="text-4xl text-on-surface/20 mr-4 font-bold">{currencySymbol}</span>
                 <input 
                   autoFocus
                   required
@@ -103,6 +103,18 @@ export default function NuevoGasto() {
                  <option value="ocio">Ocio & Placer</option>
                  <option value="otros">Otros</option>
                </select>
+            </div>
+
+            {/* Date Input */}
+            <div className="space-y-4 md:col-span-2">
+               <label className="font-black text-[10px] uppercase tracking-widest text-on-surface-variant px-4 text-center block">Fecha del Gasto</label>
+               <input 
+                 required
+                 type="date"
+                 className="w-full bg-surface-container-highest border-none rounded-[2.5rem] p-6 text-xl font-bold text-on-surface focus:ring-2 focus:ring-primary text-center"
+                 value={formData.date}
+                 onChange={e => setFormData({...formData, date: e.target.value})}
+               />
             </div>
           </div>
 

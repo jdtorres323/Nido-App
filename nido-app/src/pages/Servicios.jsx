@@ -4,7 +4,7 @@ import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
 
 export default function Servicios() {
-  const { activeHousehold, expenses, loading, members } = useHousehold();
+  const { activeHousehold, expenses, loading, members, formatAmount, currencySymbol } = useHousehold();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -79,7 +79,7 @@ export default function Servicios() {
     if (subs.length > 1) {
       tips.push({
         title: 'Auditoría de Suscripciones',
-        desc: `Tienes ${subs.length} servicios de streaming. ¿Realmente los usas todos? Cancelar uno podría ahorrarte ${activeHousehold?.currency || '€'} ${(subs[0].amount * 12).toFixed(0)} al año.`,
+        desc: `Tienes ${subs.length} servicios de streaming. ¿Realmente los usas todos? Cancelar uno podría ahorrarte ${formatAmount(subs[0].amount * 12)} al año.`,
         icon: 'subscriptions'
       });
     }
@@ -219,9 +219,9 @@ export default function Servicios() {
                       <div className="relative">
                         <label className="text-[10px] font-black text-on-surface-variant/40 uppercase tracking-widest ml-1">Monto</label>
                         <div className="flex items-end border-b-2 border-outline-variant focus-within:border-primary transition-colors py-2">
-                          <span className="text-on-surface-variant mr-2 font-bold text-xl">{activeHousehold?.currency || '€'}</span>
+                          <span className="text-on-surface-variant mr-2 font-bold text-xl">{currencySymbol}</span>
                           <span className="text-3xl font-black text-on-surface tracking-tighter">
-                            {service.amount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                            {parseFloat(service.amount).toLocaleString('es-ES', { minimumFractionDigits: 2 })}
                           </span>
                         </div>
                       </div>
@@ -278,7 +278,7 @@ export default function Servicios() {
                           <p className="font-bold text-on-primary-container text-lg leading-none mb-1">{service.concept}</p>
                           <p className="text-[10px] text-on-primary-container/60 uppercase font-black tracking-widest">En presupuesto</p>
                         </div>
-                        <p className="font-headline text-xl font-bold text-on-primary-container">~ {parseFloat(service.amount).toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}</p>
+                        <p className="font-headline text-xl font-bold text-on-primary-container">~ {formatAmount(service.amount)}</p>
                       </div>
                     ))}
                 </div>
@@ -316,7 +316,7 @@ export default function Servicios() {
             <h2 className="font-headline text-3xl md:text-4xl italic tracking-tight">Resumen de {currentDate.toLocaleString('es-ES', { month: 'long' })}</h2>
             <p className="text-surface/60 max-w-lg font-medium leading-relaxed">
               {servicesExpenses.length > 0 
-                ? `Faltan ${servicesExpenses.filter(s => !s.isPaid).length} servicios por pagar. El compromiso total proyectado es de ${totalServicesAmount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}.`
+                ? `Faltan ${servicesExpenses.filter(s => !s.isPaid).length} servicios por pagar. El compromiso total proyectado es de ${formatAmount(totalServicesAmount)}.`
                 : 'No hay servicios registrados para este periodo aún.'}
             </p>
           </div>
@@ -335,13 +335,13 @@ export default function Servicios() {
           <div className="bg-white/5 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 min-w-[180px] flex-1 lg:flex-none">
             <span className="text-primary text-[10px] uppercase font-black tracking-widest mb-2 block">Pagado</span>
             <p className="text-3xl font-black tracking-tighter">
-              {paidAmount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+              {formatAmount(paidAmount)}
             </p>
           </div>
           <div className="bg-white/5 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 min-w-[180px] flex-1 lg:flex-none">
             <span className="text-white/40 text-[10px] uppercase font-black tracking-widest mb-2 block">Pendiente</span>
             <p className="text-3xl font-black tracking-tighter opacity-50">
-              {pendingAmount.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+              {formatAmount(pendingAmount)}
             </p>
           </div>
         </div>

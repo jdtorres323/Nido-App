@@ -8,7 +8,7 @@ import { expenseService } from '../services/expenseService';
 export default function Escaner() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { activeHousehold, members } = useHousehold();
+  const { activeHousehold, members, formatAmount } = useHousehold();
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -118,7 +118,7 @@ export default function Escaner() {
                  <h3 className="font-headline text-3xl italic">Datos Extraídos</h3>
                  <div className="text-right">
                     <p className="font-headline text-4xl font-bold text-primary">
-                       {result?.amount?.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' }) || '---'}
+                       {result?.amount ? formatAmount(result.amount) : '---'}
                     </p>
                     <p className="text-surface/50 text-[10px] uppercase font-black tracking-widest leading-none mt-1">Gasto Estimado</p>
                  </div>
@@ -169,11 +169,21 @@ export default function Escaner() {
                           className="w-full bg-surface/10 border-none rounded-2xl p-4 font-bold text-lg focus:ring-2 focus:ring-primary text-surface appearance-none"
                         >
                           <option value="comida">Alimentación</option>
-                          <option value="hogar">Hogar</option>
-                          <option value="ocio">Ocio</option>
+                          <option value="hogar">Hogar & Vivienda</option>
+                          <option value="ocio">Ocio & Placer</option>
                           <option value="otros">Otros</option>
                         </select>
                       </div>
+                   </div>
+
+                   <div className="space-y-2">
+                      <label className="text-[10px] uppercase font-black tracking-widest text-surface/40 px-2">Fecha</label>
+                      <input 
+                        type="date" 
+                        value={result.date ? result.date.split('T')[0] : new Date().toISOString().split('T')[0]}
+                        onChange={(e) => setResult({...result, date: e.target.value})}
+                        className="w-full bg-surface/10 border-none rounded-2xl p-4 font-bold text-xl focus:ring-2 focus:ring-primary text-surface"
+                      />
                    </div>
                 </div>
               )}

@@ -5,7 +5,7 @@ import { db } from '../firebase';
 
 export default function Familia() {
   const { user } = useAuth();
-  const { activeHousehold, members, balances, expenses } = useHousehold();
+  const { activeHousehold, members, balances, expenses, formatAmount } = useHousehold();
 
   const copyHouseholdId = () => {
     if (activeHousehold?.id) {
@@ -106,7 +106,7 @@ export default function Familia() {
               <p className="text-on-surface-variant text-sm mb-2">{member.email}</p>
               
               <p className={`font-headline text-lg font-bold mb-6 ${balance >= 0 ? 'text-on-surface' : 'text-error'}`}>
-                Balance: {balance >= 0 ? '+' : ''}{balance.toLocaleString('es-ES', { style: 'currency', currency: activeHousehold?.currency || 'EUR' })}
+                Balance: {balance >= 0 ? '+' : ''}{formatAmount(balance)}
               </p>
 
               <div className="w-full space-y-3">
