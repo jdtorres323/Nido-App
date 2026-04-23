@@ -31,7 +31,13 @@ export default function Dashboard() {
 
   const dailyStats = last7Days.map(date => {
     const dayExpenses = expenses.filter(exp => {
-      const expDate = exp.date ? exp.date.split('T')[0] : '';
+      // Prioritize explicit date, fallback to createdAt for older records
+      let rawDate = exp.date;
+      if (!rawDate && exp.createdAt) {
+        const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
+        rawDate = d.toLocaleDateString('sv');
+      }
+      const expDate = rawDate ? rawDate.split('T')[0] : '';
       return expDate === date;
     });
     return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
@@ -151,7 +157,11 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
-                  {['L', 'M', 'X', 'J', 'V', 'S', 'D'][(new Date(last7Days[i]).getDay() + 6) % 7]}
+                  {(() => {
+                    const [y, m, d] = last7Days[i].split('-').map(Number);
+                    const dateObj = new Date(y, m - 1, d);
+                    return ['D', 'L', 'M', 'X', 'J', 'V', 'S'][dateObj.getDay()];
+                  })()}
                 </span>
               </div>
             ))}
