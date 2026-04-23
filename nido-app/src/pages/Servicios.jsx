@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
+import ServiceCalculator from '../components/ServiceCalculator';
 
 export default function Servicios() {
   const { activeHousehold, expenses, loading, members, formatAmount, currencySymbol } = useHousehold();
@@ -291,6 +292,14 @@ export default function Servicios() {
               </>
             )}
           </div>
+
+          <ServiceCalculator 
+            total={totalServicesAmount} 
+            membersCount={members.length}
+            currencySymbol={currencySymbol}
+            monthName={monthName}
+            formatAmount={formatAmount}
+          />
 
           <div className="p-10 border border-outline-variant rounded-[3rem] space-y-6 bg-surface-container-low relative group">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
