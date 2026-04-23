@@ -1,18 +1,13 @@
+import { useState } from 'react';
 import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { invitationService } from '../services/invitationService';
 
 export default function Familia() {
   const { user } = useAuth();
   const { activeHousehold, members, balances, expenses, formatAmount } = useHousehold();
-
-  const copyHouseholdId = () => {
-    if (activeHousehold?.id) {
-      navigator.clipboard.writeText(activeHousehold.id);
-      alert('¡ID del Hogar copiado!');
-    }
-  };
 
   const handleCurrencyChange = async (e) => {
     const newCurrency = e.target.value;
@@ -27,46 +22,63 @@ export default function Familia() {
     }
   };
 
-  // Stats calculation
-  const currentMonth = new Date().getMonth();
-  const expensesThisMonth = expenses.filter(exp => {
-    const expDate = new Date(exp.date);
-    return expDate.getMonth() === currentMonth;
-  }).length;
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
-  const settledMembers = members.filter(m => Math.abs(balances[m.id] || 0) < 0.01).length;
+  const handleSendInvite = async (e) => {
+    e.preventDefault();
+    if (!inviteEmail || !activeHousehold) return;
+    
+    setIsSending(true);
+    try {
+      await invitationService.sendInvitation(
+        inviteEmail, 
+        activeHousehold.id, 
+        activeHousehold.name || 'Hogar Sin Nombre',
+        user?.displayName || 'Un miembro de tu familia'
+      );
+      alert(`Invitación enviada a ${inviteEmail}. Cuando inicien sesión con Google, verán la invitación.`);
+      setInviteEmail('');
+    } catch (err) {
+      alert(err.message || "Error al enviar la invitación");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const copyInviteLink = () => {
+    const link = `https://nido-organic-app-jd.web.app/?invite=${activeHousehold?.id}`;
+    navigator.clipboard.writeText(link);
+    alert('Link de invitación copiado. Compártelo con tu familia.');
+  };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto pb-10">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
         <div>
-          <h1 className="text-4xl font-extrabold text-on-background tracking-tight">Directorio del Hogar</h1>
-          <p className="text-on-surface-variant mt-2">Gestiona los miembros de tu grupo familiar y moneda local.</p>
+          <h1 className="text-4xl font-black text-on-background tracking-tighter italic">Tu Nido</h1>
+          <p className="text-on-surface-variant mt-2 font-medium">Gestiona los miembros y la configuración de tu hogar.</p>
         </div>
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-          <div className="flex items-center gap-2 bg-surface px-4 py-3 rounded-xl border border-outline-variant shadow-sm w-full md:w-auto justify-between">
-            <span className="material-symbols-outlined text-on-surface-variant text-sm">payments</span>
-            <select 
-              value={activeHousehold?.currency || 'EUR'}
-              onChange={handleCurrencyChange}
-              className="bg-transparent text-sm font-bold text-on-surface outline-none cursor-pointer flex-1 text-right md:text-left"
-            >
-              <option value="EUR">Euro (€)</option>
-              <option value="USD">Dólar (US$)</option>
-              <option value="UYU">Peso Uruguayo ($U)</option>
-              <option value="MXN">Peso Mexicano ($)</option>
-              <option value="ARS">Peso Argentino ($)</option>
-              <option value="COP">Peso Colombiano ($)</option>
-            </select>
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+          <div className="flex items-center gap-3 bg-surface-container-high px-5 py-4 rounded-2xl border border-outline-variant shadow-sm w-full md:w-auto">
+            <span className="material-symbols-outlined text-primary text-xl">payments</span>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Moneda del Hogar</span>
+              <select 
+                value={activeHousehold?.currency || 'EUR'}
+                onChange={handleCurrencyChange}
+                className="bg-transparent text-sm font-bold text-on-surface outline-none cursor-pointer"
+              >
+                <option value="EUR">Euro (€)</option>
+                <option value="USD">Dólar (US$)</option>
+                <option value="UYU">Peso Uruguayo ($U)</option>
+                <option value="MXN">Peso Mexicano ($)</option>
+                <option value="ARS">Peso Argentino ($)</option>
+                <option value="COP">Peso Colombiano ($)</option>
+              </select>
+            </div>
           </div>
-          <button 
-            onClick={copyHouseholdId}
-            className="flex items-center justify-center gap-2 bg-primary text-on-primary py-3 px-6 rounded-xl font-semibold shadow-md active:scale-95 transition-transform w-full md:w-auto"
-          >
-            <span className="material-symbols-outlined">link</span>
-            <span>Copiar Link</span>
-          </button>
         </div>
       </div>
 
@@ -75,26 +87,17 @@ export default function Familia() {
         {members.map((member, index) => {
           const balance = balances[member.id] || 0;
           const isMe = member.id === user?.uid;
-          const isAdmin = index === 0; // Temporary logic for admin
+          const isAdmin = index === 0;
 
           return (
-            <div key={member.id} className="bg-surface p-8 rounded-3xl shadow-sm border border-outline-variant flex flex-col items-center text-center relative overflow-hidden group">
-              {isAdmin && (
-                <div className="absolute top-0 right-0 p-4">
-                  <span className="inline-flex items-center rounded-full bg-primary-container px-3 py-1 text-xs font-medium text-on-primary-container">
-                    Administrador
-                  </span>
-                </div>
-              )}
-              {isMe && !isAdmin && (
-                 <div className="absolute top-0 right-0 p-4">
-                  <span className="inline-flex items-center rounded-full bg-secondary-container px-3 py-1 text-xs font-medium text-on-secondary-container">
-                    Tú
-                  </span>
-                </div>
-              )}
+            <div key={member.id} className="bg-surface p-8 rounded-[3rem] shadow-sm border border-outline-variant flex flex-col items-center text-center relative overflow-hidden group">
+              <div className="absolute top-6 right-6">
+                <span className={`inline-flex items-center rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${isAdmin ? 'bg-primary text-on-primary' : (isMe ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-highest text-on-surface-variant')}`}>
+                  {isAdmin ? 'Admin' : (isMe ? 'Tú' : 'Miembro')}
+                </span>
+              </div>
               
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-low mb-6 shadow-xl transition-transform group-hover:scale-105 duration-300">
+              <div className="w-28 h-28 rounded-[2.5rem] overflow-hidden border-4 border-surface-container-low mb-6 shadow-2xl transition-transform group-hover:rotate-3 duration-300">
                 <img 
                   alt={member.displayName} 
                   className="w-full h-full object-cover"
@@ -102,21 +105,24 @@ export default function Familia() {
                 />
               </div>
               
-              <h3 className="text-xl font-bold text-on-background">{member.displayName}</h3>
-              <p className="text-on-surface-variant text-sm mb-2">{member.email}</p>
+              <h3 className="text-xl font-black text-on-background">{member.displayName}</h3>
+              <p className="text-on-surface-variant text-xs mb-4 font-medium">{member.email}</p>
               
-              <p className={`font-headline text-lg font-bold mb-6 ${balance >= 0 ? 'text-on-surface' : 'text-error'}`}>
-                Balance: {balance >= 0 ? '+' : ''}{formatAmount(balance)}
-              </p>
+              <div className={`px-6 py-3 rounded-2xl mb-6 w-full ${balance >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">Balance Actual</p>
+                <p className="font-black text-2xl tracking-tighter">
+                  {balance >= 0 ? '+' : ''}{formatAmount(balance)}
+                </p>
+              </div>
 
-              <div className="w-full space-y-3">
-                <div className={`flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl border border-outline-variant ${isMe ? '' : 'opacity-50'}`}>
-                  <span className="text-xs font-bold text-on-surface-variant uppercase">PayPal</span>
-                  <span className="text-on-surface font-medium italic">{isMe ? '@' + member.displayName.replace(/\s+/g, '').toLowerCase() : 'No vinculado'}</span>
+              <div className="w-full space-y-2">
+                <div className="flex items-center justify-between p-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/30">
+                  <span className="text-[9px] font-black text-on-surface-variant uppercase tracking-widest">Aportes</span>
+                  <span className="text-on-surface font-bold text-xs">85%</span>
                 </div>
-                <div className={`flex items-center justify-between p-3 bg-surface-container-lowest rounded-xl border border-outline-variant ${!isMe ? 'opacity-50' : ''}`}>
-                  <span className="text-xs font-bold text-on-surface-variant uppercase">Venmo</span>
-                  <span className="text-on-surface font-medium italic">{!isMe ? 'No vinculado' : member.displayName.replace(/\s+/g, '-').toLowerCase()}</span>
+                <div className="flex items-center justify-between p-3 bg-surface-container-lowest rounded-2xl border border-outline-variant/30">
+                  <span className="text-[9px] font-black text-on-surface-variant uppercase tracking-widest">Gastos</span>
+                  <span className="text-on-surface font-bold text-xs">12</span>
                 </div>
               </div>
             </div>
@@ -124,16 +130,41 @@ export default function Familia() {
         })}
 
         {/* Invite New Member Card */}
-        <div 
-          onClick={copyHouseholdId}
-          className="border-2 border-dashed border-outline p-8 rounded-3xl flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-surface-container-low transition-all duration-300"
-        >
-          <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-            <span className="material-symbols-outlined text-on-primary-container text-3xl">person_add</span>
+        <div className="bg-on-surface text-surface p-8 rounded-[3rem] shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+          
+          <div className="w-16 h-16 rounded-[1.5rem] bg-surface text-on-surface flex items-center justify-center mb-6 shadow-lg">
+            <span className="material-symbols-outlined text-3xl">mail_lock</span>
           </div>
-          <h3 className="text-lg font-bold text-on-background">Invitar Miembro</h3>
-          <p className="text-on-surface-variant text-sm mt-2 max-w-[200px]">Copia el ID del hogar para añadir a alguien nuevo</p>
-          <p className="font-mono text-xs font-bold mt-4 bg-surface-container px-3 py-1 rounded-lg text-primary">{activeHousehold?.id}</p>
+          
+          <h3 className="text-xl font-black italic tracking-tighter mb-2">Invitar a unirte</h3>
+          <p className="text-surface/60 text-xs mb-8 font-medium">Envía una invitación directa al Gmail de la persona.</p>
+          
+          <form onSubmit={handleSendInvite} className="w-full space-y-4">
+            <input 
+              required
+              type="email"
+              placeholder="ejemplo@gmail.com"
+              value={inviteEmail}
+              onChange={e => setInviteEmail(e.target.value)}
+              className="w-full bg-surface/10 border border-surface/20 rounded-2xl py-4 px-6 text-sm font-bold text-surface placeholder:text-surface/30 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <button 
+              type="submit"
+              disabled={isSending || !inviteEmail}
+              className="w-full bg-primary text-on-primary py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+            >
+              {isSending ? 'Enviando...' : 'Enviar Invitación'}
+            </button>
+          </form>
+          
+          <button 
+            onClick={copyInviteLink}
+            className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-surface/40 hover:text-surface transition-colors"
+          >
+            <span className="material-symbols-outlined text-sm">content_copy</span>
+            Copiar Link Directo
+          </button>
         </div>
       </div>
 

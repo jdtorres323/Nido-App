@@ -9,11 +9,13 @@ import NuevoGasto from './pages/NuevoGasto';
 import NuevoServicio from './pages/NuevoServicio';
 import { AuthProvider } from './context/AuthContext';
 import { HouseholdProvider } from './context/HouseholdContext';
+import InvitationManager from './components/InvitationManager';
 
 function App() {
   return (
     <AuthProvider>
       <HouseholdProvider>
+        <InvitationManager />
         <Router>
           <Routes>
             <Route path="/" element={<Layout title="Resumen Mensual"><Dashboard /></Layout>} />
