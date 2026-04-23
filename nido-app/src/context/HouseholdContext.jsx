@@ -19,6 +19,30 @@ export function HouseholdProvider({ children }) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Normalize expense data for consistent use across components
+  const normalizeExpense = (exp) => {
+    let processedDate = exp.date;
+    if (!processedDate && exp.createdAt) {
+      // Handle Firestore Timestamp or Date object/string
+      const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
+      processedDate = d.toLocaleDateString('sv'); // sv-SE uses YYYY-MM-DD
+    }
+    
+    // Calculate total amount if it's an itemized expense, or use root amount
+    let totalAmount = 0;
+    if (exp.items && Array.isArray(exp.items) && exp.items.length > 0) {
+      totalAmount = exp.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+    } else {
+      totalAmount = parseFloat(exp.amount) || 0;
+    }
+
+    return {
+      ...exp,
+      processedDate,
+      totalAmount
+    };
+  };
+
   // Sync active household info
   useEffect(() => {
     if (!userProfile?.currentHouseholdId) {
@@ -57,14 +81,24 @@ export function HouseholdProvider({ children }) {
       where('householdId', '==', householdId)
     );
     const unsubscribeExpenses = onSnapshot(expensesQuery, (querySnap) => {
-      let expensesData = querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Sort in memory to avoid needing a Firestore composite index
-      expensesData.sort((a, b) => {
-        const dateA = new Date(a.date || 0).getTime();
-        const dateB = new Date(b.date || 0).getTime();
-        return dateB - dateA; // Descending
+      const rawExpenses = querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Normalize and Sort in memory to avoid needing a Firestore composite index immediately
+      const normalizedExpenses = rawExpenses.map(normalizeExpense);
+      
+      normalizedExpenses.sort((a, b) => {
+        // Sort by processedDate descending
+        const dateA = a.processedDate || '0000-00-00';
+        const dateB = b.processedDate || '0000-00-00';
+        if (dateB !== dateA) return dateB.localeCompare(dateA);
+        
+        // Fallback to createdAt timestamp if dates are same
+        const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : (b.createdAt || 0);
+        const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : (a.createdAt || 0);
+        return timeB - timeA;
       });
-      setExpenses(expensesData);
+
+      setExpenses(normalizedExpenses);
       setLoading(false);
     }, (error) => {
       console.error("Error fetching expenses:", error);
@@ -86,31 +120,55 @@ export function HouseholdProvider({ children }) {
     members.forEach(m => netBalances[m.id] = 0);
 
     expenses.forEach(exp => {
-      const amount = parseFloat(exp.amount) || 0;
+      const amount = exp.totalAmount;
       const paidBy = exp.paidBy;
       
       // Amount paid by the user
-      netBalances[paidBy] += amount;
+      if (netBalances[paidBy] !== undefined) {
+        netBalances[paidBy] += amount;
+      }
 
-      // Subtract split shares
-      const splitMode = exp.splitMode || 'equal';
-      const participants = exp.participants || members.map(m => m.id);
-      
-      if (splitMode === 'custom' && exp.customSplits) {
-        // Use manual assignments
-        Object.entries(exp.customSplits).forEach(([pId, share]) => {
-          if (netBalances[pId] !== undefined) {
-            netBalances[pId] -= parseFloat(share);
+      // If the expense has itemized lines, process each line's split
+      if (exp.items && Array.isArray(exp.items) && exp.items.length > 0) {
+        exp.items.forEach(item => {
+          const itemAmount = parseFloat(item.amount) || 0;
+          const itemSplitMode = item.splitMode || 'equal';
+          const itemParticipants = item.participants || members.map(m => m.id);
+
+          if (itemSplitMode === 'custom' && item.customSplits) {
+            Object.entries(item.customSplits).forEach(([pId, share]) => {
+              if (netBalances[pId] !== undefined) {
+                netBalances[pId] -= parseFloat(share) || 0;
+              }
+            });
+          } else {
+            const share = itemAmount / itemParticipants.length;
+            itemParticipants.forEach(pId => {
+              if (netBalances[pId] !== undefined) {
+                netBalances[pId] -= share;
+              }
+            });
           }
         });
       } else {
-        // Equal split among participants
-        const share = amount / participants.length;
-        participants.forEach(pId => {
-          if (netBalances[pId] !== undefined) {
-            netBalances[pId] -= share;
-          }
-        });
+        // Fallback to global split if no items (Legacy/Simple expense)
+        const splitMode = exp.splitMode || 'equal';
+        const participants = exp.participants || members.map(m => m.id);
+        
+        if (splitMode === 'custom' && exp.customSplits) {
+          Object.entries(exp.customSplits).forEach(([pId, share]) => {
+            if (netBalances[pId] !== undefined) {
+              netBalances[pId] -= parseFloat(share) || 0;
+            }
+          });
+        } else {
+          const share = amount / participants.length;
+          participants.forEach(pId => {
+            if (netBalances[pId] !== undefined) {
+              netBalances[pId] -= share;
+            }
+          });
+        }
       }
     });
 

@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
 import Layout from '../components/Layout';
+import MultiLineSplitter from '../components/MultiLineSplitter';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -128,6 +129,9 @@ export default function Dashboard() {
           </div>
         </Link>
       </div>
+      
+      {/* Quick Entry Multi-line Splitter */}
+      <MultiLineSplitter />
 
       {/* Mini Trend Section */}
       <section className="bg-white dark:bg-stone-900 p-10 rounded-[3.5rem] border border-orange-100 dark:border-stone-800 shadow-sm overflow-hidden relative group">

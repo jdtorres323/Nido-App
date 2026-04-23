@@ -15,24 +15,17 @@ export default function Analisis() {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
-  const recentExpenses = expenses.map(exp => {
-    let rawDate = exp.date;
-    if (!rawDate && exp.createdAt) {
-      const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
-      rawDate = d.toLocaleDateString('sv');
-    }
-    return { ...exp, processedDate: rawDate };
-  }).filter(exp => {
+  const recentExpenses = expenses.filter(exp => {
     if (!exp.processedDate) return false;
     const expDate = new Date(exp.processedDate.includes('T') ? exp.processedDate : `${exp.processedDate}T12:00:00`);
     return expDate >= thirtyDaysAgo;
   });
 
-  const totalAmount = recentExpenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+  const totalAmount = recentExpenses.reduce((acc, exp) => acc + exp.totalAmount, 0);
   
   const categories = recentExpenses.reduce((acc, exp) => {
     const cat = exp.category || 'otros';
-    acc[cat] = (acc[cat] || 0) + (parseFloat(exp.amount) || 0);
+    acc[cat] = (acc[cat] || 0) + exp.totalAmount;
     return acc;
   }, {});
 
@@ -46,29 +39,32 @@ export default function Analisis() {
 
   const sortedCategories = Object.entries(categories).sort((a, b) => b[1] - a[1]);
 
-  // Dynamic Chart Logic: Last 7 days
-  const last7Days = [...Array(7)].map((_, i) => {
+  // Dynamic Chart Logic: Last 30 days
+  const last30Days = [...Array(30)].map((_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
+    d.setDate(d.getDate() - (29 - i));
     return d.toLocaleDateString('sv');
   });
 
-  const dailyTrend = last7Days.map(date => {
+  const dailyTrendData = last30Days.map(date => {
     const total = recentExpenses
-      .filter(exp => (exp.date ? exp.date.split('T')[0] : '') === date)
-      .reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+      .filter(exp => exp.processedDate === date)
+      .reduce((acc, exp) => acc + exp.totalAmount, 0);
     
     // Create date in local time to get day name
     const [year, month, day] = date.split('-').map(Number);
     const d = new Date(year, month - 1, day);
-    const dayName = d.toLocaleDateString('es-ES', { weekday: 'long' });
+    const dayName = d.toLocaleDateString('es-ES', { weekday: 'short' });
     return {
       amount: total,
+      date: date,
       label: dayName.charAt(0).toUpperCase() + dayName.slice(1)
     };
   });
 
-  const maxAmount = Math.max(...dailyTrend.map(d => d.amount), 10); // Minimum max for scaling
+  // For the bar chart UI, we might want to show only the last 7 or 14 labels to avoid crowding
+  const dailyTrend = dailyTrendData.slice(-14); // Showing last 14 days for the chart bars
+  const maxAmount = Math.max(...dailyTrend.map(d => d.amount), 10);
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -252,7 +248,7 @@ export default function Analisis() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-outline-variant/50">
-                    {recentExpenses.slice().sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount)).slice(0, 5).map((exp, idx) => (
+                    {recentExpenses.slice().sort((a, b) => b.totalAmount - a.totalAmount).slice(0, 5).map((exp, idx) => (
                       <tr 
                         key={idx} 
                         onClick={() => {
@@ -271,10 +267,10 @@ export default function Analisis() {
                           <span className="font-bold text-on-surface">{exp.concept}</span>
                         </td>
                         <td className="py-4 text-sm font-medium text-on-surface-variant">
-                          {exp.date ? new Date(exp.date).toLocaleDateString() : 'N/A'}
+                          {exp.processedDate ? new Date(`${exp.processedDate}T12:00:00`).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'N/A'}
                         </td>
                         <td className="py-4 text-sm font-black text-on-surface">
-                          {formatAmount(exp.amount)}
+                          {formatAmount(exp.totalAmount)}
                         </td>
                         <td className="py-4">
                           <span className="px-3 py-1 rounded-full bg-primary-container text-primary text-[10px] font-black uppercase tracking-wider">{categoryLabels[exp.category] || exp.category}</span>
