@@ -27,15 +27,18 @@ export default function Analisis() {
   const last7Days = [...Array(7)].map((_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    return d.toISOString().split('T')[0];
+    return d.toLocaleDateString('sv');
   });
 
   const dailyTrend = last7Days.map(date => {
     const total = expenses
-      .filter(exp => exp.date === date)
+      .filter(exp => (exp.date ? exp.date.split('T')[0] : '') === date)
       .reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
     
-    const dayName = new Date(date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long' });
+    // Create date in local time to get day name
+    const [year, month, day] = date.split('-').map(Number);
+    const d = new Date(year, month - 1, day);
+    const dayName = d.toLocaleDateString('es-ES', { weekday: 'long' });
     return {
       amount: total,
       label: dayName.charAt(0).toUpperCase() + dayName.slice(1)

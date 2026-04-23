@@ -43,7 +43,7 @@ export default function Escaner() {
         ...result,
         paidBy: user.uid,
         participants: members.map(m => m.id),
-        date: result.date || new Date().toISOString()
+        date: result.date || new Date().toLocaleDateString('sv')
       });
       navigate('/');
     } catch (error) {

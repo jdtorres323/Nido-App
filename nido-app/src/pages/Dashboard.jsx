@@ -23,15 +23,17 @@ export default function Dashboard() {
   const youAreOwed = myNetBalance > 0 ? myNetBalance : 0;
   const youOwe = myNetBalance < 0 ? Math.abs(myNetBalance) : 0;
 
-  // Calculate weekly trend (mock or real based on expenses)
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    return d.toISOString().split('T')[0];
+    return d.toLocaleDateString('sv');
   });
 
   const dailyStats = last7Days.map(date => {
-    const dayExpenses = expenses.filter(exp => exp.date.startsWith(date));
+    const dayExpenses = expenses.filter(exp => {
+      const expDate = exp.date ? exp.date.split('T')[0] : '';
+      return expDate === date;
+    });
     return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
   });
 

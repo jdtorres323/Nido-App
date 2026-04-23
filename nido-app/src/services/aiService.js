@@ -69,7 +69,7 @@ export const aiService = {
         resolve({
           concept: "Supermercado (Mock IA)",
           amount: 24.95,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toLocaleDateString('sv'),
           category: "comida"
         });
       }, 1500);

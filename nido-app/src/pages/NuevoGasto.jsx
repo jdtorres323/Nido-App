@@ -18,7 +18,7 @@ export default function NuevoGasto() {
     category: 'otros',
     paidBy: user?.uid || '',
     paymentStatus: 'Pagado',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toLocaleDateString('sv'),
     participants: [] 
   });
 
