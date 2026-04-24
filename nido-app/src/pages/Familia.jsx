@@ -9,6 +9,15 @@ export default function Familia() {
   const { user } = useAuth();
   const { activeHousehold, members, balances, expenses, formatAmount } = useHousehold();
 
+  const expensesThisMonth = expenses.filter(e => {
+    if (!e.processedDate) return false;
+    const d = new Date(e.processedDate);
+    const now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+
+  const settledMembers = Object.values(balances).filter(b => Math.abs(b) < 0.01).length;
+
   const handleCurrencyChange = async (e) => {
     const newCurrency = e.target.value;
     if (activeHousehold?.id) {
