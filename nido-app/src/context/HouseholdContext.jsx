@@ -22,6 +22,10 @@ export function HouseholdProvider({ children }) {
   // Normalize expense data for consistent use across components
   const normalizeExpense = (exp) => {
     let processedDate = exp.date;
+    if (processedDate && processedDate.includes('T')) {
+      processedDate = processedDate.split('T')[0];
+    }
+    
     if (!processedDate && exp.createdAt) {
       // Handle Firestore Timestamp or Date object/string
       const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);

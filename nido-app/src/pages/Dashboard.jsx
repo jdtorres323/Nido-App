@@ -31,17 +31,8 @@ export default function Dashboard() {
   });
 
   const dailyStats = last7Days.map(date => {
-    const dayExpenses = expenses.filter(exp => {
-      let rawDate = exp.date;
-      if (!rawDate && exp.createdAt) {
-        const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
-        rawDate = d.toLocaleDateString('sv');
-      }
-      if (!rawDate) return false;
-      const expDate = rawDate.includes('T') ? rawDate.split('T')[0] : rawDate;
-      return expDate === date;
-    });
-    return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+    const dayExpenses = expenses.filter(exp => exp.processedDate === date);
+    return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
   });
 
   const maxDaily = Math.max(...dailyStats, 100);
@@ -149,26 +140,28 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          <div className="flex items-end justify-between h-40 gap-3 md:gap-6">
-            {dailyStats.map((amount, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-4">
-                <div 
-                  className="w-full bg-gradient-to-t from-orange-600 to-orange-400 rounded-2xl transition-all hover:scale-105 hover:shadow-lg relative group/bar" 
-                  style={{ height: `${(amount / maxDaily) * 100}%`, minHeight: '8px' }}
-                >
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
+          <div className="flex items-end justify-between h-40 gap-2 sm:gap-4">
+            {dailyStats.map((amount, i) => {
+              const height = (amount / maxDaily) * 100;
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative">
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
                     {formatAmount(amount)}
                   </div>
+                  <div 
+                    className="w-full bg-gradient-to-t from-orange-600 to-orange-400 rounded-t-xl transition-all hover:scale-x-110 hover:shadow-lg" 
+                    style={{ height: `${Math.max(height, 5)}%` }}
+                  ></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                    {(() => {
+                      const [y, m, d] = last7Days[i].split('-').map(Number);
+                      const dateObj = new Date(y, m - 1, d);
+                      return ['D', 'L', 'M', 'X', 'J', 'V', 'S'][dateObj.getDay()];
+                    })()}
+                  </span>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
-                  {(() => {
-                    const [y, m, d] = last7Days[i].split('-').map(Number);
-                    const dateObj = new Date(y, m - 1, d);
-                    return ['D', 'L', 'M', 'X', 'J', 'V', 'S'][dateObj.getDay()];
-                  })()}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

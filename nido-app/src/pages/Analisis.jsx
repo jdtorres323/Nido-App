@@ -13,11 +13,14 @@ export default function Analisis() {
 
   // Filter expenses for the last 30 days
   const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  thirtyDaysAgo.setHours(0, 0, 0, 0); // Start of today
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30); // 30 days ago at 00:00:00
   
   const recentExpenses = expenses.filter(exp => {
     if (!exp.processedDate) return false;
-    const expDate = new Date(exp.processedDate.includes('T') ? exp.processedDate : `${exp.processedDate}T12:00:00`);
+    // Normalized date comparison (just the date part)
+    const [y, m, d] = exp.processedDate.split('-').map(Number);
+    const expDate = new Date(y, m - 1, d);
     return expDate >= thirtyDaysAgo;
   });
 
@@ -48,8 +51,8 @@ export default function Analisis() {
 
   const dailyTrendData = last30Days.map(date => {
     const total = recentExpenses
-      .filter(exp => exp.processedDate === date)
-      .reduce((acc, exp) => acc + exp.totalAmount, 0);
+      .filter(exp => (exp.processedDate || '').split('T')[0] === date)
+      .reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
     
     // Create date in local time to get day name
     const [year, month, day] = date.split('-').map(Number);
@@ -101,25 +104,25 @@ export default function Analisis() {
                 </div>
               </div>
               
-              <div className="relative h-64 w-full mt-auto flex items-end gap-2 px-2">
+              <div className="relative h-64 w-full mt-auto flex items-end gap-1 sm:gap-2 px-1">
                 {dailyTrend.map((day, i) => {
                   const height = (day.amount / maxAmount) * 100;
                   return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative">
+                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative min-w-0">
                       {/* Tooltip on hover */}
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl font-bold">
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl font-bold pointer-events-none">
                         {formatAmount(day.amount)}
                       </div>
                       
                       <div 
-                        className="w-full bg-primary rounded-t-xl transition-all duration-500 hover:opacity-100" 
+                        className="w-full bg-primary rounded-t-lg sm:rounded-t-xl transition-all duration-500 hover:opacity-100" 
                         style={{
-                          height: `${Math.max(height, 5)}%`, 
+                          height: `${Math.max(height, 4)}%`, 
                           opacity: 0.4 + (height / 150)
                         }}
                       ></div>
-                      <span className="text-[10px] font-black uppercase tracking-tighter text-on-surface-variant truncate w-full text-center">
-                        {day.label.substring(0, 3)}
+                      <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-tighter text-on-surface-variant truncate w-full text-center">
+                        {day.label.substring(0, 2)}
                       </span>
                     </div>
                   );
