@@ -40,13 +40,29 @@ export default function Familia() {
     
     setIsSending(true);
     try {
+      const householdName = activeHousehold.name || 'Hogar Sin Nombre';
+      const inviterName = user?.displayName || 'Un miembro de tu familia';
+
       await invitationService.sendInvitation(
         inviteEmail, 
         activeHousehold.id, 
-        activeHousehold.name || 'Hogar Sin Nombre',
-        user?.displayName || 'Un miembro de tu familia'
+        householdName,
+        inviterName
       );
-      alert(`Invitación enviada a ${inviteEmail}. Cuando inicien sesión con Google, verán la invitación.`);
+      
+      // Construir el enlace mailto
+      const subject = encodeURIComponent(`¡Únete a mi Nido en Nido Organic!`);
+      const body = encodeURIComponent(
+        `Hola,\n\n${inviterName} te ha invitado a formar parte del hogar "${householdName}" en Nido Organic.\n\n` +
+        `Para aceptar la invitación y empezar a compartir gastos y servicios, simplemente entra en la aplicación con tu cuenta de Google:\n\n` +
+        `https://nido-organic-app-jd.web.app\n\n` +
+        `¡Te esperamos!`
+      );
+      
+      // Abrir el cliente de correo
+      window.location.href = `mailto:${inviteEmail}?subject=${subject}&body=${body}`;
+
+      alert(`Invitación registrada. Se ha abierto tu aplicación de correo para enviar la invitación a ${inviteEmail}. Si no se abrió, puedes copiar el enlace directo más abajo.`);
       setInviteEmail('');
     } catch (err) {
       alert(err.message || "Error al enviar la invitación");
