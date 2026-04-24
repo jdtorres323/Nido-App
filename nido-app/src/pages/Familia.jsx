@@ -9,14 +9,14 @@ export default function Familia() {
   const { user } = useAuth();
   const { activeHousehold, members, balances, expenses, formatAmount } = useHousehold();
 
-  const expensesThisMonth = expenses.filter(e => {
-    if (!e.processedDate) return false;
+  const expensesThisMonth = (expenses || []).filter(e => {
+    if (!e?.processedDate) return false;
     const d = new Date(e.processedDate);
     const now = new Date();
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   }).length;
 
-  const settledMembers = Object.values(balances).filter(b => Math.abs(b) < 0.01).length;
+  const settledMembers = Object.values(balances || {}).filter(b => Math.abs(b) < 0.01).length;
 
   const handleCurrencyChange = async (e) => {
     const newCurrency = e.target.value;
@@ -93,8 +93,8 @@ export default function Familia() {
 
       {/* Bento Grid Member Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        {members.map((member, index) => {
-          const balance = balances[member.id] || 0;
+        {(members || []).map((member, index) => {
+          const balance = (balances || {})[member.id] || 0;
           const isMe = member.id === user?.uid;
           const isAdmin = index === 0;
 
