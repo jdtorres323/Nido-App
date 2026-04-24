@@ -17,7 +17,7 @@ export default function Dashboard() {
     </Layout>
   );
 
-  const totalSpent = expenses.reduce((acc, exp) => acc + (parseFloat(exp.amount) || 0), 0);
+  const totalSpent = expenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount || exp.amount) || 0), 0);
   
   // Calculate specific "Te deben" and "Debes" for the current user
   const myNetBalance = balances[user?.uid] || 0;

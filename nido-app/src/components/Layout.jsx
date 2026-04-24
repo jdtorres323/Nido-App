@@ -8,7 +8,7 @@ export default function Layout({ children, title }) {
   const location = useLocation();
   const path = location.pathname;
   const { user, loading: authLoading, loginWithGoogle, logout } = useAuth();
-  const { activeHousehold, members, loading: householdLoading } = useHousehold();
+  const { activeHousehold, members, expenses, formatAmount, loading: householdLoading } = useHousehold();
 
   const [showJoinInput, setShowJoinInput] = useState(false);
   const [joinId, setJoinId] = useState('');
@@ -20,13 +20,14 @@ export default function Layout({ children, title }) {
     return parseInt(localStorage.getItem('nido_last_expense_count') || '0');
   });
 
-  const hasNewNotifications = expenses.length > lastSeenExpenseCount;
+  const hasNewNotifications = (expenses?.length || 0) > lastSeenExpenseCount;
 
   const handleNotificationClick = () => {
     setIsNotificationOpen(!isNotificationOpen);
     if (!isNotificationOpen) {
-      setLastSeenExpenseCount(expenses.length);
-      localStorage.setItem('nido_last_expense_count', expenses.length.toString());
+      const count = expenses?.length || 0;
+      setLastSeenExpenseCount(count);
+      localStorage.setItem('nido_last_expense_count', count.toString());
     }
   };
 
@@ -218,13 +219,13 @@ export default function Layout({ children, title }) {
                   <span className="text-[10px] uppercase tracking-widest font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">Recientes</span>
                 </div>
                 <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                  {expenses.length === 0 ? (
+                  {(!expenses || expenses.length === 0) ? (
                     <div className="text-center py-8">
                       <span className="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-2">notifications_off</span>
                       <p className="text-xs text-on-surface-variant font-medium">No hay actividad reciente</p>
                     </div>
                   ) : (
-                    expenses.slice(0, 5).map(exp => (
+                    expenses?.slice(0, 5).map(exp => (
                       <div key={exp.id} className="p-3 rounded-2xl bg-surface-container-low border border-outline-variant/30 flex gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
                           <span className="material-symbols-outlined text-sm">receipt_long</span>

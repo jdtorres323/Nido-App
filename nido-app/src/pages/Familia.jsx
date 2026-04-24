@@ -185,7 +185,7 @@ export default function Familia() {
           
           <div className="flex flex-wrap justify-center md:justify-start gap-4">
             <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-center">
-              <span className="block text-2xl font-bold">{expensesThisMonth}</span>
+              <span className="block text-2xl font-bold">{expensesThisMonth.length}</span>
               <span className="text-xs uppercase tracking-tighter text-on-primary/80">Gastos este mes</span>
             </div>
             <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-center">
