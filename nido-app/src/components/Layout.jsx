@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
@@ -9,9 +10,37 @@ export default function Layout({ children, title }) {
   const { user, loading: authLoading, loginWithGoogle, logout } = useAuth();
   const { activeHousehold, members, loading: householdLoading } = useHousehold();
 
+  const [showJoinInput, setShowJoinInput] = useState(false);
+  const [joinId, setJoinId] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
+
   const handleCreateFirstHousehold = async () => {
     if (user) {
       await householdService.createHousehold(user.uid, "Mi Hogar");
+    }
+  };
+
+  const handleJoinHousehold = async (e) => {
+    e.preventDefault();
+    if (!joinId.trim()) return;
+    
+    setIsProcessing(true);
+    setError('');
+    
+    try {
+      const household = await householdService.getHousehold(joinId.trim());
+      if (household) {
+        await householdService.joinHousehold(user.uid, joinId.trim());
+        window.location.reload();
+      } else {
+        setError('ID de hogar no encontrado. Verifica e intenta de nuevo.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Error al intentar unirse al hogar.');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -60,9 +89,44 @@ export default function Layout({ children, title }) {
           >
             Crear mi primer Hogar
           </button>
-          <button className="bg-surface-container-lowest border border-outline text-primary px-6 py-4 rounded-full font-bold shadow-sm hover:bg-surface-container-low transition-all">
-            Unirme con un ID
-          </button>
+          {!showJoinInput ? (
+            <button 
+              onClick={() => setShowJoinInput(true)}
+              className="bg-surface-container-lowest border border-outline text-primary px-6 py-4 rounded-full font-bold shadow-sm hover:bg-surface-container-low transition-all"
+            >
+              Unirme con un ID
+            </button>
+          ) : (
+            <form onSubmit={handleJoinHousehold} className="space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
+              <input 
+                type="text"
+                value={joinId}
+                onChange={(e) => setJoinId(e.target.value)}
+                placeholder="Introduce el ID del hogar"
+                className="w-full px-6 py-4 rounded-2xl bg-surface-container-highest border border-outline focus:border-primary outline-none text-center font-bold"
+                disabled={isProcessing}
+                autoFocus
+              />
+              {error && <p className="text-error text-xs font-bold">{error}</p>}
+              <div className="flex gap-2">
+                <button 
+                  type="button"
+                  onClick={() => setShowJoinInput(false)}
+                  className="flex-1 bg-surface-container-low text-on-surface-variant px-4 py-3 rounded-xl font-bold text-sm"
+                  disabled={isProcessing}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-[2] bg-primary text-on-primary px-4 py-3 rounded-xl font-bold text-sm disabled:opacity-50"
+                  disabled={isProcessing || !joinId.trim()}
+                >
+                  {isProcessing ? 'Validando...' : 'Confirmar ID'}
+                </button>
+              </div>
+            </form>
+          )}
           <button onClick={logout} className="text-on-surface-variant text-sm hover:underline mt-4">Cerrar sesión</button>
         </div>
       </div>

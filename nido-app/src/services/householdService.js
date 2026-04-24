@@ -2,7 +2,8 @@ import {
   collection, 
   addDoc, 
   updateDoc, 
-  doc, 
+  doc,
+  getDoc,
   arrayUnion, 
   serverTimestamp 
 } from 'firebase/firestore';
@@ -45,5 +46,12 @@ export const householdService = {
       householdIds: arrayUnion(householdId),
       currentHouseholdId: householdId
     });
+  },
+
+  // Get household details by ID (used for validation)
+  async getHousehold(householdId) {
+    const householdRef = doc(db, 'households', householdId);
+    const snap = await getDoc(householdRef);
+    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
   }
 };
