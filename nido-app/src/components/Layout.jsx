@@ -14,6 +14,21 @@ export default function Layout({ children, title }) {
   const [joinId, setJoinId] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [lastSeenExpenseCount, setLastSeenExpenseCount] = useState(() => {
+    return parseInt(localStorage.getItem('nido_last_expense_count') || '0');
+  });
+
+  const hasNewNotifications = expenses.length > lastSeenExpenseCount;
+
+  const handleNotificationClick = () => {
+    setIsNotificationOpen(!isNotificationOpen);
+    if (!isNotificationOpen) {
+      setLastSeenExpenseCount(expenses.length);
+      localStorage.setItem('nido_last_expense_count', expenses.length.toString());
+    }
+  };
 
   const handleCreateFirstHousehold = async () => {
     if (user) {
@@ -185,23 +200,115 @@ export default function Layout({ children, title }) {
           <h2 className="font-headline text-3xl font-bold text-on-background tracking-tight">{title}</h2>
         </div>
         <div className="flex items-center gap-3">
-          <button className="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors relative group">
-            <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">notifications</span>
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
-          </button>
-          <div className="hidden md:flex items-center gap-3 pl-3 border-l border-outline-variant">
-            <img 
-              alt={user.displayName} 
-              className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover" 
-              src={user.photoURL} 
-            />
+          <div className="relative">
+            <button 
+              onClick={handleNotificationClick}
+              className="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors relative group"
+            >
+              <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">notifications</span>
+              {hasNewNotifications && (
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
+              )}
+            </button>
+            
+            {isNotificationOpen && (
+              <div className="absolute top-full right-0 mt-2 w-72 md:w-80 bg-surface-container-highest border border-outline-variant rounded-[2rem] shadow-2xl p-4 z-[60] animate-in fade-in slide-in-from-top-2">
+                <div className="flex justify-between items-center mb-4 px-2">
+                  <h3 className="font-headline font-bold text-on-surface">Notificaciones</h3>
+                  <span className="text-[10px] uppercase tracking-widest font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">Recientes</span>
+                </div>
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                  {expenses.length === 0 ? (
+                    <div className="text-center py-8">
+                      <span className="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-2">notifications_off</span>
+                      <p className="text-xs text-on-surface-variant font-medium">No hay actividad reciente</p>
+                    </div>
+                  ) : (
+                    expenses.slice(0, 5).map(exp => (
+                      <div key={exp.id} className="p-3 rounded-2xl bg-surface-container-low border border-outline-variant/30 flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                          <span className="material-symbols-outlined text-sm">receipt_long</span>
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="text-xs font-bold text-on-surface truncate">{exp.concept || 'Gasto nuevo'}</p>
+                          <p className="text-[10px] text-on-surface-variant line-clamp-1">
+                            {members.find(m => m.id === exp.paidBy)?.displayName || 'Alguien'} registró {formatAmount(exp.totalAmount)}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="mt-4 pt-3 border-t border-outline-variant">
+                  <button 
+                    onClick={() => {
+                      if ("Notification" in window) {
+                        Notification.requestPermission().then(permission => {
+                          alert(permission === "granted" ? "¡Genial! Notificaciones habilitadas." : "Notificaciones denegadas.");
+                        });
+                      }
+                    }}
+                    className="w-full py-3 text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-base">settings</span>
+                    Configurar alertas push
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="md:hidden">
+          <div className="hidden md:flex items-center gap-3 pl-3 border-l border-outline-variant relative">
             <img 
               alt={user.displayName} 
-              className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover" 
-              src={user.photoURL} 
+              className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover cursor-pointer" 
+              src={user.photoURL}
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
             />
+            {isProfileMenuOpen && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-surface-container-highest border border-outline-variant rounded-2xl shadow-xl p-2 z-[60] animate-in fade-in slide-in-from-top-2">
+                <button 
+                  onClick={logout}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-error hover:bg-error/10 rounded-xl transition-colors"
+                >
+                  <span className="material-symbols-outlined text-lg">logout</span>
+                  Cerrar sesión
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="md:hidden relative">
+            <img 
+              alt={user.displayName} 
+              className="w-10 h-10 rounded-full border-2 border-primary-container shadow-sm object-cover cursor-pointer active:scale-90 transition-transform" 
+              src={user.photoURL}
+              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            />
+            {isProfileMenuOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm" onClick={() => setIsProfileMenuOpen(false)}>
+                <div className="bg-surface w-full max-w-xs rounded-[2rem] p-6 shadow-2xl border border-outline-variant animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                  <div className="flex flex-col items-center gap-4 mb-6">
+                    <img src={user.photoURL} alt={user.displayName} className="w-20 h-20 rounded-full border-4 border-primary-container" />
+                    <div className="text-center">
+                      <p className="font-headline text-xl font-bold text-on-surface">{user.displayName}</p>
+                      <p className="text-sm text-on-surface-variant">{user.email}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={logout}
+                    className="w-full flex items-center justify-center gap-3 bg-error text-on-error py-4 rounded-2xl font-bold shadow-lg shadow-error/20 active:scale-95 transition-all"
+                  >
+                    <span className="material-symbols-outlined">logout</span>
+                    Cerrar sesión
+                  </button>
+                  <button 
+                    onClick={() => setIsProfileMenuOpen(false)}
+                    className="w-full mt-3 py-3 text-on-surface-variant font-bold text-sm"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
