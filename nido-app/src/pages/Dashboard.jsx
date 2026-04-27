@@ -321,6 +321,36 @@ export default function Dashboard() {
               })}
             </div>
           )}
+
+          {/* Color legend */}
+          <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-orange-50 dark:border-stone-800">
+            {trendView === 'weekly' ? (() => {
+              const seen = new Map();
+              dailyStats.forEach(({ items }) =>
+                items.forEach(exp => {
+                  if (!seen.has(exp.category)) seen.set(exp.category, catColor(exp.category));
+                })
+              );
+              const CAT_LABELS = {
+                comida: 'Comida', servicios: 'Servicios', suministros: 'Suministros',
+                transporte: 'Transporte', ocio: 'Ocio', hogar: 'Hogar',
+                salud: 'Salud', liquidacion: 'Liquidación', otros: 'Otros',
+              };
+              return seen.size === 0
+                ? <span className="text-[11px] text-stone-400 italic">Sin gastos en este período</span>
+                : Array.from(seen.entries()).map(([cat, color]) => (
+                  <span key={cat} className="flex items-center gap-1.5 text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                    <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${color}`} />
+                    {CAT_LABELS[cat] || cat}
+                  </span>
+                ));
+            })() : (
+              <span className="flex items-center gap-1.5 text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-orange-400" />
+                Gasto mensual total
+              </span>
+            )}
+          </div>
         </div>
       </section>
 

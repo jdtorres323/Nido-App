@@ -158,6 +158,30 @@ export default function Analisis() {
                   );
                 })}
               </div>
+              {/* Color legend */}
+              {(() => {
+                const seen = new Map();
+                dailyTrend.forEach(({ items }) =>
+                  (items || []).forEach(exp => {
+                    if (!seen.has(exp.category)) seen.set(exp.category, catColor(exp.category));
+                  })
+                );
+                const CAT_LABELS = {
+                  comida: 'Comida', servicios: 'Servicios', suministros: 'Suministros',
+                  transporte: 'Transporte', ocio: 'Ocio', hogar: 'Hogar',
+                  salud: 'Salud', liquidacion: 'Liquidacion', otros: 'Otros',
+                };
+                return seen.size > 0 ? (
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-4 pt-4 border-t border-outline-variant">
+                    {Array.from(seen.entries()).map(([cat, color]) => (
+                      <span key={cat} className="flex items-center gap-1.5 text-[11px] text-on-surface-variant font-medium">
+                        <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${color}`} />
+                        {CAT_LABELS[cat] || cat}
+                      </span>
+                    ))}
+                  </div>
+                ) : null;
+              })()}
             </div>
 
             {/* Category Breakdown (Bento Medium) */}
