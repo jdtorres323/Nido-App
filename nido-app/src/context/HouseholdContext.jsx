@@ -22,16 +22,21 @@ export function HouseholdProvider({ children }) {
   // Normalize expense data for consistent use across components
   const normalizeExpense = (exp) => {
     let processedDate = exp.date;
-    if (processedDate && processedDate.includes('T')) {
+    if (processedDate && typeof processedDate === 'string' && processedDate.includes('T')) {
       processedDate = processedDate.split('T')[0];
     }
     
-    if (!processedDate && exp.createdAt) {
-      // Handle Firestore Timestamp or Date object/string
-      const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
-      processedDate = d.toLocaleDateString('sv'); // sv-SE uses YYYY-MM-DD
+    // Validate it's a proper YYYY-MM-DD string
+    if (!processedDate || !/^\d{4}-\d{2}-\d{2}/.test(processedDate)) {
+      // Fallback: derive from createdAt
+      if (exp.createdAt) {
+        const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
+        processedDate = d.toLocaleDateString('sv');
+      }
+    } else {
+      // Ensure we only keep the YYYY-MM-DD part even if there's extra
+      processedDate = processedDate.substring(0, 10);
     }
-    
     // Calculate total amount if it's an itemized expense, or use root amount
     let totalAmount = 0;
     if (exp.items && Array.isArray(exp.items) && exp.items.length > 0) {

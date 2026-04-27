@@ -54,17 +54,16 @@ export default function Dashboard() {
   const youAreOwed = myNetBalance > 0 ? myNetBalance : 0;
   const youOwe = myNetBalance < 0 ? Math.abs(myNetBalance) : 0;
 
-  // --- Weekly trend: last 7 days ---
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
+  // --- Daily trend: last 30 days ---
+  const last30Days = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
+    d.setDate(d.getDate() - (29 - i));
     return d.toLocaleDateString('sv'); // YYYY-MM-DD
   });
 
-  const dailyStats = last7Days.map(date => {
+  const dailyStats = last30Days.map(date => {
     const dayExpenses = expenses.filter(exp => {
-      // Normalize: strip any time component from processedDate
-      const expDate = (exp.processedDate || '').split('T')[0];
+      const expDate = (exp.processedDate || '').substring(0, 10);
       return expDate === date;
     });
     return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
@@ -82,8 +81,8 @@ export default function Dashboard() {
 
   const monthlyStats = last6Months.map(month => {
     const monthExpenses = expenses.filter(exp => {
-      const expDate = (exp.processedDate || '').split('T')[0];
-      return expDate.startsWith(month);
+      const expDate = (exp.processedDate || '').substring(0, 7); // YYYY-MM
+      return expDate === month;
     });
     return monthExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
   });
@@ -191,10 +190,10 @@ export default function Dashboard() {
           <div className="flex flex-wrap justify-between items-center mb-10 gap-4">
             <div>
               <h3 className="font-headline text-2xl font-bold text-stone-900 dark:text-white mb-1">
-                {trendView === 'weekly' ? 'Tendencia Semanal' : 'Tendencia Mensual'}
+                {trendView === 'weekly' ? 'Últimos 30 Días' : 'Tendencia Mensual'}
               </h3>
               <p className="text-stone-500 dark:text-stone-400 text-sm">
-                {trendView === 'weekly' ? 'Gasto diario en los últimos 7 días' : 'Gasto acumulado por mes (últimos 6 meses)'}
+                {trendView === 'weekly' ? 'Gasto diario en los últimos 30 días' : 'Gasto acumulado por mes (últimos 6 meses)'}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -208,7 +207,7 @@ export default function Dashboard() {
                       : 'text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
                   }`}
                 >
-                  Semanal
+                  Últimos 30d
                 </button>
                 <button
                   onClick={() => setTrendView('monthly')}
@@ -218,7 +217,7 @@ export default function Dashboard() {
                       : 'text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
                   }`}
                 >
-                  Mensual
+                  Últimos 6m
                 </button>
               </div>
               <Link to="/analisis" className="bg-orange-50 dark:bg-stone-800 p-3 rounded-2xl text-orange-600 hover:bg-orange-100 transition-colors">
@@ -245,11 +244,13 @@ export default function Dashboard() {
                       }`}
                       style={{ height: isEmpty ? '8%' : `${Math.max(height, 8)}%` }}
                     ></div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">
                       {(() => {
-                        const [y, m, d] = last7Days[i].split('-').map(Number);
+                        const [y, m, d] = last30Days[i].split('-').map(Number);
                         const dateObj = new Date(y, m - 1, d);
-                        return ['D', 'L', 'M', 'X', 'J', 'V', 'S'][dateObj.getDay()];
+                        // Only show label every 5 days to avoid crowding
+                        if (i % 5 !== 0 && i !== 29) return '';
+                        return dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                       })()}
                     </span>
                   </div>
