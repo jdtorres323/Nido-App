@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
@@ -7,6 +8,7 @@ import { expenseService } from '../services/expenseService';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [trendView, setTrendView] = useState('weekly'); // 'weekly' | 'monthly'
   const { user } = useAuth();
   const { activeHousehold, members, expenses, balances, loading, formatAmount } = useHousehold();
 
@@ -52,18 +54,46 @@ export default function Dashboard() {
   const youAreOwed = myNetBalance > 0 ? myNetBalance : 0;
   const youOwe = myNetBalance < 0 ? Math.abs(myNetBalance) : 0;
 
+  // --- Weekly trend: last 7 days ---
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    return d.toLocaleDateString('sv');
+    return d.toLocaleDateString('sv'); // YYYY-MM-DD
   });
 
   const dailyStats = last7Days.map(date => {
-    const dayExpenses = expenses.filter(exp => exp.processedDate === date);
+    const dayExpenses = expenses.filter(exp => {
+      // Normalize: strip any time component from processedDate
+      const expDate = (exp.processedDate || '').split('T')[0];
+      return expDate === date;
+    });
     return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
   });
 
-  const maxDaily = Math.max(...dailyStats, 100);
+  const maxDaily = Math.max(...dailyStats, 1);
+
+  // --- Monthly trend: last 6 months ---
+  const last6Months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - (5 - i));
+    return d.toLocaleDateString('sv').substring(0, 7); // YYYY-MM
+  });
+
+  const monthlyStats = last6Months.map(month => {
+    const monthExpenses = expenses.filter(exp => {
+      const expDate = (exp.processedDate || '').split('T')[0];
+      return expDate.startsWith(month);
+    });
+    return monthExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
+  });
+
+  const maxMonthly = Math.max(...monthlyStats, 1);
+
+  const monthLabels = last6Months.map(m => {
+    const [y, mo] = m.split('-').map(Number);
+    return new Date(y, mo - 1, 1).toLocaleDateString('es-ES', { month: 'short' });
+  });
 
   const getCategoryStyles = (category) => {
     switch (category) {
@@ -158,39 +188,100 @@ export default function Dashboard() {
           <span className="material-symbols-outlined text-9xl font-black">analytics</span>
         </div>
         <div className="relative z-10">
-          <div className="flex justify-between items-center mb-10">
+          <div className="flex flex-wrap justify-between items-center mb-10 gap-4">
             <div>
-              <h3 className="font-headline text-2xl font-bold text-stone-900 dark:text-white mb-1">Tendencia Semanal</h3>
-              <p className="text-stone-500 dark:text-stone-400 text-sm">Gasto acumulado en los últimos 7 días</p>
+              <h3 className="font-headline text-2xl font-bold text-stone-900 dark:text-white mb-1">
+                {trendView === 'weekly' ? 'Tendencia Semanal' : 'Tendencia Mensual'}
+              </h3>
+              <p className="text-stone-500 dark:text-stone-400 text-sm">
+                {trendView === 'weekly' ? 'Gasto diario en los últimos 7 días' : 'Gasto acumulado por mes (últimos 6 meses)'}
+              </p>
             </div>
-            <Link to="/analisis" className="bg-orange-50 dark:bg-stone-800 p-3 rounded-2xl text-orange-600 hover:bg-orange-100 transition-colors">
-              <span className="material-symbols-outlined">open_in_new</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              {/* Toggle */}
+              <div className="bg-orange-50 dark:bg-stone-800 p-1 rounded-2xl inline-flex gap-1 border border-orange-100 dark:border-stone-700">
+                <button
+                  onClick={() => setTrendView('weekly')}
+                  className={`px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${
+                    trendView === 'weekly'
+                      ? 'bg-orange-600 text-white shadow-sm'
+                      : 'text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
+                  }`}
+                >
+                  Semanal
+                </button>
+                <button
+                  onClick={() => setTrendView('monthly')}
+                  className={`px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${
+                    trendView === 'monthly'
+                      ? 'bg-orange-600 text-white shadow-sm'
+                      : 'text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
+                  }`}
+                >
+                  Mensual
+                </button>
+              </div>
+              <Link to="/analisis" className="bg-orange-50 dark:bg-stone-800 p-3 rounded-2xl text-orange-600 hover:bg-orange-100 transition-colors">
+                <span className="material-symbols-outlined">open_in_new</span>
+              </Link>
+            </div>
           </div>
 
-          <div className="flex items-end justify-between h-40 gap-2 sm:gap-4">
-            {dailyStats.map((amount, i) => {
-              const height = (amount / maxDaily) * 100;
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative">
-                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
-                    {formatAmount(amount)}
+          {trendView === 'weekly' ? (
+            <div className="flex items-end justify-between h-40 gap-2 sm:gap-4">
+              {dailyStats.map((amount, i) => {
+                const height = (amount / maxDaily) * 100;
+                const isEmpty = amount === 0;
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative">
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
+                      {formatAmount(amount)}
+                    </div>
+                    <div
+                      className={`w-full rounded-t-xl transition-all hover:scale-x-110 ${
+                        isEmpty
+                          ? 'bg-orange-100 dark:bg-stone-800'
+                          : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:shadow-lg'
+                      }`}
+                      style={{ height: isEmpty ? '8%' : `${Math.max(height, 8)}%` }}
+                    ></div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                      {(() => {
+                        const [y, m, d] = last7Days[i].split('-').map(Number);
+                        const dateObj = new Date(y, m - 1, d);
+                        return ['D', 'L', 'M', 'X', 'J', 'V', 'S'][dateObj.getDay()];
+                      })()}
+                    </span>
                   </div>
-                  <div 
-                    className="w-full bg-gradient-to-t from-orange-600 to-orange-400 rounded-t-xl transition-all hover:scale-x-110 hover:shadow-lg" 
-                    style={{ height: `${Math.max(height, 5)}%` }}
-                  ></div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
-                    {(() => {
-                      const [y, m, d] = last7Days[i].split('-').map(Number);
-                      const dateObj = new Date(y, m - 1, d);
-                      return ['D', 'L', 'M', 'X', 'J', 'V', 'S'][dateObj.getDay()];
-                    })()}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex items-end justify-between h-40 gap-2 sm:gap-4">
+              {monthlyStats.map((amount, i) => {
+                const height = (amount / maxMonthly) * 100;
+                const isEmpty = amount === 0;
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative">
+                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
+                      {formatAmount(amount)}
+                    </div>
+                    <div
+                      className={`w-full rounded-t-xl transition-all hover:scale-x-110 ${
+                        isEmpty
+                          ? 'bg-orange-100 dark:bg-stone-800'
+                          : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:shadow-lg'
+                      }`}
+                      style={{ height: isEmpty ? '8%' : `${Math.max(height, 8)}%` }}
+                    ></div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                      {monthLabels[i]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
