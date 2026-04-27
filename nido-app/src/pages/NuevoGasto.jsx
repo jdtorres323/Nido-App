@@ -216,6 +216,36 @@ export default function NuevoGasto() {
               </div>
 
               <div className="space-y-4">
+                <label className="font-black text-[10px] uppercase tracking-widest text-on-surface-variant px-4">Categoría</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {[
+                    { value: 'comida',       label: 'Alimentación',  icon: 'shopping_cart',  color: 'bg-amber-100 text-amber-700 border-amber-200' },
+                    { value: 'servicios',    label: 'Servicios',     icon: 'electrical_services', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+                    { value: 'suministros',  label: 'Suministros',   icon: 'lightbulb',      color: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
+                    { value: 'transporte',   label: 'Transporte',    icon: 'directions_car', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+                    { value: 'ocio',         label: 'Ocio',          icon: 'movie',          color: 'bg-purple-100 text-purple-700 border-purple-200' },
+                    { value: 'hogar',        label: 'Hogar',         icon: 'home_work',      color: 'bg-rose-100 text-rose-700 border-rose-200' },
+                    { value: 'salud',        label: 'Salud',         icon: 'health_and_safety', color: 'bg-red-100 text-red-700 border-red-200' },
+                    { value: 'otros',        label: 'Otros',         icon: 'more_horiz',     color: 'bg-stone-100 text-stone-600 border-stone-200' },
+                  ].map(cat => (
+                    <button
+                      key={cat.value}
+                      type="button"
+                      onClick={() => setFormData({...formData, category: cat.value})}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 font-bold text-xs transition-all ${
+                        formData.category === cat.value
+                          ? `${cat.color} border-current scale-105 shadow-md`
+                          : 'border-outline-variant text-on-surface-variant hover:border-outline'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-xl">{cat.icon}</span>
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
                 <div className="flex justify-between items-center px-4">
                   <label className="font-black text-[10px] uppercase tracking-widest text-on-surface-variant">Desglose de Líneas</label>
                   <button type="button" onClick={addLine} className="flex items-center gap-2 text-primary font-bold text-xs hover:underline">
@@ -372,16 +402,32 @@ export default function NuevoGasto() {
 
                 <div className="space-y-4">
                   <label className="font-black text-[10px] uppercase tracking-widest text-on-surface-variant px-4">Categoría</label>
-                  <select 
-                    className="w-full bg-surface-container-highest border-none rounded-[2.5rem] p-6 text-xl font-bold text-on-surface focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
-                    value={formData.category}
-                    onChange={e => setFormData({...formData, category: e.target.value})}
-                  >
-                    <option value="comida">Alimentación</option>
-                    <option value="hogar">Hogar & Servicios</option>
-                    <option value="ocio">Ocio & Placer</option>
-                    <option value="otros">Otros</option>
-                  </select>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {[
+                      { value: 'comida',       label: 'Alimentación',  icon: 'shopping_cart',       color: 'bg-amber-100 text-amber-700 border-amber-200' },
+                      { value: 'servicios',    label: 'Servicios',     icon: 'electrical_services', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+                      { value: 'suministros',  label: 'Suministros',   icon: 'lightbulb',           color: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
+                      { value: 'transporte',   label: 'Transporte',    icon: 'directions_car',      color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+                      { value: 'ocio',         label: 'Ocio',          icon: 'movie',               color: 'bg-purple-100 text-purple-700 border-purple-200' },
+                      { value: 'hogar',        label: 'Hogar',         icon: 'home_work',           color: 'bg-rose-100 text-rose-700 border-rose-200' },
+                      { value: 'salud',        label: 'Salud',         icon: 'health_and_safety',   color: 'bg-red-100 text-red-700 border-red-200' },
+                      { value: 'otros',        label: 'Otros',         icon: 'more_horiz',          color: 'bg-stone-100 text-stone-600 border-stone-200' },
+                    ].map(cat => (
+                      <button
+                        key={cat.value}
+                        type="button"
+                        onClick={() => setFormData({...formData, category: cat.value})}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-3xl border-2 font-bold text-xs transition-all ${
+                          formData.category === cat.value
+                            ? `${cat.color} border-current scale-105 shadow-md`
+                            : 'border-outline-variant text-on-surface-variant hover:border-outline'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-xl">{cat.icon}</span>
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
