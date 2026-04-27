@@ -66,10 +66,25 @@ export default function Dashboard() {
       const expDate = (exp.processedDate || '').substring(0, 10);
       return expDate === date;
     });
-    return dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
+    const total = dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
+    return { total, items: dayExpenses };
   });
 
-  const maxDaily = Math.max(...dailyStats, 1);
+  const maxDaily = Math.max(...dailyStats.map(d => d.total), 1);
+
+  // Colors per category for stacked bars
+  const CAT_BAR_COLOR = {
+    comida:          'bg-amber-400',
+    servicios:       'bg-blue-400',
+    suministros:     'bg-cyan-400',
+    transporte:      'bg-emerald-400',
+    ocio:            'bg-purple-400',
+    hogar:           'bg-rose-400',
+    salud:           'bg-red-400',
+    liquidacion:     'bg-teal-400',
+    otros:           'bg-stone-400',
+  };
+  const catColor = (cat) => CAT_BAR_COLOR[cat] || 'bg-orange-400';
 
   // --- Monthly trend: last 6 months ---
   const last6Months = Array.from({ length: 6 }, (_, i) => {
@@ -228,20 +243,48 @@ export default function Dashboard() {
 
           {trendView === 'weekly' ? (
             <div className="flex items-end gap-1 sm:gap-2 pt-4">
-              {dailyStats.map((amount, i) => {
-                const barPx = amount > 0 ? Math.max((amount / maxDaily) * 130, 8) : 4;
-                const isEmpty = amount === 0;
+              {dailyStats.map(({ total, items }, i) => {
+                const barPx = total > 0 ? Math.max((total / maxDaily) * 130, 8) : 4;
+                const isEmpty = total === 0;
                 return (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar relative">
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
-                      {amount > 0 ? formatAmount(amount) : ''}
-                    </div>
+                    {/* Rich tooltip */}
+                    {!isEmpty && (
+                      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-3 py-2 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-30 pointer-events-none min-w-max">
+                        {items.map((exp, j) => (
+                          <div key={j} className="flex justify-between gap-3">
+                            <span className="text-stone-300 truncate max-w-[120px]">{exp.concept}</span>
+                            <span className="font-bold text-white">{formatAmount(parseFloat(exp.totalAmount) || 0)}</span>
+                          </div>
+                        ))}
+                        {items.length > 1 && (
+                          <div className="border-t border-stone-700 mt-1 pt-1 flex justify-between gap-3">
+                            <span className="text-stone-400">Total</span>
+                            <span className="font-bold text-orange-400">{formatAmount(total)}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {/* Stacked bar */}
                     <div
-                      className={`w-full rounded-t-xl transition-all ${
-                        isEmpty ? 'bg-orange-100 dark:bg-stone-800' : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:opacity-80'
-                      }`}
+                      className="w-full rounded-t-xl overflow-hidden flex flex-col-reverse"
                       style={{ height: `${barPx}px` }}
-                    />
+                    >
+                      {isEmpty ? (
+                        <div className="w-full h-full bg-orange-100 dark:bg-stone-800" />
+                      ) : (
+                        items.map((exp, j) => {
+                          const segPx = (parseFloat(exp.totalAmount) / total) * barPx;
+                          return (
+                            <div
+                              key={j}
+                              className={`w-full ${catColor(exp.category)} transition-all`}
+                              style={{ height: `${segPx}px`, minHeight: items.length > 1 ? '3px' : undefined }}
+                            />
+                          );
+                        })
+                      )}
+                    </div>
                     <span className="text-[8px] font-black text-stone-400 text-center leading-tight">
                       {(() => {
                         const [y, m, d] = last30Days[i].split('-').map(Number);

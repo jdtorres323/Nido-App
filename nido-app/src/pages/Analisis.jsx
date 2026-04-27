@@ -49,24 +49,28 @@ export default function Analisis() {
     return d.toLocaleDateString('sv');
   });
 
+  const CAT_BAR_COLOR = {
+    comida: 'bg-amber-400', servicios: 'bg-blue-400', suministros: 'bg-cyan-400',
+    transporte: 'bg-emerald-400', ocio: 'bg-purple-400', hogar: 'bg-rose-400',
+    salud: 'bg-red-400', liquidacion: 'bg-teal-400', otros: 'bg-stone-400',
+  };
+  const catColor = (cat) => CAT_BAR_COLOR[cat] || 'bg-orange-400';
+
   const dailyTrendData = last30Days.map(date => {
-    const total = recentExpenses
-      .filter(exp => (exp.processedDate || '').split('T')[0] === date)
-      .reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
-    
-    // Create date in local time to get day name
+    const dayItems = recentExpenses.filter(exp => (exp.processedDate || '').substring(0, 10) === date);
+    const total = dayItems.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
     const [year, month, day] = date.split('-').map(Number);
     const d = new Date(year, month - 1, day);
     const dayName = d.toLocaleDateString('es-ES', { weekday: 'short' });
     return {
       amount: total,
-      date: date,
+      items: dayItems,
+      date,
       label: dayName.charAt(0).toUpperCase() + dayName.slice(1)
     };
   });
 
-  // For the bar chart UI, we might want to show only the last 7 or 14 labels to avoid crowding
-  const dailyTrend = dailyTrendData.slice(-14); // Showing last 14 days for the chart bars
+  const dailyTrend = dailyTrendData.slice(-14);
   const maxAmount = Math.max(...dailyTrend.map(d => d.amount), 10);
 
   return (
@@ -107,15 +111,46 @@ export default function Analisis() {
               <div className="w-full flex items-end gap-1 sm:gap-2 px-1 pt-4">
                 {dailyTrend.map((day, i) => {
                   const barPx = day.amount > 0 ? Math.max((day.amount / maxAmount) * 200, 8) : 4;
+                  const isEmpty = day.amount === 0;
                   return (
                     <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative min-w-0">
-                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl font-bold pointer-events-none">
-                        {day.amount > 0 ? formatAmount(day.amount) : ''}
-                      </div>
+                      {/* Rich tooltip */}
+                      {!isEmpty && (
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-3 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-30 pointer-events-none min-w-max">
+                          {day.items.map((exp, j) => (
+                            <div key={j} className="flex justify-between gap-3">
+                              <span className="text-stone-300 truncate max-w-[140px]">{exp.concept}</span>
+                              <span className="font-bold text-white">{formatAmount(parseFloat(exp.totalAmount) || 0)}</span>
+                            </div>
+                          ))}
+                          {day.items.length > 1 && (
+                            <div className="border-t border-stone-700 mt-1 pt-1 flex justify-between gap-3">
+                              <span className="text-stone-400">Total</span>
+                              <span className="font-bold text-orange-400">{formatAmount(day.amount)}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {/* Stacked bar */}
                       <div
-                        className={`w-full rounded-t-lg sm:rounded-t-xl transition-all duration-300 ${day.amount > 0 ? 'bg-primary hover:opacity-80' : 'bg-surface-container-highest'}`}
+                        className="w-full rounded-t-lg sm:rounded-t-xl overflow-hidden flex flex-col-reverse"
                         style={{ height: `${barPx}px` }}
-                      />
+                      >
+                        {isEmpty ? (
+                          <div className="w-full h-full bg-surface-container-highest" />
+                        ) : (
+                          day.items.map((exp, j) => {
+                            const segPx = (parseFloat(exp.totalAmount) / day.amount) * barPx;
+                            return (
+                              <div
+                                key={j}
+                                className={`w-full ${catColor(exp.category)} transition-all`}
+                                style={{ height: `${segPx}px`, minHeight: day.items.length > 1 ? '3px' : undefined }}
+                              />
+                            );
+                          })
+                        )}
+                      </div>
                       <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-tighter text-on-surface-variant truncate w-full text-center">
                         {day.label.substring(0, 2)}
                       </span>
