@@ -3,11 +3,39 @@ import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
 import Layout from '../components/Layout';
 import MultiLineSplitter from '../components/MultiLineSplitter';
+import { expenseService } from '../services/expenseService';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { activeHousehold, members, expenses, balances, loading, formatAmount } = useHousehold();
+
+  const handleSettle = async (memberId, amount, isUserDebtor) => {
+    if (!window.confirm(`¿Quieres marcar esta deuda de ${formatAmount(Math.abs(amount))} como saldada? Se registrará un pago automático.`)) return;
+
+    try {
+      const settlementData = {
+        concept: `Liquidación: ${members.find(m => m.id === memberId)?.displayName}`,
+        amount: Math.abs(amount),
+        category: 'otros',
+        // Si YO debo, YO pago. Si ÉL debe, ÉL paga.
+        paidBy: isUserDebtor ? user.uid : memberId,
+        // El beneficiario es el que recibía el dinero
+        participants: [isUserDebtor ? memberId : user.uid],
+        date: new Date().toLocaleDateString('sv'),
+        paymentStatus: 'Pagado',
+        splitMode: 'custom',
+        customSplits: {
+          [isUserDebtor ? memberId : user.uid]: Math.abs(amount)
+        }
+      };
+
+      await expenseService.addExpense(activeHousehold.id, settlementData);
+    } catch (error) {
+      console.error("Error al liquidar:", error);
+      alert("No se pudo registrar la liquidación");
+    }
+  };
 
   if (loading) return (
     <Layout title="Dashboard">
@@ -202,14 +230,27 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <p className="font-bold text-stone-800 dark:text-stone-100">{member.displayName}</p>
-                    <p className={`text-[10px] font-black uppercase tracking-[0.15em] ${isSettled ? 'text-stone-400' : (balance >= 0 ? 'text-emerald-600' : 'text-rose-500')}`}>
-                      {isSettled ? 'Al día' : (balance >= 0 ? 'Te debe' : 'Le debes')}
+                    <p className={`text-[10px] font-black uppercase tracking-[0.15em] ${isSettled ? 'text-stone-400' : (balance > 0 ? 'text-rose-500' : 'text-emerald-600')}`}>
+                      {isSettled ? 'Al día' : (balance > 0 ? 'Le debes' : 'Te debe')}
                     </p>
                   </div>
                 </div>
-                <p className={`font-headline text-2xl font-bold ${isSettled ? 'text-stone-300' : (balance >= 0 ? 'text-stone-900 dark:text-white' : 'text-rose-600')}`}>
-                  {formatAmount(Math.abs(balance))}
-                </p>
+                <div className="flex flex-col items-end gap-2">
+                  <p className={`font-headline text-2xl font-bold ${isSettled ? 'text-stone-300' : (balance > 0 ? 'text-rose-600' : 'text-stone-900 dark:text-white')}`}>
+                    {formatAmount(Math.abs(balance))}
+                  </p>
+                  {!isSettled && (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSettle(member.id, balance, balance > 0);
+                      }}
+                      className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-colors border border-emerald-100 dark:border-emerald-800/50"
+                    >
+                      Liquidar
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}
