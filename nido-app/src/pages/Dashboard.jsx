@@ -227,28 +227,25 @@ export default function Dashboard() {
           </div>
 
           {trendView === 'weekly' ? (
-            <div className="flex items-end justify-between h-40 gap-2 sm:gap-4">
+            <div className="flex items-end gap-1 sm:gap-2 pt-4">
               {dailyStats.map((amount, i) => {
-                const height = (amount / maxDaily) * 100;
+                const barPx = amount > 0 ? Math.max((amount / maxDaily) * 130, 8) : 4;
                 const isEmpty = amount === 0;
                 return (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative">
-                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
-                      {formatAmount(amount)}
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar relative">
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
+                      {amount > 0 ? formatAmount(amount) : ''}
                     </div>
                     <div
-                      className={`w-full rounded-t-xl transition-all hover:scale-x-110 ${
-                        isEmpty
-                          ? 'bg-orange-100 dark:bg-stone-800'
-                          : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:shadow-lg'
+                      className={`w-full rounded-t-xl transition-all ${
+                        isEmpty ? 'bg-orange-100 dark:bg-stone-800' : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:opacity-80'
                       }`}
-                      style={{ height: isEmpty ? '8%' : `${Math.max(height, 8)}%` }}
-                    ></div>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">
+                      style={{ height: `${barPx}px` }}
+                    />
+                    <span className="text-[8px] font-black text-stone-400 text-center leading-tight">
                       {(() => {
                         const [y, m, d] = last30Days[i].split('-').map(Number);
                         const dateObj = new Date(y, m - 1, d);
-                        // Only show label every 5 days to avoid crowding
                         if (i % 5 !== 0 && i !== 29) return '';
                         return dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                       })()}
@@ -258,23 +255,21 @@ export default function Dashboard() {
               })}
             </div>
           ) : (
-            <div className="flex items-end justify-between h-40 gap-2 sm:gap-4">
+            <div className="flex items-end gap-2 sm:gap-3 pt-4">
               {monthlyStats.map((amount, i) => {
-                const height = (amount / maxMonthly) * 100;
+                const barPx = amount > 0 ? Math.max((amount / maxMonthly) * 130, 8) : 4;
                 const isEmpty = amount === 0;
                 return (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-3 group/bar relative">
-                    <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
-                      {formatAmount(amount)}
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar relative">
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white text-[10px] px-2 py-1.5 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-20 pointer-events-none font-bold">
+                      {amount > 0 ? formatAmount(amount) : ''}
                     </div>
                     <div
-                      className={`w-full rounded-t-xl transition-all hover:scale-x-110 ${
-                        isEmpty
-                          ? 'bg-orange-100 dark:bg-stone-800'
-                          : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:shadow-lg'
+                      className={`w-full rounded-t-xl transition-all ${
+                        isEmpty ? 'bg-orange-100 dark:bg-stone-800' : 'bg-gradient-to-t from-orange-600 to-orange-400 hover:opacity-80'
                       }`}
-                      style={{ height: isEmpty ? '8%' : `${Math.max(height, 8)}%` }}
-                    ></div>
+                      style={{ height: `${barPx}px` }}
+                    />
                     <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
                       {monthLabels[i]}
                     </span>

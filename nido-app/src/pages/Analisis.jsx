@@ -104,23 +104,18 @@ export default function Analisis() {
                 </div>
               </div>
               
-              <div className="relative h-64 w-full mt-auto flex items-end gap-1 sm:gap-2 px-1">
+              <div className="w-full flex items-end gap-1 sm:gap-2 px-1 pt-4">
                 {dailyTrend.map((day, i) => {
-                  const height = (day.amount / maxAmount) * 100;
+                  const barPx = day.amount > 0 ? Math.max((day.amount / maxAmount) * 200, 8) : 4;
                   return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative min-w-0">
-                      {/* Tooltip on hover */}
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl font-bold pointer-events-none">
-                        {formatAmount(day.amount)}
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative min-w-0">
+                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl font-bold pointer-events-none">
+                        {day.amount > 0 ? formatAmount(day.amount) : ''}
                       </div>
-                      
-                      <div 
-                        className="w-full bg-primary rounded-t-lg sm:rounded-t-xl transition-all duration-500 hover:opacity-100" 
-                        style={{
-                          height: `${Math.max(height, 4)}%`, 
-                          opacity: 0.4 + (height / 150)
-                        }}
-                      ></div>
+                      <div
+                        className={`w-full rounded-t-lg sm:rounded-t-xl transition-all duration-300 ${day.amount > 0 ? 'bg-primary hover:opacity-80' : 'bg-surface-container-highest'}`}
+                        style={{ height: `${barPx}px` }}
+                      />
                       <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-tighter text-on-surface-variant truncate w-full text-center">
                         {day.label.substring(0, 2)}
                       </span>
