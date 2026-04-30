@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
+import { normalizeExpense, calculateBalances } from '../utils/expenseLogic';
 
 const HouseholdContext = createContext();
 
@@ -19,37 +20,7 @@ export function HouseholdProvider({ children }) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Normalize expense data for consistent use across components
-  const normalizeExpense = (exp) => {
-    let processedDate = exp.date;
-    if (processedDate && typeof processedDate === 'string' && processedDate.includes('T')) {
-      processedDate = processedDate.split('T')[0];
-    }
-    
-    // Validate it's a proper YYYY-MM-DD string
-    if (!processedDate || !/^\d{4}-\d{2}-\d{2}/.test(processedDate)) {
-      // Fallback: derive from createdAt
-      if (exp.createdAt) {
-        const d = exp.createdAt.toDate ? exp.createdAt.toDate() : new Date(exp.createdAt);
-        processedDate = d.toLocaleDateString('sv');
-      }
-    } else {
-      // Ensure we only keep the YYYY-MM-DD part even if there's extra
-      processedDate = processedDate.substring(0, 10);
-    }
-    // Calculate total amount if it's an itemized expense, or use root amount
-    let totalAmount = 0;
-    if (exp.items && Array.isArray(exp.items) && exp.items.length > 0) {
-      totalAmount = exp.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-    } else {
-      totalAmount = parseFloat(exp.amount) || 0;
-    }
 
-    return {
-      ...exp,
-      processedDate,
-      totalAmount
-    };
   };
 
   // Sync active household info
@@ -93,7 +64,7 @@ export function HouseholdProvider({ children }) {
       const rawExpenses = querySnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
       // Normalize and Sort in memory to avoid needing a Firestore composite index immediately
-      const normalizedExpenses = rawExpenses.map(normalizeExpense);
+      const normalizedExpenses = rawExpenses.map(exp => normalizeExpense(exp));
       
       normalizedExpenses.sort((a, b) => {
         // Sort by processedDate descending
@@ -123,65 +94,7 @@ export function HouseholdProvider({ children }) {
 
   // Derived State: Balances (Who owes whom)
   const balances = useMemo(() => {
-    if (!members.length || !expenses.length) return {};
-
-    const netBalances = {}; // userId -> amount (positive means they are owed, negative means they owe)
-    members.forEach(m => netBalances[m.id] = 0);
-
-    expenses.forEach(exp => {
-      const amount = exp.totalAmount;
-      const paidBy = exp.paidBy;
-      
-      // Amount paid by the user
-      if (netBalances[paidBy] !== undefined) {
-        netBalances[paidBy] += amount;
-      }
-
-      // If the expense has itemized lines, process each line's split
-      if (exp.items && Array.isArray(exp.items) && exp.items.length > 0) {
-        exp.items.forEach(item => {
-          const itemAmount = parseFloat(item.amount) || 0;
-          const itemSplitMode = item.splitMode || 'equal';
-          const itemParticipants = item.participants || members.map(m => m.id);
-
-          if (itemSplitMode === 'custom' && item.customSplits) {
-            Object.entries(item.customSplits).forEach(([pId, share]) => {
-              if (netBalances[pId] !== undefined) {
-                netBalances[pId] -= parseFloat(share) || 0;
-              }
-            });
-          } else {
-            const share = itemAmount / itemParticipants.length;
-            itemParticipants.forEach(pId => {
-              if (netBalances[pId] !== undefined) {
-                netBalances[pId] -= share;
-              }
-            });
-          }
-        });
-      } else {
-        // Fallback to global split if no items (Legacy/Simple expense)
-        const splitMode = exp.splitMode || 'equal';
-        const participants = exp.participants || members.map(m => m.id);
-        
-        if (splitMode === 'custom' && exp.customSplits) {
-          Object.entries(exp.customSplits).forEach(([pId, share]) => {
-            if (netBalances[pId] !== undefined) {
-              netBalances[pId] -= parseFloat(share) || 0;
-            }
-          });
-        } else {
-          const share = amount / participants.length;
-          participants.forEach(pId => {
-            if (netBalances[pId] !== undefined) {
-              netBalances[pId] -= share;
-            }
-          });
-        }
-      }
-    });
-
-    return netBalances;
+    return calculateBalances(members, expenses);
   }, [members, expenses]);
 
   // Helper to get currency symbol
