@@ -20,9 +20,6 @@ export function HouseholdProvider({ children }) {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
-  };
-
   // Sync active household info
   useEffect(() => {
     if (!userProfile?.currentHouseholdId) {
