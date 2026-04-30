@@ -44,8 +44,14 @@ export const generateFinancialInsights = async (expenses, householdName) => {
     const text = response.text();
     console.log("Raw AI Response:", text);
     
-    // Clean potential markdown code blocks
-    const cleanedText = text.replace(/```json|```/gi, "").trim();
+    // Extract JSON from potential markdown or surrounding text
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error("No JSON found in AI response");
+      return null;
+    }
+    
+    const cleanedText = jsonMatch[0].trim();
     return JSON.parse(cleanedText);
   } catch (error) {
     console.error("Error generating AI insights:", error);

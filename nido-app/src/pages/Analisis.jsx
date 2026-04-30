@@ -262,18 +262,32 @@ export default function Analisis() {
             </div>
 
             <div className="md:col-span-12">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lightbulb</span>
-                <h3 className="font-headline text-xl font-bold text-on-surface">Sugerencias de IA</h3>
-                {aiLoading && <div className="animate-pulse flex space-x-2 items-center ml-4">
-                  <div className="h-2 w-2 bg-primary rounded-full"></div>
-                  <div className="h-2 w-2 bg-primary rounded-full"></div>
-                  <div className="h-2 w-2 bg-primary rounded-full"></div>
-                </div>}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lightbulb</span>
+                  <h3 className="font-headline text-xl font-bold text-on-surface">Sugerencias de IA</h3>
+                </div>
+                <button 
+                  onClick={() => { setAiInsights(null); getAIInsights(); }}
+                  disabled={aiLoading}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-sm font-bold text-on-surface disabled:opacity-50"
+                >
+                  <span className={`material-symbols-outlined text-sm ${aiLoading ? 'animate-spin' : ''}`}>refresh</span>
+                  <span>{aiLoading ? 'Analizando...' : 'Actualizar'}</span>
+                </button>
               </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {!aiInsights && !aiLoading && (
-                  <p className="text-on-surface-variant text-sm col-span-3">No hay sugerencias disponibles en este momento.</p>
+                  <div className="col-span-3 bg-surface-container p-8 rounded-[2rem] text-center border border-outline-variant/50">
+                    <p className="text-on-surface-variant text-sm mb-4">No hay sugerencias disponibles en este momento.</p>
+                    <button 
+                      onClick={getAIInsights}
+                      className="bg-primary text-on-primary px-6 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
+                    >
+                      Generar sugerencias ahora
+                    </button>
+                  </div>
                 )}
                 
                 {aiInsights?.map((insight, idx) => {
