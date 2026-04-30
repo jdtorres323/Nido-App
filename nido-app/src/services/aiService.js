@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 export const generateFinancialInsights = async (expenses, householdName) => {
   if (!expenses || expenses.length === 0) return null;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
   const prompt = `
     Eres un experto en finanzas personales y economía doméstica para la aplicación "Nido".
@@ -72,7 +72,7 @@ const fileToGenerativePart = async (file) => {
 
 export const aiService = {
   analyzeReceipt: async (file) => {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const prompt = `
       Analiza esta imagen de un ticket o recibo de compra.
