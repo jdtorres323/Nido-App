@@ -1,79 +1,92 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Read API Key from environment variables (Vite requires VITE_ prefix)
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || "PLACEHOLDER");
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(API_KEY);
 
-export const aiService = {
-  /**
-   * Translates an image file to a structured expense object using Gemini
-   */
-  async analyzeReceipt(imageFile) {
-    if (GEMINI_API_KEY === "TU_API_KEY_AQUI") {
-      console.warn("Gemini API Key not configured. Using mock data.");
-      return this.getMockData();
+export const generateFinancialInsights = async (expenses, householdName) => {
+  if (!expenses || expenses.length === 0) return null;
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const prompt = `
+    Eres un experto en finanzas personales y economía doméstica para la aplicación "Nido".
+    Analiza los siguientes gastos del hogar "${householdName}" y proporciona 3 sugerencias accionables y reales.
+    
+    Los gastos son:
+    ${JSON.stringify(expenses.map(e => ({ concept: e.concept, amount: e.totalAmount, category: e.category, date: e.processedDate })))}
+
+    Devuelve ÚNICAMENTE un objeto JSON con el siguiente formato, sin markdown, sin texto adicional:
+    {
+      "insights": [
+        {
+          "type": "energy" | "subscriptions" | "savings" | "general",
+          "title": "Título corto",
+          "description": "Descripción detallada con datos reales basados en los gastos",
+          "actionText": "Texto del botón de acción",
+          "icon": "nombre_icono_material_symbols"
+        }
+      ]
     }
 
-    try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
-      // Convert image to generation part
-      const imageData = await this.fileToGenerativePart(imageFile);
-      
-      const prompt = `Analiza este ticket de compra. Extrae el nombre del establecimiento (concept), el importe total (amount) y la fecha (date). 
-      Devuelve ÚNICAMENTE un objeto JSON con este formato:
-      {
-        "concept": "nombre del sitio",
-        "amount": 00.00,
-        "date": "YYYY-MM-DD",
-        "category": "comida" | "hogar" | "ocio" | "otros"
-      }
-      Básate en el contenido para elegir la categoría más lógica.`;
+    Reglas:
+    1. Si detectas gastos duplicados en servicios de streaming o similares, menciónalo.
+    2. Si los gastos en servicios (luz, agua) son altos, da consejos de ahorro energético.
+    3. Si hay una tendencia positiva de ahorro, felicita al usuario.
+    4. Usa un tono cercano, premium y motivador.
+    5. Los montos deben estar en la moneda que se ve en los datos (usualmente UYU o pesos).
+  `;
 
-      const result = await model.generateContent([prompt, imageData]);
-      const response = await result.response;
-      const text = response.text();
-      
-      // Extract JSON from response (Gemini sometimes adds markdown blocks)
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      
-      return null;
-    } catch (error) {
-      console.error("Error analyzing receipt with Gemini:", error);
-      return null;
-    }
-  },
-
-  async fileToGenerativePart(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve({
-          inlineData: {
-            data: reader.result.split(',')[1],
-            mimeType: file.type
-          }
-        });
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  },
-
-  getMockData() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          concept: "Supermercado (Mock IA)",
-          amount: 24.95,
-          date: new Date().toLocaleDateString('sv'),
-          category: "comida"
-        });
-      }, 1500);
-    });
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    const cleanedText = text.replace(/```json|```/gi, "").trim();
+    return JSON.parse(cleanedText);
+  } catch (error) {
+    console.error("Error generating AI insights:", error);
+    return null;
   }
 };
 
+const fileToGenerativePart = async (file) => {
+  const base64EncodedDataPromise = new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.readAsDataURL(file);
+  });
+  return {
+    inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+  };
+};
+
+export const aiService = {
+  analyzeReceipt: async (file) => {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `
+      Analiza esta imagen de un ticket o recibo de compra.
+      Extrae la siguiente información y devuélvela ÚNICAMENTE en formato JSON:
+      {
+        "concept": "Nombre del establecimiento o producto principal",
+        "amount": 123.45 (solo el número),
+        "category": "comida" | "hogar" | "ocio" | "otros" | "servicios",
+        "date": "YYYY-MM-DD"
+      }
+      
+      Si no puedes determinar la fecha, usa la fecha actual.
+      Si no puedes determinar la categoría, usa "otros".
+    `;
+
+    try {
+      const imagePart = await fileToGenerativePart(file);
+      const result = await model.generateContent([prompt, imagePart]);
+      const response = await result.response;
+      const text = response.text();
+      const cleanedText = text.replace(/```json|```/gi, "").trim();
+      return JSON.parse(cleanedText);
+    } catch (error) {
+      console.error("Error analyzing receipt with Gemini:", error);
+      throw error;
+    }
+  }
+};

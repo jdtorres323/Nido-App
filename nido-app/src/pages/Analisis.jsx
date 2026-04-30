@@ -1,9 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
+import { generateFinancialInsights } from '../services/aiService';
 
 export default function Analisis() {
   const navigate = useNavigate();
   const { expenses, activeHousehold, loading, formatAmount } = useHousehold();
+  const [aiInsights, setAiInsights] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  useEffect(() => {
+    async function getAIInsights() {
+      if (expenses.length > 0 && activeHousehold && !aiInsights && !aiLoading) {
+        setAiLoading(true);
+        const insights = await generateFinancialInsights(expenses, activeHousehold.name);
+        if (insights) {
+          setAiInsights(insights.insights);
+        }
+        setAiLoading(false);
+      }
+    }
+    getAIInsights();
+  }, [expenses, activeHousehold]);
 
   if (loading) return (
     <div className="flex items-center justify-center h-96">
@@ -236,58 +254,78 @@ export default function Analisis() {
               </div>
             </div>
 
-            {/* AI Suggestions (Asymmetric Grid) */}
             <div className="md:col-span-12">
               <div className="flex items-center gap-2 mb-4">
                 <span className="material-symbols-outlined text-primary" style={{fontVariationSettings: "'FILL' 1"}}>lightbulb</span>
                 <h3 className="font-headline text-xl font-bold text-on-surface">Sugerencias de IA</h3>
+                {aiLoading && <div className="animate-pulse flex space-x-2 items-center ml-4">
+                  <div className="h-2 w-2 bg-primary rounded-full"></div>
+                  <div className="h-2 w-2 bg-primary rounded-full"></div>
+                  <div className="h-2 w-2 bg-primary rounded-full"></div>
+                </div>}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Suggestion Card 1 */}
-                <div className="bg-primary text-on-primary p-6 rounded-[2rem] shadow-lg relative overflow-hidden group">
-                  <div className="absolute -right-4 -top-4 opacity-10 transition-transform group-hover:scale-110 duration-300">
-                    <span className="material-symbols-outlined text-9xl">bolt</span>
-                  </div>
-                  <div className="relative z-10">
-                    <div className="bg-on-primary/20 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
-                      <span className="material-symbols-outlined">electric_bolt</span>
-                    </div>
-                    <h4 className="font-headline font-bold text-lg mb-2">Ahorro en Energía</h4>
-                    <p className="text-on-primary/90 text-sm leading-relaxed font-medium">Gastaste un 15% más en luz este mes comparado con el promedio del vecindario. Considera revisar el aislamiento térmico.</p>
-                    <button className="mt-4 text-[10px] font-black uppercase tracking-wider bg-surface text-primary px-4 py-2 rounded-lg hover:bg-surface-container transition-colors">Ver detalles</button>
-                  </div>
-                </div>
+                {!aiInsights && !aiLoading && (
+                  <p className="text-on-surface-variant text-sm col-span-3">No hay sugerencias disponibles en este momento.</p>
+                )}
+                
+                {aiInsights?.map((insight, idx) => {
+                  if (insight.type === 'energy') {
+                    return (
+                      <div key={idx} className="bg-primary text-on-primary p-6 rounded-[2rem] shadow-lg relative overflow-hidden group">
+                        <div className="absolute -right-4 -top-4 opacity-10 transition-transform group-hover:scale-110 duration-300">
+                          <span className="material-symbols-outlined text-9xl">{insight.icon || 'bolt'}</span>
+                        </div>
+                        <div className="relative z-10">
+                          <div className="bg-on-primary/20 w-10 h-10 rounded-xl flex items-center justify-center mb-4">
+                            <span className="material-symbols-outlined">{insight.icon || 'electric_bolt'}</span>
+                          </div>
+                          <h4 className="font-headline font-bold text-lg mb-2">{insight.title}</h4>
+                          <p className="text-on-primary/90 text-sm leading-relaxed font-medium">{insight.description}</p>
+                          <button className="mt-4 text-[10px] font-black uppercase tracking-wider bg-surface text-primary px-4 py-2 rounded-lg hover:bg-surface-container transition-colors">{insight.actionText || 'Ver detalles'}</button>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  if (insight.type === 'subscriptions') {
+                    return (
+                      <div key={idx} className="bg-surface-container-lowest p-6 rounded-[2rem] border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="bg-primary-container w-10 h-10 rounded-xl flex items-center justify-center text-primary">
+                            <span className="material-symbols-outlined">{insight.icon || 'subscriptions'}</span>
+                          </div>
+                          <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-wider">Suscripciones</span>
+                        </div>
+                        <h4 className="font-headline font-bold text-on-surface mb-2">{insight.title}</h4>
+                        <p className="text-on-surface-variant text-sm leading-relaxed font-medium">{insight.description}</p>
+                        <div className="mt-4 flex items-center gap-2 text-primary font-bold text-sm cursor-pointer hover:underline">
+                          <span>{insight.actionText || 'Solucionar ahora'}</span>
+                          <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        </div>
+                      </div>
+                    );
+                  }
 
-                {/* Suggestion Card 2 */}
-                <div className="bg-surface-container-lowest p-6 rounded-[2rem] border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-primary-container w-10 h-10 rounded-xl flex items-center justify-center text-primary">
-                      <span className="material-symbols-outlined">subscriptions</span>
+                  // Default for savings or other
+                  return (
+                    <div key={idx} className="bg-on-surface text-surface p-6 rounded-[2rem] shadow-lg border border-outline-variant">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="bg-surface/10 w-10 h-10 rounded-xl flex items-center justify-center text-secondary">
+                          <span className="material-symbols-outlined">{insight.icon || 'savings'}</span>
+                        </div>
+                        <span className="text-[10px] font-black text-surface/60 uppercase tracking-wider">{insight.type === 'savings' ? 'Metas' : 'General'}</span>
+                      </div>
+                      <h4 className="font-headline font-bold text-secondary mb-2">{insight.title}</h4>
+                      <p className="text-surface/80 text-sm leading-relaxed font-medium">{insight.description}</p>
+                      {insight.type === 'savings' && (
+                        <div className="mt-4 w-full bg-surface/10 h-2 rounded-full overflow-hidden">
+                          <div className="bg-secondary h-full rounded-full w-[78%]"></div>
+                        </div>
+                      )}
                     </div>
-                    <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-wider">Suscripciones</span>
-                  </div>
-                  <h4 className="font-headline font-bold text-on-surface mb-2">Cargos Duplicados</h4>
-                  <p className="text-on-surface-variant text-sm leading-relaxed font-medium">Hemos detectado dos cobros similares de "Streaming Service". Podrías ahorrar {formatAmount(12.99)} mensuales cancelando uno.</p>
-                  <div className="mt-4 flex items-center gap-2 text-primary font-bold text-sm cursor-pointer hover:underline">
-                    <span>Solucionar ahora</span>
-                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                  </div>
-                </div>
-
-                {/* Suggestion Card 3 */}
-                <div className="bg-on-surface text-surface p-6 rounded-[2rem] shadow-lg border border-outline-variant">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-surface/10 w-10 h-10 rounded-xl flex items-center justify-center text-secondary">
-                      <span className="material-symbols-outlined">savings</span>
-                    </div>
-                    <span className="text-[10px] font-black text-surface/60 uppercase tracking-wider">Metas</span>
-                  </div>
-                  <h4 className="font-headline font-bold text-secondary mb-2">Fondo de Emergencia</h4>
-                  <p className="text-surface/80 text-sm leading-relaxed font-medium">Si mantienes este ritmo de ahorro, completarás tu meta de vacaciones 2 meses antes de lo previsto.</p>
-                  <div className="mt-4 w-full bg-surface/10 h-2 rounded-full overflow-hidden">
-                    <div className="bg-secondary h-full rounded-full w-[78%]"></div>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
 
