@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
 import { generateFinancialInsights } from '../services/aiService';
@@ -9,26 +9,27 @@ export default function Analisis() {
   const [aiInsights, setAiInsights] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
 
-  useEffect(() => {
-    async function getAIInsights() {
-      console.log("Checking AI conditions:", { expensesLen: expenses.length, activeHousehold, aiInsights, aiLoading });
-      if (expenses.length > 0 && activeHousehold && !aiInsights && !aiLoading) {
-        console.log("Generating AI insights for:", activeHousehold.name);
-        setAiLoading(true);
-        try {
-          const insights = await generateFinancialInsights(expenses, activeHousehold.name);
-          console.log("AI Insights received:", insights);
-          if (insights && insights.insights) {
-            setAiInsights(insights.insights);
-          }
-        } catch (error) {
-          console.error("Error in Analisis useEffect:", error);
+  const getAIInsights = useCallback(async (force = false) => {
+    // Only proceed if conditions are met, or if force is true (manual refresh)
+    if (expenses.length > 0 && activeHousehold && (force || (!aiInsights && !aiLoading))) {
+      console.log("Generating AI insights for:", activeHousehold.name);
+      setAiLoading(true);
+      try {
+        const insights = await generateFinancialInsights(expenses, activeHousehold.name);
+        console.log("AI Insights received:", insights);
+        if (insights && insights.insights) {
+          setAiInsights(insights.insights);
         }
-        setAiLoading(false);
+      } catch (error) {
+        console.error("Error in Analisis getAIInsights:", error);
       }
+      setAiLoading(false);
     }
+  }, [expenses, activeHousehold, aiInsights, aiLoading]);
+
+  useEffect(() => {
     getAIInsights();
-  }, [expenses, activeHousehold]);
+  }, [getAIInsights]);
 
   if (loading) return (
     <div className="flex items-center justify-center h-96">
@@ -268,7 +269,7 @@ export default function Analisis() {
                   <h3 className="font-headline text-xl font-bold text-on-surface">Sugerencias de IA</h3>
                 </div>
                 <button 
-                  onClick={() => { setAiInsights(null); getAIInsights(); }}
+                  onClick={() => getAIInsights(true)}
                   disabled={aiLoading}
                   className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-sm font-bold text-on-surface disabled:opacity-50"
                 >
@@ -282,7 +283,7 @@ export default function Analisis() {
                   <div className="col-span-3 bg-surface-container p-8 rounded-[2rem] text-center border border-outline-variant/50">
                     <p className="text-on-surface-variant text-sm mb-4">No hay sugerencias disponibles en este momento.</p>
                     <button 
-                      onClick={getAIInsights}
+                      onClick={() => getAIInsights(true)}
                       className="bg-primary text-on-primary px-6 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
                     >
                       Generar sugerencias ahora
