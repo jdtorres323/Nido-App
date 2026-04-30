@@ -11,11 +11,18 @@ export default function Analisis() {
 
   useEffect(() => {
     async function getAIInsights() {
+      console.log("Checking AI conditions:", { expensesLen: expenses.length, activeHousehold, aiInsights, aiLoading });
       if (expenses.length > 0 && activeHousehold && !aiInsights && !aiLoading) {
+        console.log("Generating AI insights for:", activeHousehold.name);
         setAiLoading(true);
-        const insights = await generateFinancialInsights(expenses, activeHousehold.name);
-        if (insights) {
-          setAiInsights(insights.insights);
+        try {
+          const insights = await generateFinancialInsights(expenses, activeHousehold.name);
+          console.log("AI Insights received:", insights);
+          if (insights && insights.insights) {
+            setAiInsights(insights.insights);
+          }
+        } catch (error) {
+          console.error("Error in Analisis useEffect:", error);
         }
         setAiLoading(false);
       }

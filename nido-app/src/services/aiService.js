@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+console.log("Gemini API Key defined:", !!API_KEY);
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 export const generateFinancialInsights = async (expenses, householdName) => {
@@ -36,10 +37,14 @@ export const generateFinancialInsights = async (expenses, householdName) => {
     5. Los montos deben estar en la moneda que se ve en los datos (usualmente UYU o pesos).
   `;
 
+  console.log("AI Prompt:", prompt);
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    console.log("Raw AI Response:", text);
+    
+    // Clean potential markdown code blocks
     const cleanedText = text.replace(/```json|```/gi, "").trim();
     return JSON.parse(cleanedText);
   } catch (error) {
