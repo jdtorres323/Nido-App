@@ -338,7 +338,7 @@ export default function Layout({ children, title }) {
           </Link>
         </div>
 
-        {navItems.slice(3).map(item => (
+        {navItems.slice(2).map(item => (
           <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 px-4 transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
             <span className="material-symbols-outlined text-2xl" style={path === item.path ? {fontVariationSettings: "'FILL' 1"} : {}}>{item.icon}</span>
             <span className="font-label text-[10px] font-bold uppercase tracking-tighter">{item.name}</span>

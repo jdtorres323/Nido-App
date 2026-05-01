@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHousehold } from '../context/HouseholdContext';
@@ -9,6 +9,7 @@ import { expenseService } from '../services/expenseService';
 export default function Dashboard() {
   const navigate = useNavigate();
   const [trendView, setTrendView] = useState('weekly'); // 'weekly' | 'monthly'
+  const [selectedMonth, setSelectedMonth] = useState(() => new Date().toLocaleDateString('sv').substring(0, 7)); // YYYY-MM
   const { user } = useAuth();
   const { activeHousehold, members, expenses, balances, loading, formatAmount } = useHousehold();
 
@@ -47,7 +48,14 @@ export default function Dashboard() {
     </Layout>
   );
 
-  const totalSpent = expenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount || exp.amount) || 0), 0);
+  const totalSpent = useMemo(() => {
+    return expenses
+      .filter(exp => {
+        const expDate = (exp.processedDate || exp.date || '').substring(0, 7);
+        return expDate === selectedMonth;
+      })
+      .reduce((acc, exp) => acc + (parseFloat(exp.totalAmount || exp.amount) || 0), 0);
+  }, [expenses, selectedMonth]);
   
   // Calculate specific "Te deben" and "Debes" for the current user
   const myNetBalance = balances[user?.uid] || 0;
@@ -142,7 +150,15 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-orange-100 dark:bg-orange-900/10 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700"></div>
           
           <div className="relative z-10">
-            <p className="text-stone-500 dark:text-stone-400 font-medium mb-1">Balance total del hogar</p>
+            <div className="flex items-center gap-3 mb-1">
+              <p className="text-stone-500 dark:text-stone-400 font-medium">Balance total del hogar</p>
+              <input 
+                type="month" 
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="bg-orange-50 dark:bg-stone-800 text-orange-700 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-xl outline-none border border-orange-200 dark:border-stone-700 cursor-pointer"
+              />
+            </div>
             <h3 className="font-headline text-5xl font-extrabold text-stone-900 dark:text-white mb-8 tracking-tighter">
               {formatAmount(totalSpent)}
             </h3>

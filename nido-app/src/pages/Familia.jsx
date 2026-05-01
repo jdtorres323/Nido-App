@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { invitationService } from '../services/invitationService';
+import { householdService } from '../services/householdService';
 
 export default function Familia() {
   const { user } = useAuth();
@@ -61,6 +62,17 @@ export default function Familia() {
     alert('Link de invitación copiado. Compártelo con tu familia.');
   };
 
+  const handleRemoveMember = async (memberId, memberName) => {
+    if (!window.confirm(`¿Estás seguro de que quieres eliminar a ${memberName} de este hogar?`)) return;
+    try {
+      await householdService.removeMember(memberId, activeHousehold.id);
+      alert(`${memberName} ha sido eliminado del hogar.`);
+    } catch (err) {
+      console.error(err);
+      alert('Error al eliminar el miembro');
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto pb-10">
       {/* Header Section */}
@@ -100,7 +112,16 @@ export default function Familia() {
 
           return (
             <div key={member.id} className="bg-surface p-8 rounded-[3rem] shadow-sm border border-outline-variant flex flex-col items-center text-center relative overflow-hidden group">
-              <div className="absolute top-6 right-6">
+              <div className="absolute top-6 right-6 flex items-center gap-2">
+                {!isAdmin && !isMe && (
+                  <button 
+                    onClick={() => handleRemoveMember(member.id, member.displayName)}
+                    className="w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-100 flex items-center justify-center transition-colors shadow-sm border border-rose-100"
+                    title="Eliminar usuario"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">person_remove</span>
+                  </button>
+                )}
                 <span className={`inline-flex items-center rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${isAdmin ? 'bg-primary text-on-primary' : (isMe ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-highest text-on-surface-variant')}`}>
                   {isAdmin ? 'Admin' : (isMe ? 'Tú' : 'Miembro')}
                 </span>

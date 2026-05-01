@@ -53,5 +53,25 @@ export const householdService = {
     const householdRef = doc(db, 'households', householdId);
     const snap = await getDoc(householdRef);
     return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  },
+
+  // Remove a member from the household
+  async removeMember(uid, householdId) {
+    const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) return;
+    
+    const userData = userSnap.data();
+    const newHouseholdIds = (userData.householdIds || []).filter(id => id !== householdId);
+    
+    const updateData = {
+      householdIds: newHouseholdIds
+    };
+    
+    if (userData.currentHouseholdId === householdId) {
+      updateData.currentHouseholdId = newHouseholdIds.length > 0 ? newHouseholdIds[0] : null;
+    }
+    
+    await updateDoc(userRef, updateData);
   }
 };
