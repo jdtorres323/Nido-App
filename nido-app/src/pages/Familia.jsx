@@ -107,13 +107,14 @@ export default function Familia() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {(members || []).map((member, index) => {
           const balance = (balances || {})[member.id] || 0;
+          const isOwner = member.id === activeHousehold?.ownerUid;
           const isMe = member.id === user?.uid;
-          const isAdmin = index === 0;
+          const amIOwner = user?.uid === activeHousehold?.ownerUid;
 
           return (
             <div key={member.id} className="bg-surface p-8 rounded-[3rem] shadow-sm border border-outline-variant flex flex-col items-center text-center relative overflow-hidden group">
               <div className="absolute top-6 right-6 flex items-center gap-2">
-                {!isAdmin && !isMe && (
+                {!isOwner && !isMe && amIOwner && (
                   <button 
                     onClick={() => handleRemoveMember(member.id, member.displayName)}
                     className="w-8 h-8 rounded-full bg-rose-50 text-rose-500 hover:bg-rose-100 flex items-center justify-center transition-colors shadow-sm border border-rose-100"
@@ -122,8 +123,8 @@ export default function Familia() {
                     <span className="material-symbols-outlined text-[16px]">person_remove</span>
                   </button>
                 )}
-                <span className={`inline-flex items-center rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${isAdmin ? 'bg-primary text-on-primary' : (isMe ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-highest text-on-surface-variant')}`}>
-                  {isAdmin ? 'Admin' : (isMe ? 'Tú' : 'Miembro')}
+                <span className={`inline-flex items-center rounded-xl px-3 py-1 text-[10px] font-black uppercase tracking-widest ${isOwner ? 'bg-primary text-on-primary' : (isMe ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-highest text-on-surface-variant')}`}>
+                  {isOwner ? 'Admin' : (isMe ? 'Tú' : 'Miembro')}
                 </span>
               </div>
               
