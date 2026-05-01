@@ -150,13 +150,13 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-orange-100 dark:bg-orange-900/10 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700"></div>
           
           <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-1">
-              <p className="text-stone-500 dark:text-stone-400 font-medium">Balance total del hogar</p>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
+              <p className="text-stone-500 dark:text-stone-400 font-medium whitespace-nowrap">Balance mensual</p>
               <input 
                 type="month" 
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="bg-orange-50 dark:bg-stone-800 text-orange-700 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-xl outline-none border border-orange-200 dark:border-stone-700 cursor-pointer"
+                className="bg-orange-50 dark:bg-stone-800 text-orange-700 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-xl outline-none border border-orange-200 dark:border-stone-700 cursor-pointer w-auto"
               />
             </div>
             <h3 className="font-headline text-5xl font-extrabold text-stone-900 dark:text-white mb-8 tracking-tighter">

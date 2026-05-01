@@ -320,28 +320,28 @@ export default function Layout({ children, title }) {
       </main>
 
       {/* Bottom Navigation (Mobile Only) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container/90 backdrop-blur-xl border-t border-outline-variant px-2 pt-3 pb-safe flex justify-around items-end z-50 rounded-t-[2.5rem] shadow-[0_-4px_40px_rgba(0,0,0,0.05)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container/90 backdrop-blur-xl border-t border-outline-variant px-1 pt-2 pb-safe grid grid-cols-5 items-end justify-items-center z-50 rounded-t-[2.5rem] shadow-[0_-4px_40px_rgba(0,0,0,0.05)]">
         {navItems.slice(0, 2).map(item => (
-          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 px-4 transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 w-full transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
             <span className="material-symbols-outlined text-2xl" style={path === item.path ? {fontVariationSettings: "'FILL' 1"} : {}}>{item.icon}</span>
-            <span className="font-label text-[10px] font-bold uppercase tracking-tighter">{item.name}</span>
+            <span className="font-label text-[10px] font-bold uppercase tracking-tighter truncate max-w-[60px] text-center">{item.name}</span>
           </Link>
         ))}
 
         {/* FAB in the middle */}
-        <div className="relative -top-8">
+        <div className="relative transform -translate-y-6 flex justify-center w-full">
           <Link 
             to="/nuevo-gasto" 
-            className="w-16 h-16 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(154,68,45,0.4)] border-4 border-surface"
+            className="w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(154,68,45,0.4)] border-4 border-surface active:scale-95 transition-transform"
           >
             <span className="material-symbols-outlined text-3xl font-black">add</span>
           </Link>
         </div>
 
         {navItems.slice(2).map(item => (
-          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 px-4 transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 w-full transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
             <span className="material-symbols-outlined text-2xl" style={path === item.path ? {fontVariationSettings: "'FILL' 1"} : {}}>{item.icon}</span>
-            <span className="font-label text-[10px] font-bold uppercase tracking-tighter">{item.name}</span>
+            <span className="font-label text-[10px] font-bold uppercase tracking-tighter truncate max-w-[60px] text-center">{item.name}</span>
           </Link>
         ))}
       </nav>

@@ -3,17 +3,41 @@ import { useHousehold } from '../context/HouseholdContext';
 import { useAuth } from '../context/AuthContext';
 import { expenseService } from '../services/expenseService';
 
-export default function MultiLineSplitter({ onSaveSuccess }) {
+export default function MultiLineSplitter({ onSaveSuccess, initialData = null }) {
   const { user } = useAuth();
   const { members, activeHousehold, currencySymbol, formatAmount } = useHousehold();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [lines, setLines] = useState([
-    { id: Date.now(), concept: '', amount: '', splitMode: 'equal', customSplits: {} }
-  ]);
+  const [lines, setLines] = useState(
+    initialData?.items?.length > 0 
+      ? initialData.items.map((item, idx) => ({
+          id: Date.now() + idx,
+          concept: item.concept || '',
+          amount: item.amount || '',
+          splitMode: 'equal',
+          customSplits: {}
+        }))
+      : [{ id: Date.now(), concept: '', amount: '', splitMode: 'equal', customSplits: {} }]
+  );
   const [paidBy, setPaidBy] = useState(user?.uid || '');
-  const [date, setDate] = useState(new Date().toLocaleDateString('sv'));
-  const [globalConcept, setGlobalConcept] = useState('Compra Conjunta');
+  const [date, setDate] = useState(initialData?.date || new Date().toLocaleDateString('sv'));
+  const [globalConcept, setGlobalConcept] = useState(initialData?.concept || 'Compra Conjunta');
   const [expandedLineId, setExpandedLineId] = useState(null);
+
+  useEffect(() => {
+    if (initialData) {
+      setGlobalConcept(initialData.concept || 'Compra Conjunta');
+      if (initialData.date) setDate(initialData.date);
+      if (initialData.items && initialData.items.length > 0) {
+        setLines(initialData.items.map((item, idx) => ({
+          id: Date.now() + idx,
+          concept: item.concept || '',
+          amount: item.amount || '',
+          splitMode: 'equal',
+          customSplits: {}
+        })));
+      }
+    }
+  }, [initialData]);
 
   const totalAmount = lines.reduce((acc, line) => acc + (parseFloat(line.amount) || 0), 0);
 

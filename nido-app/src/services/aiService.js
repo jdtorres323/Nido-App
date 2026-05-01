@@ -71,26 +71,35 @@ const fileToGenerativePart = async (file) => {
 };
 
 export const aiService = {
-  analyzeReceipt: async (file) => {
+  analyzeReceipt: async (files) => {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
-      Analiza esta imagen de un ticket o recibo de compra.
+      Analiza estas imágenes de un ticket o recibo de compra. (Pueden ser partes de la misma factura larga).
       Extrae la siguiente información y devuélvela ÚNICAMENTE en formato JSON:
       {
-        "concept": "Nombre del establecimiento o producto principal",
-        "amount": 123.45 (solo el número),
-        "category": "comida" | "hogar" | "ocio" | "otros" | "servicios",
-        "date": "YYYY-MM-DD"
+        "concept": "Nombre del establecimiento o comercio principal",
+        "date": "YYYY-MM-DD",
+        "items": [
+          {
+            "concept": "Nombre del producto (ej: Whisky Escocés)",
+            "amount": 749.00 (solo el número),
+            "category": "comida" | "hogar" | "ocio" | "otros" | "servicios"
+          }
+        ]
       }
       
-      Si no puedes determinar la fecha, usa la fecha actual.
-      Si no puedes determinar la categoría, usa "otros".
+      Reglas:
+      1. Si no puedes determinar la fecha, usa la fecha actual.
+      2. Si no puedes determinar la categoría de un ítem, usa "otros".
+      3. Extrae CADA producto individual como un ítem separado en el array "items".
     `;
 
     try {
-      const imagePart = await fileToGenerativePart(file);
-      const result = await model.generateContent([prompt, imagePart]);
+      const fileArray = Array.isArray(files) ? files : [files];
+      const imageParts = await Promise.all(fileArray.map(fileToGenerativePart));
+      
+      const result = await model.generateContent([prompt, ...imageParts]);
       const response = await result.response;
       const text = response.text();
       const cleanedText = text.replace(/```json|```/gi, "").trim();
