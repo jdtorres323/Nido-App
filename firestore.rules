@@ -33,7 +33,10 @@ service cloud.firestore {
     // Perfiles de Usuario
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow write: if request.auth.uid == userId;
+      // Permitimos que el propio usuario edite su perfil
+      // O que un Admin edite los IDs de hogar (necesario para eliminar miembros sin Cloud Functions)
+      allow write: if request.auth.uid == userId || 
+                    (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['householdIds', 'currentHouseholdId']));
     }
   }
 }

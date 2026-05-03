@@ -69,7 +69,7 @@ export default function Familia() {
       alert(`${memberName} ha sido eliminado del hogar.`);
     } catch (err) {
       console.error(err);
-      alert('Error al eliminar el miembro');
+      alert('Error al eliminar el miembro: ' + (err.message || 'Error desconocido'));
     }
   };
 
