@@ -320,30 +320,40 @@ export default function Layout({ children, title }) {
       </main>
 
       {/* Bottom Navigation (Mobile Only) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container/90 backdrop-blur-xl border-t border-outline-variant px-1 pt-2 pb-safe grid grid-cols-5 items-end justify-items-center z-50 rounded-t-[2.5rem] shadow-[0_-4px_40px_rgba(0,0,0,0.05)]">
-        {navItems.slice(0, 2).map(item => (
-          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 w-full transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
-            <span className="material-symbols-outlined text-2xl" style={path === item.path ? {fontVariationSettings: "'FILL' 1"} : {}}>{item.icon}</span>
-            <span className="font-label text-[10px] font-bold uppercase tracking-tighter truncate max-w-[60px] text-center">{item.name}</span>
-          </Link>
-        ))}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container/95 backdrop-blur-xl border-t border-outline-variant px-2 pt-2 pb-safe grid grid-cols-5 items-center justify-items-center z-50 rounded-t-[2.5rem] shadow-[0_-4px_40px_rgba(0,0,0,0.1)]">
+        {/* Slot 1: Inicio */}
+        <Link to="/" className={`flex flex-col items-center gap-1 w-full transition-all ${path === '/' ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <span className="material-symbols-outlined text-2xl" style={path === '/' ? {fontVariationSettings: "'FILL' 1"} : {}}>home</span>
+          <span className="font-label text-[10px] font-bold uppercase tracking-tighter">Inicio</span>
+        </Link>
 
-        {/* FAB in the middle */}
-        <div className="relative transform -translate-y-6 flex justify-center w-full">
+        {/* Slot 2: Gastos */}
+        <Link to="/servicios" className={`flex flex-col items-center gap-1 w-full transition-all ${path === '/servicios' ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <span className="material-symbols-outlined text-2xl" style={path === '/servicios' ? {fontVariationSettings: "'FILL' 1"} : {}}>receipt_long</span>
+          <span className="font-label text-[10px] font-bold uppercase tracking-tighter">Gastos</span>
+        </Link>
+
+        {/* Slot 3: Elevated FAB (The middle one, smaller but higher) */}
+        <div className="relative flex items-center justify-center w-full">
           <Link 
             to="/nuevo-gasto" 
-            className="w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(154,68,45,0.4)] border-4 border-surface active:scale-95 transition-transform"
+            className="absolute -top-12 w-12 h-12 bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-full flex items-center justify-center shadow-[0_8px_25px_rgba(154,68,45,0.4)] border-4 border-surface active:scale-95 transition-transform"
           >
-            <span className="material-symbols-outlined text-3xl font-black">add</span>
+            <span className="material-symbols-outlined text-2xl font-black">add</span>
           </Link>
         </div>
 
-        {navItems.slice(2).map(item => (
-          <Link key={item.path} to={item.path} className={`flex flex-col items-center gap-1 pb-2 w-full transition-all ${path === item.path ? 'text-primary' : 'text-on-surface-variant'}`}>
-            <span className="material-symbols-outlined text-2xl" style={path === item.path ? {fontVariationSettings: "'FILL' 1"} : {}}>{item.icon}</span>
-            <span className="font-label text-[10px] font-bold uppercase tracking-tighter truncate max-w-[60px] text-center">{item.name}</span>
-          </Link>
-        ))}
+        {/* Slot 4: Escáner */}
+        <Link to="/escaner" className={`flex flex-col items-center gap-1 w-full transition-all ${path === '/escaner' ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <span className="material-symbols-outlined text-2xl" style={path === '/escaner' ? {fontVariationSettings: "'FILL' 1"} : {}}>document_scanner</span>
+          <span className="font-label text-[10px] font-bold uppercase tracking-tighter">Escáner</span>
+        </Link>
+
+        {/* Slot 5: Análisis */}
+        <Link to="/analisis" className={`flex flex-col items-center gap-1 w-full transition-all ${path === '/analisis' ? 'text-primary' : 'text-on-surface-variant'}`}>
+          <span className="material-symbols-outlined text-2xl" style={path === '/analisis' ? {fontVariationSettings: "'FILL' 1"} : {}}>analytics</span>
+          <span className="font-label text-[10px] font-bold uppercase tracking-tighter">Análisis</span>
+        </Link>
       </nav>
     </div>
   );
