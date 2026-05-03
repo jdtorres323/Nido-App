@@ -12,6 +12,7 @@ service cloud.firestore {
     match /households/{householdId} {
       allow read, create: if isSignedIn();
       allow update: if isSignedIn();
+      allow delete: if isSignedIn() && resource.data.ownerUid == request.auth.uid;
       
       // Miembros del hogar (si se usan como subcolección)
       match /members/{memberId} {
@@ -33,7 +34,7 @@ service cloud.firestore {
     // Perfiles de Usuario
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow write: if request.auth.uid == userId;
+      allow write: if isSignedIn();
     }
   }
 }
