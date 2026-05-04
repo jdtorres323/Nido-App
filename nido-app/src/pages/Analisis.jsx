@@ -154,12 +154,15 @@ export default function Analisis() {
     const total = dayItems.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
     const [year, month, day] = date.split('-').map(Number);
     const d = new Date(year, month - 1, day);
-    const dayName = d.toLocaleDateString('es-ES', { weekday: 'short' });
+    const dayNum = d.getDate();
+    const monthNum = d.getMonth() + 1;
+    const dayName = d.toLocaleDateString('es-ES', { weekday: 'short' }).substring(0, 2).toUpperCase();
     return {
       amount: total,
       items: dayItems,
       date,
-      label: dayName.charAt(0).toUpperCase() + dayName.slice(1)
+      label: `${dayNum}/${monthNum}`,
+      shortDay: dayName
     };
   });
 
@@ -249,9 +252,14 @@ export default function Analisis() {
                           })
                         )}
                       </div>
-                      <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-tighter text-on-surface-variant truncate w-full text-center">
-                        {day.label.substring(0, 2)}
-                      </span>
+                      <div className="flex flex-col items-center leading-[0.7] mt-1">
+                        <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-tighter text-on-surface-variant/50">
+                          {day.shortDay}
+                        </span>
+                        <span className="text-[8px] sm:text-[10px] font-bold text-on-surface">
+                          {day.label}
+                        </span>
+                      </div>
                     </div>
                   );
                 })}

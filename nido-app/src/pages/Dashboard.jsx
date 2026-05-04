@@ -75,7 +75,13 @@ export default function Dashboard() {
       return expDate === date;
     });
     const total = dayExpenses.reduce((acc, exp) => acc + (parseFloat(exp.totalAmount) || 0), 0);
-    return { total, items: dayExpenses };
+    
+    const [y, m, d] = date.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayName = dateObj.toLocaleDateString('es-ES', { weekday: 'short' }).substring(0, 2).toUpperCase();
+    const dayMonth = `${d}/${m}`;
+    
+    return { total, items: dayExpenses, label: dayMonth, shortDay: dayName };
   });
 
   const maxDaily = Math.max(...dailyStats.map(d => d.total), 1);
@@ -141,9 +147,54 @@ export default function Dashboard() {
     }
   };
 
+  const expensesThisMonthCount = expenses.filter(e => {
+    const d = new Date(e.processedDate || e.date);
+    const now = new Date();
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+
+  const settledMembersCount = Object.values(balances).filter(b => Math.abs(b) < 0.01).length;
+
   return (
-    <div className="space-y-12 animate-in fade-in duration-700">
-      {/* Balance Bento Grid Section */}
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Group Status Card (Premium Design) */}
+      <div className="bg-[#6D2E1E] p-8 sm:p-10 rounded-[3rem] shadow-2xl flex flex-col md:flex-row gap-8 items-center justify-between text-white border border-white/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -mr-32 -mt-32 blur-3xl opacity-50 transition-transform group-hover:scale-110 duration-1000"></div>
+        
+        <div className="flex-1 text-center md:text-left w-full relative z-10">
+          <h3 className="text-3xl font-black tracking-tighter mb-2 italic">Estado del Grupo</h3>
+          <p className="text-white/60 text-sm mb-8 font-medium">Actualmente hay {members.length} miembros activos compartiendo gastos.</p>
+          
+          <div className="flex flex-wrap justify-center md:justify-start gap-6">
+            <div className="bg-black/20 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/10 text-center min-w-[120px] transition-transform hover:scale-105">
+              <span className="block text-3xl font-black mb-1">{expensesThisMonthCount}</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Gastos este mes</span>
+            </div>
+            <div className="bg-black/20 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/10 text-center min-w-[120px] transition-transform hover:scale-105">
+              <span className="block text-3xl font-black mb-1">{settledMembersCount}/{members.length}</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Pagos al día</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="w-full md:w-auto flex flex-col gap-4 relative z-10">
+          <button 
+            onClick={() => navigate('/familia')}
+            className="bg-[#FFF8F1] text-[#6D2E1E] px-8 py-4 rounded-2xl font-black text-sm hover:bg-white transition-all flex items-center justify-center gap-3 shadow-lg group/btn"
+          >
+            <span className="material-symbols-outlined text-xl group-hover/btn:rotate-45 transition-transform">settings</span>
+            <span>Configurar Reglas</span>
+          </button>
+          <button 
+            onClick={() => navigate('/analisis')}
+            className="bg-transparent text-white border-2 border-white/20 px-8 py-4 rounded-2xl font-black text-sm hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+          >
+            <span className="material-symbols-outlined text-xl">history</span>
+            <span>Historial de Pagos</span>
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Global Balance Card */}
         <div className="lg:col-span-2 bg-white dark:bg-stone-900 p-8 rounded-[3rem] shadow-sm border border-orange-100 dark:border-stone-800 relative overflow-hidden group transition-all hover:shadow-md">
@@ -301,14 +352,20 @@ export default function Dashboard() {
                         })
                       )}
                     </div>
-                    <span className="text-[8px] font-black text-stone-400 text-center leading-tight">
-                      {(() => {
-                        const [y, m, d] = last30Days[i].split('-').map(Number);
-                        const dateObj = new Date(y, m - 1, d);
-                        if (i % 5 !== 0 && i !== 29) return '';
-                        return dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-                      })()}
-                    </span>
+                    <div className="flex flex-col items-center leading-[0.7] mt-1 min-w-0">
+                      {i % 3 === 0 || i === 29 ? (
+                        <>
+                          <span className="text-[6px] font-black uppercase tracking-tighter text-stone-400/60">
+                            {dailyStats[i].shortDay}
+                          </span>
+                          <span className="text-[7px] font-bold text-stone-500">
+                            {dailyStats[i].label}
+                          </span>
+                        </>
+                      ) : (
+                        <div className="h-[13px]" /> // Spacer to keep height consistent
+                      )}
+                    </div>
                   </div>
                 );
               })}
