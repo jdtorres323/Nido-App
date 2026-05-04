@@ -2,12 +2,79 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHousehold } from '../context/HouseholdContext';
 import { generateFinancialInsights } from '../services/aiService';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default function Analisis() {
   const navigate = useNavigate();
   const { expenses, activeHousehold, loading, formatAmount } = useHousehold();
   const [aiInsights, setAiInsights] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
+
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const householdName = activeHousehold?.name || 'Hogar';
+    const dateStr = new Date().toLocaleDateString('es-ES');
+
+    // Header
+    doc.setFontSize(22);
+    doc.setTextColor(230, 81, 0); // Primary-like color
+    doc.text('Nido: Reporte Financiero', 14, 22);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text(`Hogar: ${householdName}`, 14, 32);
+    doc.text(`Fecha: ${dateStr}`, 14, 38);
+    
+    // Summary
+    doc.setFontSize(16);
+    doc.setTextColor(0);
+    doc.text('Resumen de Gastos (Últimos 30 días)', 14, 52);
+    
+    doc.setFontSize(12);
+    doc.text(`Total Gastado: ${formatAmount(totalAmount)}`, 14, 62);
+    doc.text(`Total Transacciones: ${recentExpenses.length}`, 14, 68);
+
+    // Categories Table
+    const catRows = sortedCategories.map(([cat, amount]) => [
+      categoryLabels[cat] || cat,
+      formatAmount(amount),
+      `${((amount / (totalAmount || 1)) * 100).toFixed(1)}%`
+    ]);
+
+    autoTable(doc, {
+      startY: 75,
+      head: [['Categoría', 'Monto', 'Porcentaje']],
+      body: catRows,
+      theme: 'striped',
+      headStyles: { fillStyle: 'fill', fillColor: [230, 81, 0], textColor: 255 },
+    });
+
+    // Detailed Table
+    const detailRows = recentExpenses
+      .slice()
+      .sort((a, b) => b.totalAmount - a.totalAmount)
+      .map(exp => [
+        exp.concept,
+        exp.processedDate ? new Date(`${exp.processedDate}T12:00:00`).toLocaleDateString('es-ES') : 'N/A',
+        categoryLabels[exp.category] || exp.category,
+        formatAmount(exp.totalAmount)
+      ]);
+
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.text('Detalle de Gastos', 14, 22);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [['Concepto', 'Fecha', 'Categoría', 'Monto']],
+      body: detailRows,
+      theme: 'grid',
+      headStyles: { fillColor: [50, 50, 50] },
+    });
+
+    doc.save(`Reporte_Nido_${householdName.replace(/\s+/g, '_')}_${dateStr}.pdf`);
+  };
 
   const getAIInsights = useCallback(async (force = false) => {
     // Only proceed if conditions are met, or if force is true (manual refresh)
@@ -109,7 +176,12 @@ export default function Analisis() {
         </div>
         <div className="flex gap-2">
           <button className="bg-surface px-4 py-2 border border-outline-variant rounded-xl text-sm font-medium hover:bg-surface-container transition-colors">Mes actual</button>
-          <button className="bg-primary text-on-primary px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Descargar PDF</button>
+          <button 
+            onClick={downloadPDF}
+            className="bg-primary text-on-primary px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Descargar PDF
+          </button>
         </div>
       </div>
 
