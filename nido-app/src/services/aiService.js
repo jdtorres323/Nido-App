@@ -89,10 +89,12 @@ export const aiService = {
         ]
       }
       
-      Reglas:
-      1. Si no puedes determinar la fecha, usa la fecha actual.
-      2. Si no puedes determinar la categoría de un ítem, usa "otros".
-      3. Extrae CADA producto individual como un ítem separado en el array "items".
+      Reglas CRÍTICAS de Procesamiento:
+      1. MANEJO DE DESCUENTOS: Si encuentras una línea que indica "Descuento", "Bonificación" o similar, NO la crees como un ítem separado. En su lugar, RESTA ese monto del valor del producto inmediatamente anterior. El objetivo es obtener el PRECIO FINAL PAGADO por cada producto.
+      2. Si no puedes determinar la fecha, usa la fecha actual (${new Date().toISOString().split('T')[0]}).
+      3. Si no puedes determinar la categoría de un ítem, usa "otros".
+      4. Extrae CADA producto individual como un ítem separado en el array "items".
+      5. Limpieza de nombres: No incluyas códigos internos o números de serie en el "concept" si ensucian el nombre del producto.
     `;
 
     try {
