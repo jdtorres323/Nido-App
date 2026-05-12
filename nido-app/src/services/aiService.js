@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 console.log("Gemini API Key defined:", !!API_KEY);
@@ -70,32 +70,40 @@ const fileToGenerativePart = async (file) => {
   };
 };
 
+const receiptSchema = {
+  type: SchemaType.OBJECT,
+  properties: {
+    concept: { type: SchemaType.STRING, description: "Nombre del supermercado o comercio principal" },
+    date: { type: SchemaType.STRING, description: "Fecha de la compra (YYYY-MM-DD)" },
+    items: {
+      type: SchemaType.ARRAY,
+      description: "Lista exhaustiva de todos y cada uno de los productos del ticket. PROHIBIDO resumir.",
+      items: {
+        type: SchemaType.OBJECT,
+        properties: {
+          concept: { type: SchemaType.STRING, description: "Nombre del producto limpio (sin códigos)" },
+          amount: { type: SchemaType.NUMBER, description: "Precio final pagado por el producto. ¡IMPORTANTE! Si el ítem siguiente dice 'Descuento', RESTA ese monto a este valor. Ejemplo: Producto 100, Descuento 20 -> extrae 80." },
+          category: { type: SchemaType.STRING, enum: ["comida", "hogar", "ocio", "otros", "servicios"], description: "Categoría lógica del producto." }
+        },
+        required: ["concept", "amount", "category"]
+      }
+    }
+  },
+  required: ["concept", "date", "items"]
+};
+
 export const aiService = {
   analyzeReceipt: async (files) => {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-    const prompt = `
-      Analiza estas imágenes de un ticket o recibo de compra. (Pueden ser partes de la misma factura larga).
-      Extrae la siguiente información y devuélvela ÚNICAMENTE en formato JSON:
-      {
-        "concept": "Nombre del establecimiento o comercio principal",
-        "date": "YYYY-MM-DD",
-        "items": [
-          {
-            "concept": "Nombre del producto (ej: Whisky Escocés)",
-            "amount": 749.00 (solo el número),
-            "category": "comida" | "hogar" | "ocio" | "otros" | "servicios"
-          }
-        ]
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash",
+      systemInstruction: "Eres un analista experto que transcribe tickets de supermercado extremadamente largos de fotos. Extrae TODOS Y CADA UNO de los ítems. Tienes PROHIBIDO agrupar o resumir productos por cansancio. REGLA CLAVE: Toma el precio TOTAL de cada ítem, no el unitario. Si ves una línea que dice 'Descuento' debajo de un producto, tienes que RESTAR ese monto del importe total del producto de arriba y guardar el resultado final en 'amount'. Retorna solo datos estructurados.",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: receiptSchema,
       }
-      
-      Reglas CRÍTICAS de Procesamiento:
-      1. MANEJO DE DESCUENTOS: Si encuentras una línea que indica "Descuento", "Bonificación" o similar, NO la crees como un ítem separado. En su lugar, RESTA ese monto del valor del producto inmediatamente anterior. El objetivo es obtener el PRECIO FINAL PAGADO por cada producto.
-      2. Si no puedes determinar la fecha, usa la fecha actual (${new Date().toISOString().split('T')[0]}).
-      3. Si no puedes determinar la categoría de un ítem, usa "otros".
-      4. Extrae CADA producto individual como un ítem separado en el array "items".
-      5. Limpieza de nombres: No incluyas códigos internos o números de serie en el "concept" si ensucian el nombre del producto.
-    `;
+    });
+
+    const prompt = `Analiza estas imágenes de un ticket de compra continuo y extrae todos los productos. Si no encuentras fecha en las fotos, utiliza la fecha actual: ${new Date().toISOString().split('T')[0]}`;
 
     try {
       const fileArray = Array.isArray(files) ? files : [files];
@@ -103,9 +111,11 @@ export const aiService = {
       
       const result = await model.generateContent([prompt, ...imageParts]);
       const response = await result.response;
+      // Con responseMimeType y responseSchema, Gemini devuelve texto 100% JSON validado sin backticks.
       const text = response.text();
-      const cleanedText = text.replace(/```json|```/gi, "").trim();
-      return JSON.parse(cleanedText);
+      console.log("Structured AI Response:", text);
+      
+      return JSON.parse(text);
     } catch (error) {
       console.error("Error analyzing receipt with Gemini:", error);
       throw error;
